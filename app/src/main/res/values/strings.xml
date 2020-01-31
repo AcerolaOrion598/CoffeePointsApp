@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">CoffeePointApp</string>
+    <string name="title_map">Карта</string>
+    <string name="title_points">Мои Точки</string>
+    <string name="title_profile">Профиль</string>
+    <string name="title_other">Другое</string>
+    <string name="maps_key">AIzaSyCZOEHFd_tdIdZmQbL2XMnhCve0JazriEE</string>
+</resources>

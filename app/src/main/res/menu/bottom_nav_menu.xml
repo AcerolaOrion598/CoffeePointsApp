@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_map"
+        android:icon="@drawable/ic_maps_24dp"
+        android:title="@string/title_map"/>
+
+    <item
+        android:id="@+id/navigation_points"
+        android:icon="@drawable/ic_pin_24dp"
+        android:title="@string/title_points"/>
+
+    <item
+        android:id="@+id/navigation_profile"
+        android:icon="@drawable/ic_user_24dp"
+        android:title="@string/title_profile"/>
+
+    <item
+        android:id="@+id/navigation_other"
+        android:icon="@drawable/ic_menu_24dp"
+        android:title="@string/title_other"/>
+</menu>
