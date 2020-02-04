@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.djaphar.coffeepointapp.MainActivity;
 import com.djaphar.coffeepointapp.R;
@@ -33,6 +34,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private GoogleMap gMap;
     private ConstraintLayout pointInfoWindow;
     private TextView pointName, pointAbout, pointOwner, pointActive;
+    private int whoMoved;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
             ViewGroup container, Bundle savedInstanceState) {
@@ -60,6 +62,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     @Override
     public void onMapReady(GoogleMap googleMap) {
         gMap = googleMap;
+        mainViewModel.sendScreenBounds(gMap.getProjection().getVisibleRegion().latLngBounds);
 
         gMap.setOnCameraMoveStartedListener(this);
         gMap.setOnCameraIdleListener(this);
@@ -112,7 +115,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     @Override
     public void onCameraMoveStarted(int reason) {
-        if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
+        whoMoved = reason;
+        if (whoMoved == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
             if (pointInfoWindow.getVisibility() == View.VISIBLE) {
                 pointInfoWindow.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.point_info_hide_animation));
                 pointInfoWindow.setVisibility(View.INVISIBLE);
@@ -122,6 +126,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     @Override
     public void onCameraIdle() {
-        mainViewModel.sendScreenBounds(gMap.getProjection().getVisibleRegion().latLngBounds);
+        if (whoMoved == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
+            mainViewModel.sendScreenBounds(gMap.getProjection().getVisibleRegion().latLngBounds);
+        }
     }
 }
