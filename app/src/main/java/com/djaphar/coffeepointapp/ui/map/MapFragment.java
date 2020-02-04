@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.djaphar.coffeepointapp.MainActivity;
@@ -86,17 +87,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                         if (point != null) {
                             String status;
                             if (point.isActive()) {
-                                status = "Открыта";
+                                status = getString(R.string.point_status_true);
                                 pointActive.setTextColor(getResources().getColor(R.color.colorGreen60));
                             } else {
                                 pointActive.setTextColor(getResources().getColor(R.color.colorRed60));
-                                status = "Закрыта";
+                                status = getString(R.string.point_status_false);
                             }
                             pointName.setText(point.getName());
                             pointAbout.setText(point.getAbout());
                             pointOwner.setText(point.getOwner());
                             pointActive.setText(status);
+
                             pointInfoWindow.setVisibility(View.VISIBLE);
+                            pointInfoWindow.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.point_info_show_animation));
                         }
                         return false;
                     }
@@ -108,7 +111,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     @Override
     public void onCameraMoveStarted(int reason) {
         if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
-            pointInfoWindow.setVisibility(View.INVISIBLE);
+            if (pointInfoWindow.getVisibility() == View.VISIBLE) {
+                pointInfoWindow.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.point_info_hide_animation));
+                pointInfoWindow.setVisibility(View.INVISIBLE);
+            }
         }
     }
 
