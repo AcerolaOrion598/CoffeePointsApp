@@ -98,8 +98,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                             pointOwner.setText(point.getOwner());
                             pointActive.setText(status);
 
-                            pointInfoWindow.setVisibility(View.VISIBLE);
-                            pointInfoWindow.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.point_info_show_animation));
+                            if (pointInfoWindow.getVisibility() == View.INVISIBLE) {
+                                pointInfoWindow.setVisibility(View.VISIBLE);
+                                pointInfoWindow.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.point_info_show_animation));
+                            }
                         }
                         return false;
                     }
