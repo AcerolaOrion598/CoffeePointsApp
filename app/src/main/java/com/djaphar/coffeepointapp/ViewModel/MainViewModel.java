@@ -20,14 +20,14 @@ public class MainViewModel extends AndroidViewModel {
         super(application);
 
         ArrayList<Point> pointList = new ArrayList<>();
-        Point point1 = new Point(new LatLng(55.665954, 37.503766), "Какое-то уникальное название 1",
+        Point point1 = new Point(new LatLng(55.665954, 37.503766), "Моя точка",
                 "Лучшая точка в этом районе", "", "Владелец: Aye", true, 3);
-        Point point2 = new Point(new LatLng(55.890356, 37.722421), "Какое-то уникальное название 2",
-                "Короткое описание, которое заставит\n" +
-                        "меня выбрать именно эту точку.", "", "Владелец: Salamulya", false, 2);
-        Point point3 = new Point(new LatLng(55.718324, 37.810124), "Какое-то уникальное название 3",
-                "Короткое описание, которое заставит\n" +
-                        "меня выбрать именно эту точку 2.", "Отошёл на 10 минут", "Владелец: Patsanva", true, 1);
+        Point point2 = new Point(new LatLng(55.890356, 37.722421), "Какое-то уникальное название",
+                "Короткое описание, которое заставит меня выбрать именно эту точку.",
+                "", "Владелец: Salamulya", false, 2);
+        Point point3 = new Point(new LatLng(55.718324, 37.810124), "Сюда иди да",
+                "Короткое описание, которое заставит меня выбрать именно эту точку сто проц просто",
+                "Отошёл на 10 минут", "Владелец: Patsanva", true, 1);
 
         pointList.add(point1);
         pointList.add(point2);

@@ -12,7 +12,7 @@
         android:layout_height="60dp"
         android:background="@color/colorPrimary"
         app:itemIconSize="24dp"
-        app:itemIconTint="@color/colorWhite87"
+        app:itemIconTint="@color/bottom_nav_colors"
         app:labelVisibilityMode="unlabeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

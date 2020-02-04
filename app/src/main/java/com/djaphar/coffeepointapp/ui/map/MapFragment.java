@@ -67,6 +67,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             public void onChanged(ArrayList<Point> points) {
                 MarkerOptions options = new MarkerOptions();
                 for (Point point:points) {
+                    if (point.isActive()) {
+
+                    }
                     Marker marker;
                     options.position(point
                             .getCoordinates())
