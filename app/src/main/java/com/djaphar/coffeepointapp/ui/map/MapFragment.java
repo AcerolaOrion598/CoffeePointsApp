@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.djaphar.coffeepointapp.MainActivity;
 import com.djaphar.coffeepointapp.R;
@@ -78,7 +77,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                     options.position(point
                             .getCoordinates())
                             .title(point.getHint());
-//                            .icon(mainViewModel.bitmapDescriptorFromVector(R.drawable.ic_pin_24dp));
+                    //TODO:Кастомные маркеры
+                            //.icon(mainViewModel.bitmapDescriptorFromVector(R.drawable.ic_pin_24dp));
                     marker = gMap.addMarker(options);
                     marker.setTag(point);
                 }

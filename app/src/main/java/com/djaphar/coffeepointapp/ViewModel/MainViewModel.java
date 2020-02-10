@@ -27,11 +27,39 @@ public class MainViewModel extends AndroidViewModel {
                 "", "Владелец: Salamulya", false, 2);
         Point point3 = new Point(new LatLng(55.718324, 37.810124), "Сюда иди да",
                 "Короткое описание, которое заставит меня выбрать именно эту точку сто проц просто",
-                "Отошёл на 10 минут", "Владелец: Patsanva", true, 1);
+                "", "Владелец: Patsanva", true, 1);
+        Point point4 = new Point(new LatLng(55.779971, 37.525455), "Я же по любому тебя настигну",
+                "Короткое описание, которое заставит меня выбрать именно эту точку сто проц просто",
+                "Отошёл на 15 минут", "Владелец: Patsanva", true, 1);
+        Point point5 = new Point(new LatLng(55.818181, 37.513095), "Че ты убегаешь да",
+                "Короткое описание, которое заставит меня выбрать именно эту точку сто проц просто",
+                "", "Владелец: Patsanva", true, 1);
+        Point point6 = new Point(new LatLng(55.678955, 37.431020), "Ща да подожди",
+                "Короткое описание, которое заставит меня выбрать именно эту точку сто проц просто",
+                "", "Владелец: Patsanva", false, 1);
+        Point point7 = new Point(new LatLng(55.800243, 37.391118), "Э ты нарвался да",
+                "Короткое описание, которое заставит меня выбрать именно эту точку сто проц просто",
+                "", "Владелец: Patsanva", false, 1);
+        Point point8 = new Point(new LatLng(55.899181, 37.934192), "Ты кому сказал да э?",
+                "Короткое описание, которое заставит меня выбрать именно эту точку сто проц просто",
+                "", "Владелец: Patsanva", true, 1);
+        Point point9 = new Point(new LatLng(55.692994, 37.664097), "Нормально говори да по-братски",
+                "Короткое описание, которое заставит меня выбрать именно эту точку сто проц просто",
+                "", "Владелец: Patsanva", true, 1);
+        Point point10 = new Point(new LatLng(55.742886, 37.624700), "Не ты послушай да",
+                "Короткое описание, которое заставит меня выбрать именно эту точку сто проц просто",
+                "", "Владелец: Patsanva", false, 1);
 
         pointList.add(point1);
         pointList.add(point2);
         pointList.add(point3);
+        pointList.add(point4);
+        pointList.add(point5);
+        pointList.add(point6);
+        pointList.add(point7);
+        pointList.add(point8);
+        pointList.add(point9);
+        pointList.add(point10);
 
         points = new MutableLiveData<>();
         points.setValue(pointList);
