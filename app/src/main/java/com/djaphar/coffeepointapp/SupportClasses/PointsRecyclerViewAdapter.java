@@ -34,6 +34,7 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Point point = points.get(position);
+        holder.listPointName.setTextColor(context.getResources().getColor(R.color.colorBlack87));
         holder.listPointName.setText(point.getName());
         if (point.isActive()) {
             holder.listPointStatus.setTextColor(context.getResources().getColor(R.color.colorGreen60));
