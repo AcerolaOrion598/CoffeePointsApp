@@ -5,11 +5,12 @@
         <!-- Customize your theme here. -->
         <item name="actionBarStyle">@style/MyActionBarStyle</item>
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     </style>
     <style name="MyActionBarStyle" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
         <item name="height">60dp</item>
+        <item name="background">@color/colorAccent</item>
     </style>
 
 </resources>
