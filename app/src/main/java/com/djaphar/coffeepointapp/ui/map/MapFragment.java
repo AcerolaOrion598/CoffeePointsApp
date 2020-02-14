@@ -1,6 +1,5 @@
 package com.djaphar.coffeepointapp.ui.map;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +7,6 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +17,7 @@ import com.djaphar.coffeepointapp.ViewModel.MainViewModel;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -43,6 +42,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private SwitchCompat pointActiveSwitch;
     private String statusTrueText, statusFalseText;
     private int whoMoved, statusTrueColor, statusFalseColor, btnShow, btnHide, windowShow, windowHide;
+    private ArrayList<Marker> markers = new ArrayList<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
@@ -133,22 +133,30 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             public void onChanged(ArrayList<Point> points) {
                 MarkerOptions options = new MarkerOptions();
                 for (Point point:points) {
+                    float color;
                     if (point.isActive()) {
-
+                        color = BitmapDescriptorFactory.HUE_GREEN;
+                    } else {
+                        color = BitmapDescriptorFactory.HUE_RED;
                     }
                     Marker marker;
                     options.position(point
                             .getCoordinates())
-                            .title(point.getHint());
-                    //TODO:Кастомные маркеры
-                            //.icon(mainViewModel.bitmapDescriptorFromVector(R.drawable.ic_pin_24dp));
+                            .title(point.getHint())
+                            .alpha(0.87f)
+                            .icon(BitmapDescriptorFactory.defaultMarker(color));
                     marker = gMap.addMarker(options);
                     marker.setTag(point);
+                    markers.add(marker);
                 }
 
                 gMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
                     public boolean onMarkerClick(Marker marker) {
+                        for (Marker m: markers) {
+                            m.setAlpha(0.6f);
+                        }
+                        marker.setAlpha(1.0f);
                         Point point = (Point) marker.getTag();
                         if (point != null) {
                             if (point.isActive()) {
@@ -176,6 +184,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         whoMoved = reason;
         if (whoMoved == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
             hideView(pointInfoWindow, windowHide);
+            for (Marker marker:markers) {
+                marker.setAlpha(0.87f);
+            }
         }
     }
 
