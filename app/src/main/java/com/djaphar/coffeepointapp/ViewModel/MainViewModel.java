@@ -73,6 +73,10 @@ public class MainViewModel extends AndroidViewModel {
         //Тут цепляем границы экрана и шлём их на сервер
     }
 
+    public void addPoint() {
+        //Тут лезем апдейтить бд
+    }
+
 //    public BitmapDescriptor bitmapDescriptorFromVector(int vectorResId) {
 //        Drawable vectorDrawable = ContextCompat.getDrawable(getApplication(),  vectorResId);
 //        Objects.requireNonNull(vectorDrawable).setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
