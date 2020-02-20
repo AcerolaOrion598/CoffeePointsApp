@@ -1,10 +1,10 @@
 package com.djaphar.coffeepointapp.ui.map;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.TextView;
@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.djaphar.coffeepointapp.MainActivity;
 import com.djaphar.coffeepointapp.R;
 import com.djaphar.coffeepointapp.SupportClasses.Point;
+import com.djaphar.coffeepointapp.SupportClasses.ViewDriver;
 import com.djaphar.coffeepointapp.ViewModel.MainViewModel;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -43,6 +44,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private String statusTrueText, statusFalseText;
     private int whoMoved, statusTrueColor, statusFalseColor, btnShow, btnHide, windowShow, windowHide;
     private ArrayList<Marker> markers = new ArrayList<>();
+    private Context context;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
@@ -74,6 +76,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         btnHide = R.anim.add_btn_hide_animation;
         windowShow = R.anim.bottom_window_show_animation;
         windowHide = R.anim.bottom_window_hide_animation;
+        context = getContext();
 
         SupportMapFragment supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_container);
         if (supportMapFragment != null) {
@@ -85,17 +88,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             public void onClick(View view) {
                 pointActiveSwitch.setChecked(false);
                 setStatusTvOptions(pointActiveSwitchTv, statusFalseText, statusFalseColor);
-                hideView(pointAddBtn, btnHide);
-                hideView(pointInfoWindow, windowHide);
-                showView(pointAddWindow, windowShow);
+                ViewDriver.hideView(pointAddBtn, btnHide, context);
+                ViewDriver.hideView(pointInfoWindow, windowHide, context);
+                ViewDriver.showView(pointAddWindow, windowShow, context);
             }
         });
 
         pointAddCancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                hideView(pointAddWindow, windowHide);
-                showView(pointAddBtn, btnShow);
+                ViewDriver.hideView(pointAddWindow, windowHide, context);
+                ViewDriver.showView(pointAddBtn, btnShow,context);
             }
         });
 
@@ -103,9 +106,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             @Override
             public void onClick(View view) {
                 mainViewModel.addPoint();
-                hideView(pointAddWindow, windowHide);
-                showView(pointAddBtn, btnShow);
-                Toast.makeText(getContext(), "Точка добавлена (нет)", Toast.LENGTH_SHORT).show();
+                ViewDriver.hideView(pointAddWindow, windowHide, context);
+                ViewDriver.showView(pointAddBtn, btnShow, context);
+                Toast.makeText(context, "Точка добавлена (нет)", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -132,6 +135,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             @Override
             public void onChanged(ArrayList<Point> points) {
                 MarkerOptions options = new MarkerOptions();
+                markers.clear();
                 for (Point point:points) {
                     float color;
                     if (point.isActive()) {
@@ -168,9 +172,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                             pointAbout.setText(point.getAbout());
                             pointOwner.setText(point.getOwner());
 
-                            hideView(pointAddWindow, windowHide);
-                            showView(pointInfoWindow, windowShow);
-                            showView(pointAddBtn, btnShow);
+                            ViewDriver.hideView(pointAddWindow, windowHide, context);
+                            ViewDriver.showView(pointInfoWindow, windowShow, context);
+                            ViewDriver.showView(pointAddBtn, btnShow, context);
                         }
                         return false;
                     }
@@ -183,7 +187,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     public void onCameraMoveStarted(int reason) {
         whoMoved = reason;
         if (whoMoved == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
-            hideView(pointInfoWindow, windowHide);
+            ViewDriver.hideView(pointInfoWindow, windowHide, context);
             for (Marker marker:markers) {
                 marker.setAlpha(0.87f);
             }
@@ -194,20 +198,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     public void onCameraIdle() {
         if (whoMoved == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
             mainViewModel.sendScreenBounds(gMap.getProjection().getVisibleRegion().latLngBounds);
-        }
-    }
-
-    private void showView(View view, int animation) {
-        if (view.getVisibility() == View.INVISIBLE) {
-            view.setVisibility(View.VISIBLE);
-            view.startAnimation(AnimationUtils.loadAnimation(getContext(), animation));
-        }
-    }
-
-    private void hideView(View view, int animation) {
-        if (view.getVisibility() == View.VISIBLE) {
-            view.startAnimation(AnimationUtils.loadAnimation(getContext(), animation));
-            view.setVisibility(View.INVISIBLE);
         }
     }
 
