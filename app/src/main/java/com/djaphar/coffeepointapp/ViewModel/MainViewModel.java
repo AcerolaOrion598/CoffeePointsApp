@@ -15,7 +15,6 @@ import androidx.lifecycle.MutableLiveData;
 public class MainViewModel extends AndroidViewModel {
 
     private MutableLiveData<ArrayList<Point>> points;
-//    private ArrayList<Marker> markers = new ArrayList<>();
 
     public MainViewModel(@NonNull Application application) {
         super(application);
@@ -69,10 +68,6 @@ public class MainViewModel extends AndroidViewModel {
     public MutableLiveData<ArrayList<Point>> getPoints() {
         return points;
     }
-
-//    public ArrayList<Marker> getMarkers() {
-//        return markers;
-//    }
 
     public void sendScreenBounds(LatLngBounds bounds) {
         //Тут цепляем границы экрана и шлём их на сервер

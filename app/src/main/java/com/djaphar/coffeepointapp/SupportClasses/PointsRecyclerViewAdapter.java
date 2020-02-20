@@ -7,28 +7,49 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.djaphar.coffeepointapp.MainActivity;
 import com.djaphar.coffeepointapp.R;
 
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecyclerViewAdapter.ViewHolder> {
 
+    private RelativeLayout pointListLayout;
+    private ConstraintLayout pointEditLayout;
     private ArrayList<Point> points;
     private Context context;
+    private MainActivity mainActivity;
 
-    public PointsRecyclerViewAdapter(ArrayList<Point> points, Context context) {
+    public PointsRecyclerViewAdapter(ArrayList<Point> points, Context context, RelativeLayout pointListLayout,
+                                     ConstraintLayout pointEditLayout, MainActivity mainActivity) {
+        this.pointListLayout = pointListLayout;
+        this.pointEditLayout = pointEditLayout;
         this.points = points;
         this.context = context;
+        this.mainActivity = mainActivity;
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.points_list, parent, false);
-        return new ViewHolder(view);
+    public ViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, int viewType) {
+        final Context context = parent.getContext();
+        View view = LayoutInflater.from(context).inflate(R.layout.points_list, parent, false);
+        final ViewHolder viewHolder = new ViewHolder(view);
+
+        viewHolder.parentLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mainActivity.setActionBarTitle(context.getString(R.string.title_point_edit));
+                ViewDriver.showView(pointEditLayout, R.anim.full_screen_show_animation, context);
+                pointListLayout.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        return viewHolder;
     }
 
     @Override
@@ -60,5 +81,6 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
             listPointName = itemView.findViewById(R.id.list_point_name);
             listPointStatus = itemView.findViewById(R.id.list_point_status);
         }
+
     }
 }

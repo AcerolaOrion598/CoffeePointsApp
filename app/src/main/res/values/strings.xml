@@ -4,6 +4,7 @@
     <string name="title_points">Мои Точки</string>
     <string name="title_profile">Профиль</string>
     <string name="title_other">Другое</string>
+    <string name="title_point_edit">Редактировать Точку</string>
     <string name="point_status_true">Открыта</string>
     <string name="point_status_false">Закрыта</string>
     <string name="maps_key">YOUR_API_KEY</string>
@@ -12,4 +13,5 @@
     <string name="point_about_hint">Краткое описание точки</string>
     <string name="save_btn">Сохранить</string>
     <string name="cancel_btn">Отмена</string>
+    <string name="delete_btn">Удалить</string>
 </resources>
