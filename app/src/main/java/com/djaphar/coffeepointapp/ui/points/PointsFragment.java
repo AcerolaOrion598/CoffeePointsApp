@@ -2,21 +2,30 @@ package com.djaphar.coffeepointapp.ui.points;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.djaphar.coffeepointapp.MainActivity;
 import com.djaphar.coffeepointapp.R;
 import com.djaphar.coffeepointapp.SupportClasses.Point;
 import com.djaphar.coffeepointapp.SupportClasses.PointsRecyclerViewAdapter;
+import com.djaphar.coffeepointapp.SupportClasses.ViewDriver;
 import com.djaphar.coffeepointapp.ViewModel.MainViewModel;
 
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -33,6 +42,12 @@ public class PointsFragment extends Fragment {
     private ConstraintLayout pointEditLayout;
     private ArrayList<Point> points;
     private MainActivity mainActivity;
+    private EditText pointNameFormEd, pointAboutFormEd;
+    private TextView pointActiveSwitchFormTv;
+    private SwitchCompat pointActiveSwitchForm;
+    private String statusTrueText, statusFalseText;
+    private int statusTrueColor, statusFalseColor;
+    private Button pointEditSaveButton;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
@@ -40,6 +55,11 @@ public class PointsFragment extends Fragment {
         recyclerView = root.findViewById(R.id.points_recycler_view);
         pointListLayout = root.findViewById(R.id.points_list_layout);
         pointEditLayout = root.findViewById(R.id.point_edit_layout);
+        pointNameFormEd = root.findViewById(R.id.point_name_form_ed);
+        pointAboutFormEd = root.findViewById(R.id.point_about_form_ed);
+        pointActiveSwitchFormTv = root.findViewById(R.id.point_active_switch_form_tv);
+        pointActiveSwitchForm = root.findViewById(R.id.point_active_switch_form);
+        pointEditSaveButton = root.findViewById(R.id.point_edit_save_btn);
         mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
             mainActivity.setActionBarTitle(getString(R.string.title_points));
@@ -51,15 +71,52 @@ public class PointsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         context = getContext();
+        statusTrueColor = getResources().getColor(R.color.colorGreen60);
+        statusFalseColor = getResources().getColor(R.color.colorRed60);
+        statusTrueText = getString(R.string.point_status_true);
+        statusFalseText = getString(R.string.point_status_false);
+
 
         mainViewModel.getPoints().observe(getViewLifecycleOwner(), new Observer<ArrayList<Point>>() {
             @Override
             public void onChanged(ArrayList<Point> mPoints) {
                 points = mPoints;
                 PointsRecyclerViewAdapter adapter = new PointsRecyclerViewAdapter(points, context, pointListLayout,
-                                                                                        pointEditLayout, mainActivity);
+                        pointEditLayout, mainActivity, pointNameFormEd, pointAboutFormEd, pointActiveSwitchFormTv, pointActiveSwitchForm);
                 recyclerView.setAdapter(adapter);
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            }
+        });
+
+        pointActiveSwitchForm.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked) {
+                    ViewDriver.setStatusTvOptions(pointActiveSwitchFormTv, statusTrueText, statusTrueColor);
+                } else {
+                    ViewDriver.setStatusTvOptions(pointActiveSwitchFormTv, statusFalseText, statusFalseColor);
+                }
+            }
+        });
+
+        pointNameFormEd.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.toString().equals("")) {
+                    pointEditSaveButton.setEnabled(false);
+                } else {
+                    pointEditSaveButton.setEnabled(true);
+                }
             }
         });
     }

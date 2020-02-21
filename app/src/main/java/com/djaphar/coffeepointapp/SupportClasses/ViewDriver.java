@@ -3,6 +3,7 @@ package com.djaphar.coffeepointapp.SupportClasses;
 import android.content.Context;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.widget.TextView;
 
 public class ViewDriver {
 
@@ -19,4 +20,10 @@ public class ViewDriver {
             view.setVisibility(View.INVISIBLE);
         }
     }
+
+    public static void setStatusTvOptions(TextView tv, String text, int color) {
+        tv.setTextColor(color);
+        tv.setText(text);
+    }
+
 }

@@ -87,7 +87,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             @Override
             public void onClick(View view) {
                 pointActiveSwitch.setChecked(false);
-                setStatusTvOptions(pointActiveSwitchTv, statusFalseText, statusFalseColor);
+                ViewDriver.setStatusTvOptions(pointActiveSwitchTv, statusFalseText, statusFalseColor);
                 ViewDriver.hideView(pointAddBtn, btnHide, context);
                 ViewDriver.hideView(pointInfoWindow, windowHide, context);
                 ViewDriver.showView(pointAddWindow, windowShow, context);
@@ -116,9 +116,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked) {
-                    setStatusTvOptions(pointActiveSwitchTv, statusTrueText, statusTrueColor);
+                    ViewDriver.setStatusTvOptions(pointActiveSwitchTv, statusTrueText, statusTrueColor);
                 } else {
-                    setStatusTvOptions(pointActiveSwitchTv, statusFalseText, statusFalseColor);
+                    ViewDriver.setStatusTvOptions(pointActiveSwitchTv, statusFalseText, statusFalseColor);
                 }
             }
         });
@@ -164,9 +164,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                         Point point = (Point) marker.getTag();
                         if (point != null) {
                             if (point.isActive()) {
-                                setStatusTvOptions(pointActive, statusTrueText, statusTrueColor);
+                                ViewDriver.setStatusTvOptions(pointActive, statusTrueText, statusTrueColor);
                             } else {
-                                setStatusTvOptions(pointActive, statusFalseText, statusFalseColor);
+                                ViewDriver.setStatusTvOptions(pointActive, statusFalseText, statusFalseColor);
                             }
                             pointName.setText(point.getName());
                             pointAbout.setText(point.getAbout());
@@ -199,10 +199,5 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         if (whoMoved == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
             mainViewModel.sendScreenBounds(gMap.getProjection().getVisibleRegion().latLngBounds);
         }
-    }
-
-    private void setStatusTvOptions(TextView tv, String text, int color) {
-        tv.setTextColor(color);
-        tv.setText(text);
     }
 }
