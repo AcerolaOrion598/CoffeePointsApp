@@ -1,12 +1,15 @@
 package com.djaphar.coffeepointapp.SupportClasses;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.djaphar.coffeepointapp.MainActivity;
 import com.djaphar.coffeepointapp.R;
@@ -23,21 +26,21 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
     private RelativeLayout pointListLayout;
     private ConstraintLayout pointEditLayout;
     private ArrayList<Point> points;
-    private Context context;
     private MainActivity mainActivity;
     private EditText pointNameFormEd, pointAboutFormEd;
     private TextView pointActiveSwitchFormTv;
     private SwitchCompat pointActiveSwitchForm;
     private String statusTrueText, statusFalseText;
-    private int statusTrueColor, statusFalseColor;
+    private int statusTrueColor, statusFalseColor, layoutBackgroundColor;
+    private Resources resources;
+    private Animation animation;
 
-    public PointsRecyclerViewAdapter(ArrayList<Point> points, Context context, RelativeLayout pointListLayout,
+    public PointsRecyclerViewAdapter(ArrayList<Point> points, RelativeLayout pointListLayout,
                                      ConstraintLayout pointEditLayout, MainActivity mainActivity, EditText pointNameFormEd,
                                      EditText pointAboutFormEd, TextView pointActiveSwitchFormTv, SwitchCompat pointActiveSwitchForm) {
         this.pointListLayout = pointListLayout;
         this.pointEditLayout = pointEditLayout;
         this.points = points;
-        this.context = context;
         this.mainActivity = mainActivity;
         this.pointNameFormEd = pointNameFormEd;
         this.pointAboutFormEd = pointAboutFormEd;
@@ -51,8 +54,11 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
         final Context context = parent.getContext();
         View view = LayoutInflater.from(context).inflate(R.layout.points_list, parent, false);
         final ViewHolder viewHolder = new ViewHolder(view);
-        statusTrueColor = context.getResources().getColor(R.color.colorGreen60);
-        statusFalseColor = context.getResources().getColor(R.color.colorRed60);
+
+        resources = context.getResources();
+        statusTrueColor = resources.getColor(R.color.colorGreen60);
+        statusFalseColor = resources.getColor(R.color.colorRed60);
+        layoutBackgroundColor = resources.getColor(R.color.colorWhite87);
         statusTrueText = context.getString(R.string.point_status_true);
         statusFalseText = context.getString(R.string.point_status_false);
 
@@ -64,17 +70,29 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
                 pointNameFormEd.setText(point.getName());
                 pointAboutFormEd.setText(point.getAbout());
                 if (point.isActive()) {
-                    ViewDriver.setStatusTvOptions(pointActiveSwitchFormTv, statusTrueText, statusTrueColor);
-                    pointActiveSwitchForm.setChecked(true);
+                    ViewDriver.setSwitchAndLabel(pointActiveSwitchForm, pointActiveSwitchFormTv, statusTrueText, statusTrueColor, true);
                 } else {
-                    ViewDriver.setStatusTvOptions(pointActiveSwitchFormTv, statusFalseText, statusFalseColor);
-                    pointActiveSwitchForm.setChecked(false);
+                    ViewDriver.setSwitchAndLabel(pointActiveSwitchForm, pointActiveSwitchFormTv, statusFalseText, statusFalseColor, false);
                 }
                 mainActivity.setActionBarTitle(context.getString(R.string.title_point_edit));
-                ViewDriver.showView(pointEditLayout, R.anim.full_screen_show_animation, context);
-                pointListLayout.setVisibility(View.INVISIBLE);
+                animation = ViewDriver.showView(pointEditLayout, R.anim.full_screen_show_animation, context);
+                animation.setAnimationListener(new Animation.AnimationListener() {
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        pointListLayout.setVisibility(View.INVISIBLE);
+                        pointEditLayout.setBackgroundColor(layoutBackgroundColor);
+                    }
+
+                    @Override
+                    public void onAnimationStart(Animation animation) { }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) { }
+                });
             }
         });
+
 
         return viewHolder;
     }
@@ -82,7 +100,7 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Point point = points.get(position);
-        ViewDriver.setStatusTvOptions(holder.listPointName, point.getName(), context.getResources().getColor(R.color.colorBlack87));
+        ViewDriver.setStatusTvOptions(holder.listPointName, point.getName(), resources.getColor(R.color.colorBlack87));
         if (point.isActive()) {
             ViewDriver.setStatusTvOptions(holder.listPointStatus, statusTrueText, statusTrueColor);
         } else {

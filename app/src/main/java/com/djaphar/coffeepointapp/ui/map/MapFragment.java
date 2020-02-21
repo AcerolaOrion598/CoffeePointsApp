@@ -19,6 +19,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -127,7 +128,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     @Override
     public void onMapReady(GoogleMap googleMap) {
         gMap = googleMap;
-        mainViewModel.sendScreenBounds(gMap.getProjection().getVisibleRegion().latLngBounds);
+        mainViewModel.sendScreenBounds(getScreenBounds());
 
         gMap.setOnCameraMoveStartedListener(this);
         gMap.setOnCameraIdleListener(this);
@@ -197,7 +198,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     @Override
     public void onCameraIdle() {
         if (whoMoved == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
-            mainViewModel.sendScreenBounds(gMap.getProjection().getVisibleRegion().latLngBounds);
+            mainViewModel.sendScreenBounds(getScreenBounds());
         }
+    }
+
+    public LatLngBounds getScreenBounds() {
+        return gMap.getProjection().getVisibleRegion().latLngBounds;
     }
 }

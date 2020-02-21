@@ -49,7 +49,9 @@ public class MainActivity extends AppCompatActivity {
         if (fragment instanceof PointsFragment) {
             ConstraintLayout editLayout = ((PointsFragment) fragment).getPointEditLayout();
             if (editLayout.getVisibility() == View.VISIBLE) {
+                setActionBarTitle(getString(R.string.title_points));
                 RelativeLayout listLayout = ((PointsFragment) fragment).getPointListLayout();
+                editLayout.setBackgroundColor(getResources().getColor(R.color.colorWhite));
                 listLayout.setVisibility(View.VISIBLE);
                 ViewDriver.hideView(editLayout, R.anim.full_screen_hide_animation, this);
             } else {
