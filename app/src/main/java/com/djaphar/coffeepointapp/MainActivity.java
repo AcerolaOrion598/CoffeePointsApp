@@ -23,6 +23,7 @@ import androidx.navigation.ui.NavigationUI;
 public class MainActivity extends AppCompatActivity {
 
     private TextView actionBarTitle;
+    private Fragment currentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,18 +40,17 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Fragment fragment = null;
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
 
         if (navHostFragment != null) {
-            fragment = navHostFragment.getChildFragmentManager().getFragments().get(0);
+            currentFragment = navHostFragment.getChildFragmentManager().getFragments().get(0);
         }
 
-        if (fragment instanceof PointsFragment) {
-            ConstraintLayout editLayout = ((PointsFragment) fragment).getPointEditLayout();
+        if (currentFragment instanceof PointsFragment) {
+            ConstraintLayout editLayout = ((PointsFragment) currentFragment).getPointEditLayout();
             if (editLayout.getVisibility() == View.VISIBLE) {
                 setActionBarTitle(getString(R.string.title_points));
-                RelativeLayout listLayout = ((PointsFragment) fragment).getPointListLayout();
+                RelativeLayout listLayout = ((PointsFragment) currentFragment).getPointListLayout();
                 editLayout.setBackgroundColor(getResources().getColor(R.color.colorWhite));
                 listLayout.setVisibility(View.VISIBLE);
                 ViewDriver.hideView(editLayout, R.anim.full_screen_hide_animation, this);

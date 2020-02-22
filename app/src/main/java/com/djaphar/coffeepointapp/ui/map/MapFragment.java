@@ -1,6 +1,11 @@
 package com.djaphar.coffeepointapp.ui.map;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,24 +17,27 @@ import android.widget.Toast;
 
 import com.djaphar.coffeepointapp.MainActivity;
 import com.djaphar.coffeepointapp.R;
+import com.djaphar.coffeepointapp.SupportClasses.PermissionDriver;
 import com.djaphar.coffeepointapp.SupportClasses.Point;
 import com.djaphar.coffeepointapp.SupportClasses.ViewDriver;
 import com.djaphar.coffeepointapp.ViewModel.MainViewModel;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -37,7 +45,6 @@ import androidx.lifecycle.ViewModelProviders;
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener, GoogleMap.OnCameraIdleListener {
 
     private MainViewModel mainViewModel;
-    private GoogleMap gMap;
     private ConstraintLayout pointInfoWindow, pointAddWindow;
     private TextView pointName, pointAbout, pointOwner, pointActive, pointActiveSwitchTv;
     private Button pointAddBtn, pointAddCancelBtn, pointAddSaveBtn;
@@ -46,6 +53,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private int whoMoved, statusTrueColor, statusFalseColor, btnShow, btnHide, windowShow, windowHide;
     private ArrayList<Marker> markers = new ArrayList<>();
     private Context context;
+    private MainActivity mainActivity;
+    private String[] perms = new String[2];
+    private LocationManager locationManager;
+    private boolean justOpened;
+    private GoogleMap gMap;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
@@ -61,7 +73,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         pointAddCancelBtn = root.findViewById(R.id.point_add_cancel_btn);
         pointAddSaveBtn = root.findViewById(R.id.point_add_save_btn);
         pointActiveSwitch = root.findViewById(R.id.point_active_switch);
-        ((MainActivity) Objects.requireNonNull(getActivity())).setActionBarTitle(getString(R.string.title_map));
+        mainActivity = (MainActivity) getActivity();
+        if (mainActivity != null) {
+            mainActivity.setActionBarTitle(getString(R.string.title_map));
+        }
+        perms[0] = Manifest.permission.ACCESS_COARSE_LOCATION;
+        perms[1] = Manifest.permission.ACCESS_FINE_LOCATION;
+        justOpened = true;
         return root;
     }
 
@@ -99,7 +117,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             @Override
             public void onClick(View view) {
                 ViewDriver.hideView(pointAddWindow, windowHide, context);
-                ViewDriver.showView(pointAddBtn, btnShow,context);
+                ViewDriver.showView(pointAddBtn, btnShow, context);
             }
         });
 
@@ -109,7 +127,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 mainViewModel.addPoint();
                 ViewDriver.hideView(pointAddWindow, windowHide, context);
                 ViewDriver.showView(pointAddBtn, btnShow, context);
-                Toast.makeText(context, "Точка добавлена (нет)", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, getString(R.string.ononoki_chan), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -128,16 +146,25 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     @Override
     public void onMapReady(GoogleMap googleMap) {
         gMap = googleMap;
-        mainViewModel.sendScreenBounds(getScreenBounds());
+
+        if (PermissionDriver.hasPerms(perms, context)) {
+            getDeviceLocation();
+            gMap.setMyLocationEnabled(true);
+            gMap.getUiSettings().setMyLocationButtonEnabled(false);
+        } else {
+            PermissionDriver.requestPerms(this, perms);
+        }
 
         gMap.setOnCameraMoveStartedListener(this);
         gMap.setOnCameraIdleListener(this);
+
+        mainViewModel.sendScreenBounds(getScreenBounds());
         mainViewModel.getPoints().observe(getViewLifecycleOwner(), new Observer<ArrayList<Point>>() {
             @Override
             public void onChanged(ArrayList<Point> points) {
                 MarkerOptions options = new MarkerOptions();
                 markers.clear();
-                for (Point point:points) {
+                for (Point point : points) {
                     float color;
                     if (point.isActive()) {
                         color = BitmapDescriptorFactory.HUE_GREEN;
@@ -158,7 +185,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 gMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
                     public boolean onMarkerClick(Marker marker) {
-                        for (Marker m: markers) {
+                        for (Marker m : markers) {
                             m.setAlpha(0.6f);
                         }
                         marker.setAlpha(1.0f);
@@ -177,6 +204,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                             ViewDriver.showView(pointInfoWindow, windowShow, context);
                             ViewDriver.showView(pointAddBtn, btnShow, context);
                         }
+
                         return false;
                     }
                 });
@@ -189,7 +217,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         whoMoved = reason;
         if (whoMoved == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
             ViewDriver.hideView(pointInfoWindow, windowHide, context);
-            for (Marker marker:markers) {
+            for (Marker marker : markers) {
                 marker.setAlpha(0.87f);
             }
         }
@@ -202,7 +230,53 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         }
     }
 
-    public LatLngBounds getScreenBounds() {
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        getDeviceLocation();
+        gMap.getUiSettings().setMyLocationButtonEnabled(false);
+        gMap.setMyLocationEnabled(true);
+    }
+
+    private void getDeviceLocation() {
+        locationManager = (LocationManager) mainActivity.getSystemService(Context.LOCATION_SERVICE);
+
+        try {
+            if (ActivityCompat.checkSelfPermission(context, perms[0]) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(context, perms[0]) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 1, locationListener);
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 100, 1, locationListener);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private LatLngBounds getScreenBounds() {
         return gMap.getProjection().getVisibleRegion().latLngBounds;
+    }
+
+    private LocationListener locationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+            LatLng myPosition = new LatLng(location.getLatitude(), location.getLongitude());
+            if (justOpened) {
+                focusOnMe(myPosition, 15f);
+            }
+        }
+
+        @Override
+        public void onStatusChanged(String s, int i, Bundle bundle) { }
+
+        @Override
+        public void onProviderEnabled(String s) { }
+
+        @Override
+        public void onProviderDisabled(String s) { }
+    };
+
+    private void focusOnMe(LatLng latLng, float zoom) {
+            gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+            justOpened = false;
     }
 }

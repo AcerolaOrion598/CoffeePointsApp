@@ -9,7 +9,6 @@ import android.view.animation.Animation;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.djaphar.coffeepointapp.MainActivity;
 import com.djaphar.coffeepointapp.R;
@@ -62,7 +61,6 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
         statusTrueText = context.getString(R.string.point_status_true);
         statusFalseText = context.getString(R.string.point_status_false);
 
-
         viewHolder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -93,7 +91,6 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
             }
         });
 
-
         return viewHolder;
     }
 
@@ -123,6 +120,5 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
             listPointName = itemView.findViewById(R.id.list_point_name);
             listPointStatus = itemView.findViewById(R.id.list_point_status);
         }
-
     }
 }
