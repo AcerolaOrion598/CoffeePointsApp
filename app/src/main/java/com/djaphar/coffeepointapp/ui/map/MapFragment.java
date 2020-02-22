@@ -65,6 +65,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private SupportMapFragment supportMapFragment;
     private int markerSize;
 
+    private static final int ownerId = 3;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
@@ -180,10 +182,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 markers.clear();
                 for (Point point : points) {
                     Bitmap customIcon;
-                    if (point.isActive()) {
-                        customIcon = BitmapFactory.decodeResource(resources, R.drawable.green_marker);
+                    if (point.getOwnerId() == ownerId) {
+                        if (point.isActive()) {
+                            customIcon = BitmapFactory.decodeResource(resources, R.drawable.green_marker);
+                        } else {
+                            customIcon = BitmapFactory.decodeResource(resources, R.drawable.red_marker);
+                        }
                     } else {
-                        customIcon = BitmapFactory.decodeResource(resources, R.drawable.red_marker);
+                        customIcon = BitmapFactory.decodeResource(resources, R.drawable.grey_marker);
                     }
                     Bitmap scaledCustomIcon = Bitmap.createScaledBitmap(customIcon, markerSize, markerSize, false);
                     Marker marker;
@@ -201,7 +207,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                     @Override
                     public boolean onMarkerClick(Marker marker) {
                         for (Marker m : markers) {
-                            m.setAlpha(0.6f);
+                            m.setAlpha(0.4f);
                         }
                         marker.setAlpha(1.0f);
                         Point point = (Point) marker.getTag();

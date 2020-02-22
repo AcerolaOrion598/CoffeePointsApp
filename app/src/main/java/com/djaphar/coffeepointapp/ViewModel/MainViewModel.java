@@ -33,7 +33,7 @@ public class MainViewModel extends AndroidViewModel {
                 "Отошёл на 15 минут", "Владелец: Patsanva", true, 1);
         Point point5 = new Point(new LatLng(55.818181, 37.513095), "Че ты убегаешь да",
                 "Короткое описание, которое заставит меня выбрать именно эту точку сто проц просто",
-                "", "Владелец: Patsanva", true, 1);
+                "", "Владелец: Aye", true, 3);
         Point point6 = new Point(new LatLng(55.678955, 37.431020), "Ща да подожди",
                 "Короткое описание, которое заставит меня выбрать именно эту точку сто проц просто",
                 "", "Владелец: Patsanva", false, 1);
@@ -42,13 +42,13 @@ public class MainViewModel extends AndroidViewModel {
                 "", "Владелец: Patsanva", false, 1);
         Point point8 = new Point(new LatLng(55.899181, 37.934192), "Ты кому сказал да э?",
                 "Короткое описание, которое заставит меня выбрать именно эту точку сто проц просто",
-                "", "Владелец: Patsanva", true, 1);
+                "", "Владелец: Aye", true, 3);
         Point point9 = new Point(new LatLng(55.692994, 37.664097), "Нормально говори да по-братски",
                 "Короткое описание, которое заставит меня выбрать именно эту точку сто проц просто",
                 "", "Владелец: Patsanva", true, 1);
         Point point10 = new Point(new LatLng(55.742886, 37.624700), "Не ты послушай да",
                 "Короткое описание, которое заставит меня выбрать именно эту точку сто проц просто",
-                "", "Владелец: Patsanva", false, 1);
+                "", "Владелец: Aye", false, 3);
 
         pointList.add(point1);
         pointList.add(point2);
