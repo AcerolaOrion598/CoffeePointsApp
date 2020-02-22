@@ -3,6 +3,9 @@ package com.djaphar.coffeepointapp.ui.map;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -53,12 +56,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private int whoMoved, statusTrueColor, statusFalseColor, btnShow, btnHide, windowShow, windowHide;
     private ArrayList<Marker> markers = new ArrayList<>();
     private Context context;
+    private Resources resources;
     private MainActivity mainActivity;
     private String[] perms = new String[2];
     private LocationManager locationManager;
     private boolean alreadyOpened = false;
     private GoogleMap gMap;
     private SupportMapFragment supportMapFragment;
+    private int markerSize;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
@@ -87,15 +93,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        statusTrueColor = getResources().getColor(R.color.colorGreen60);
-        statusFalseColor = getResources().getColor(R.color.colorRed60);
+        context = getContext();
+        resources = getResources();
+        statusTrueColor = resources.getColor(R.color.colorGreen60);
+        statusFalseColor = resources.getColor(R.color.colorRed60);
         statusTrueText = getString(R.string.point_status_true);
         statusFalseText = getString(R.string.point_status_false);
         btnShow = R.anim.add_btn_show_animation;
         btnHide = R.anim.add_btn_hide_animation;
         windowShow = R.anim.bottom_window_show_animation;
         windowHide = R.anim.bottom_window_hide_animation;
-        context = getContext();
+        markerSize =  (int) resources.getDimension(R.dimen.marker_size);
 
         pointAddBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -171,18 +179,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 }
                 markers.clear();
                 for (Point point : points) {
-                    float color;
+                    Bitmap customIcon;
                     if (point.isActive()) {
-                        color = BitmapDescriptorFactory.HUE_GREEN;
+                        customIcon = BitmapFactory.decodeResource(resources, R.drawable.green_marker);
                     } else {
-                        color = BitmapDescriptorFactory.HUE_RED;
+                        customIcon = BitmapFactory.decodeResource(resources, R.drawable.red_marker);
                     }
+                    Bitmap scaledCustomIcon = Bitmap.createScaledBitmap(customIcon, markerSize, markerSize, false);
                     Marker marker;
                     options.position(point
                             .getCoordinates())
                             .title(point.getHint())
                             .alpha(0.87f)
-                            .icon(BitmapDescriptorFactory.defaultMarker(color));
+                            .icon(BitmapDescriptorFactory.fromBitmap(scaledCustomIcon));
                     marker = gMap.addMarker(options);
                     marker.setTag(point);
                     markers.add(marker);

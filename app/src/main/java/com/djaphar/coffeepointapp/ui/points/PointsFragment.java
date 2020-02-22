@@ -1,6 +1,7 @@
 package com.djaphar.coffeepointapp.ui.points;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -37,6 +38,7 @@ public class PointsFragment extends Fragment {
     private MainViewModel mainViewModel;
     private RecyclerView recyclerView;
     private Context context;
+    private Resources resources;
     private RelativeLayout pointListLayout;
     private ConstraintLayout pointEditLayout;
     private ArrayList<Point> points;
@@ -70,8 +72,9 @@ public class PointsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         context = getContext();
-        statusTrueColor = getResources().getColor(R.color.colorGreen60);
-        statusFalseColor = getResources().getColor(R.color.colorRed60);
+        resources = getResources();
+        statusTrueColor = resources.getColor(R.color.colorGreen60);
+        statusFalseColor = resources.getColor(R.color.colorRed60);
         statusTrueText = getString(R.string.point_status_true);
         statusFalseText = getString(R.string.point_status_false);
 
