@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.TextView;
@@ -60,7 +62,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private MainActivity mainActivity;
     private String[] perms = new String[2];
     private LocationManager locationManager;
-    private boolean alreadyOpened = false;
+    private boolean alreadyOpened = false, addWindowHidden = false;
     private GoogleMap gMap;
     private SupportMapFragment supportMapFragment;
     private int myMarkerSize, markerSize;
@@ -183,13 +185,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 markers.clear();
                 for (Point point : points) {
                     Bitmap customIcon;
-                    Bitmap scaledCustomIcon;
                     if (point.isActive()) {
                         customIcon = BitmapFactory.decodeResource(resources, R.drawable.green_marker);
                     } else {
                         customIcon = BitmapFactory.decodeResource(resources, R.drawable.red_marker);
                     }
 
+                    Bitmap scaledCustomIcon;
                     if (point.getOwnerId() == ownerId) {
                         scaledCustomIcon = Bitmap.createScaledBitmap(customIcon, myMarkerSize, myMarkerSize, false);
                     } else {
@@ -240,6 +242,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     public void onCameraMoveStarted(int reason) {
         whoMoved = reason;
         if (whoMoved == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
+            if (pointAddWindow.getVisibility() == View.VISIBLE) {
+                addWindowHidden = true;
+                ViewDriver.hideView(pointAddWindow, R.anim.fast_fade_out_animation, context);
+            }
+
             ViewDriver.hideView(pointInfoWindow, windowHide, context);
             for (Marker marker : markers) {
                 marker.setAlpha(0.87f);
@@ -250,6 +257,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     @Override
     public void onCameraIdle() {
         if (whoMoved == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
+            if (addWindowHidden) {
+                addWindowHidden = false;
+                ViewDriver.showView(pointAddWindow, R.anim.fast_fade_in_animation, context);
+            }
             mainViewModel.sendScreenBounds(getScreenBounds());
         }
     }
