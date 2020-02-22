@@ -56,8 +56,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private MainActivity mainActivity;
     private String[] perms = new String[2];
     private LocationManager locationManager;
-    private boolean justOpened;
+    private boolean alreadyOpened = false;
     private GoogleMap gMap;
+    private SupportMapFragment supportMapFragment;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
@@ -79,7 +80,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         }
         perms[0] = Manifest.permission.ACCESS_COARSE_LOCATION;
         perms[1] = Manifest.permission.ACCESS_FINE_LOCATION;
-        justOpened = true;
         return root;
     }
 
@@ -96,11 +96,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         windowShow = R.anim.bottom_window_show_animation;
         windowHide = R.anim.bottom_window_hide_animation;
         context = getContext();
-
-        SupportMapFragment supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_container);
-        if (supportMapFragment != null) {
-            supportMapFragment.getMapAsync(this);
-        }
 
         pointAddBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,6 +136,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 }
             }
         });
+
+        if (supportMapFragment == null) {
+            supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_container);
+            if (supportMapFragment != null) {
+                supportMapFragment.getMapAsync(this);
+            }
+        }
+
     }
 
     @Override
@@ -163,6 +166,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             @Override
             public void onChanged(ArrayList<Point> points) {
                 MarkerOptions options = new MarkerOptions();
+                for (Marker marker : markers) {
+                    marker.remove();
+                }
                 markers.clear();
                 for (Point point : points) {
                     float color;
@@ -260,7 +266,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         @Override
         public void onLocationChanged(Location location) {
             LatLng myPosition = new LatLng(location.getLatitude(), location.getLongitude());
-            if (justOpened) {
+            if (!alreadyOpened) {
                 focusOnMe(myPosition, 15f);
             }
         }
@@ -277,6 +283,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     private void focusOnMe(LatLng latLng, float zoom) {
             gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
-            justOpened = false;
+            alreadyOpened = true;
     }
 }
