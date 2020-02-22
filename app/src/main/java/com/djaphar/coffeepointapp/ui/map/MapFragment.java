@@ -63,7 +63,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private boolean alreadyOpened = false;
     private GoogleMap gMap;
     private SupportMapFragment supportMapFragment;
-    private int markerSize;
+    private int myMarkerSize, markerSize;
 
     private static final int ownerId = 3;
 
@@ -105,6 +105,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         btnHide = R.anim.add_btn_hide_animation;
         windowShow = R.anim.bottom_window_show_animation;
         windowHide = R.anim.bottom_window_hide_animation;
+        myMarkerSize =  (int) resources.getDimension(R.dimen.my_marker_size);
         markerSize =  (int) resources.getDimension(R.dimen.marker_size);
 
         pointAddBtn.setOnClickListener(new View.OnClickListener() {
@@ -182,16 +183,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 markers.clear();
                 for (Point point : points) {
                     Bitmap customIcon;
-                    if (point.getOwnerId() == ownerId) {
-                        if (point.isActive()) {
-                            customIcon = BitmapFactory.decodeResource(resources, R.drawable.green_marker);
-                        } else {
-                            customIcon = BitmapFactory.decodeResource(resources, R.drawable.red_marker);
-                        }
+                    Bitmap scaledCustomIcon;
+                    if (point.isActive()) {
+                        customIcon = BitmapFactory.decodeResource(resources, R.drawable.green_marker);
                     } else {
-                        customIcon = BitmapFactory.decodeResource(resources, R.drawable.grey_marker);
+                        customIcon = BitmapFactory.decodeResource(resources, R.drawable.red_marker);
                     }
-                    Bitmap scaledCustomIcon = Bitmap.createScaledBitmap(customIcon, markerSize, markerSize, false);
+
+                    if (point.getOwnerId() == ownerId) {
+                        scaledCustomIcon = Bitmap.createScaledBitmap(customIcon, myMarkerSize, myMarkerSize, false);
+                    } else {
+                        scaledCustomIcon = Bitmap.createScaledBitmap(customIcon, markerSize, markerSize, false);
+                    }
                     Marker marker;
                     options.position(point
                             .getCoordinates())
