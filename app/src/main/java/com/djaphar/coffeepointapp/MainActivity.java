@@ -51,29 +51,32 @@ public class MainActivity extends AppCompatActivity {
         FragmentNames names = FragmentNames.valueOf(currentFragment.getClass().getSimpleName());
         switch (names) {
             case MapFragment:
-                ConstraintLayout pointAddWindow = ((MapFragment) currentFragment).getPointAddWindow();
-                ConstraintLayout pointInfoWindow = ((MapFragment) currentFragment).getPointInfoWindow();
-                Button pointAddButton = ((MapFragment) currentFragment).getPointAddBtn();
+                MapFragment mapFragment = ((MapFragment) currentFragment);
+                ConstraintLayout pointAddWindow = mapFragment.getPointAddWindow();
+                ConstraintLayout pointInfoWindow = mapFragment.getPointInfoWindow();
+                Button pointAddButton = mapFragment.getPointAddBtn();
                 if (!(pointAddWindow.getVisibility() == View.VISIBLE) && !(pointInfoWindow.getVisibility() == View.VISIBLE)) {
                     super.onBackPressed();
                 } else if (pointAddWindow.getVisibility() == View.VISIBLE) {
                     ViewDriver.hideView(pointAddWindow, R.anim.bottom_window_hide_animation, this);
                     ViewDriver.showView(pointAddButton, R.anim.add_btn_show_animation, this);
                 } else {
+                    mapFragment.equalizeMarkers();
                     ViewDriver.hideView(pointInfoWindow, R.anim.bottom_window_hide_animation, this);
                 }
                 break;
 
             case PointsFragment:
-                ConstraintLayout editLayout = ((PointsFragment) currentFragment).getPointEditLayout();
-                if (editLayout.getVisibility() == View.VISIBLE) {
+                PointsFragment pointsFragment = ((PointsFragment) currentFragment);
+                ConstraintLayout editLayout = pointsFragment.getPointEditLayout();
+                if (!(editLayout.getVisibility() == View.VISIBLE)) {
+                    super.onBackPressed();
+                } else {
                     setActionBarTitle(getString(R.string.title_points));
-                    RelativeLayout listLayout = ((PointsFragment) currentFragment).getPointListLayout();
+                    RelativeLayout listLayout = pointsFragment.getPointListLayout();
                     editLayout.setBackgroundColor(getResources().getColor(R.color.colorWhite));
                     listLayout.setVisibility(View.VISIBLE);
                     ViewDriver.hideView(editLayout, R.anim.full_screen_hide_animation, this);
-                } else {
-                    super.onBackPressed();
                 }
                 break;
 

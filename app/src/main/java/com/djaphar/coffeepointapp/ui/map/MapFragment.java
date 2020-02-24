@@ -114,10 +114,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         markerSize = (int) resources.getDimension(R.dimen.marker_size);
         addWindowHorizontalPadding = (int) resources.getDimension(R.dimen.point_add_window_horizontal_padding);
         addWindowVerticalPadding = (int) resources.getDimension(R.dimen.point_add_window_vertical_padding);
+        equalizeMarkers();
 
         pointAddBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                equalizeMarkers();
                 pointActiveSwitch.setChecked(false);
                 pointNameEd.setText("");
                 pointAboutEd.setText("");
@@ -266,9 +268,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             }
 
             ViewDriver.hideView(pointInfoWindow, windowHide, context);
-            for (Marker marker : markers) {
-                marker.setAlpha(0.87f);
-            }
+            equalizeMarkers();
         }
     }
 
@@ -345,6 +345,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         pointAddCancelBtn.setVisibility(visibility);
         pointAddSaveBtn.setVisibility(visibility);
         pointAddWindowExpanded = isExpanded;
+    }
+
+    public void equalizeMarkers() {
+        for (Marker marker : markers) {
+            marker.setAlpha(0.87f);
+        }
     }
 
     public ConstraintLayout getPointAddWindow() {
