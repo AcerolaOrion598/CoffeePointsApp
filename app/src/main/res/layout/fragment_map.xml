@@ -114,15 +114,16 @@
         app:layout_constraintStart_toStartOf="parent"
         android:background="@drawable/rounded_corners_shape"
         android:elevation="10dp"
-        android:paddingStart="15dp"
-        android:paddingEnd="15dp">
+        android:paddingTop="@dimen/point_add_window_vertical_padding"
+        android:paddingBottom="@dimen/point_add_window_vertical_padding"
+        android:paddingStart="@dimen/point_add_window_horizontal_padding"
+        android:paddingEnd="@dimen/point_add_window_horizontal_padding">
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/point_name_ed"
             android:textCursorDrawable="@drawable/cursor_color"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:paddingStart="15dp"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
@@ -150,7 +151,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/point_name_ed"
-            tools:ignore="RtlSymmetry" />
+            tools:ignore="RtlSymmetry"
+            android:visibility="gone"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/point_active_switch_tv"
@@ -161,7 +163,8 @@
             android:textSize="12sp"
             android:fontFamily="@font/roboto"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/point_about_ed" />
+            app:layout_constraintTop_toBottomOf="@+id/point_about_ed"
+            android:visibility="gone"/>
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/point_active_switch"
@@ -169,7 +172,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             app:layout_constraintStart_toEndOf="@+id/point_active_switch_tv"
-            app:layout_constraintTop_toBottomOf="@+id/point_about_ed" />
+            app:layout_constraintTop_toBottomOf="@+id/point_about_ed"
+            android:visibility="gone"/>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/point_add_save_btn"
@@ -185,15 +189,16 @@
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/point_active_switch" />
+            app:layout_constraintTop_toBottomOf="@+id/point_active_switch"
+            android:visibility="gone"/>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/point_add_cancel_btn"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="4dp"
             android:layout_marginBottom="16dp"
+            android:layout_marginEnd="4dp"
             android:background="@drawable/cancel_button"
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
@@ -202,7 +207,8 @@
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/point_add_save_btn"
-            app:layout_constraintTop_toBottomOf="@+id/point_active_switch" />
+            app:layout_constraintTop_toBottomOf="@+id/point_active_switch"
+            android:visibility="gone"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -1,6 +1,7 @@
 package com.djaphar.coffeepointapp.SupportClasses;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
