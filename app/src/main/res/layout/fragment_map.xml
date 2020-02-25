@@ -115,7 +115,6 @@
         android:background="@drawable/rounded_corners_shape"
         android:elevation="10dp"
         android:paddingTop="@dimen/point_add_window_vertical_padding"
-        android:paddingBottom="@dimen/point_add_window_vertical_padding"
         android:paddingStart="@dimen/point_add_window_horizontal_padding"
         android:paddingEnd="@dimen/point_add_window_horizontal_padding">
 
@@ -189,8 +188,7 @@
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/point_active_switch"
-            android:visibility="gone"/>
+            app:layout_constraintTop_toBottomOf="@+id/point_active_switch"/>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/point_add_cancel_btn"
@@ -207,8 +205,7 @@
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/point_add_save_btn"
-            app:layout_constraintTop_toBottomOf="@+id/point_active_switch"
-            android:visibility="gone"/>
+            app:layout_constraintTop_toBottomOf="@+id/point_active_switch"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

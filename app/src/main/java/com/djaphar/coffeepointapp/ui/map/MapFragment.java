@@ -65,11 +65,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private boolean alreadyOpened = false, addWindowHidden = false, pointAddWindowExpanded = false;
     private GoogleMap gMap;
     private SupportMapFragment supportMapFragment;
-    private int myMarkerSize, markerSize, addWindowHorizontalPadding, addWindowVerticalPadding;
-
-
+    private int myMarkerSize, markerSize;
     private static final int ownerId = 3;
-
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
@@ -112,8 +109,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         windowHide = R.anim.bottom_window_hide_animation;
         myMarkerSize = (int) resources.getDimension(R.dimen.my_marker_size);
         markerSize = (int) resources.getDimension(R.dimen.marker_size);
-        addWindowHorizontalPadding = (int) resources.getDimension(R.dimen.point_add_window_horizontal_padding);
-        addWindowVerticalPadding = (int) resources.getDimension(R.dimen.point_add_window_vertical_padding);
         equalizeMarkers();
 
         pointAddBtn.setOnClickListener(new View.OnClickListener() {
@@ -123,7 +118,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 pointActiveSwitch.setChecked(false);
                 pointNameEd.setText("");
                 pointAboutEd.setText("");
-                pointAddWindow.setPadding(addWindowHorizontalPadding, addWindowVerticalPadding, addWindowHorizontalPadding, addWindowVerticalPadding);
                 pointAddWindowToggle(View.GONE, false);
                 ViewDriver.setStatusTvOptions(pointActiveSwitchTv, statusFalseText, statusFalseColor);
                 ViewDriver.hideView(pointAddBtn, btnHide, context);
@@ -136,7 +130,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             @Override
             public void onFocusChange(View view, boolean focused) {
                 if (focused) {
-                    pointAddWindow.setPadding(addWindowHorizontalPadding, addWindowVerticalPadding, addWindowHorizontalPadding, 0);
                     pointAddWindowToggle(View.VISIBLE, true);
                 }
             }
@@ -198,7 +191,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         mainViewModel.getPoints().observe(getViewLifecycleOwner(), new Observer<ArrayList<Point>>() {
             @Override
             public void onChanged(ArrayList<Point> points) {
-                MarkerOptions options = new MarkerOptions();
                 for (Marker marker : markers) {
                     marker.remove();
                 }
@@ -217,13 +209,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                     } else {
                         scaledCustomIcon = Bitmap.createScaledBitmap(customIcon, markerSize, markerSize, false);
                     }
-                    Marker marker;
-                    options.position(point
-                            .getCoordinates())
+                    MarkerOptions options = new MarkerOptions();
+                    options.position(point.getCoordinates())
                             .title(point.getHint())
                             .alpha(0.87f)
                             .icon(BitmapDescriptorFactory.fromBitmap(scaledCustomIcon));
-                    marker = gMap.addMarker(options);
+                    Marker marker = gMap.addMarker(options);
                     marker.setTag(point);
                     markers.add(marker);
                 }
@@ -276,7 +267,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     public void onCameraIdle() {
         if (whoMoved == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
             if (pointAddWindowExpanded) {
-                pointAddWindow.setPadding(addWindowHorizontalPadding, addWindowVerticalPadding, addWindowHorizontalPadding, addWindowVerticalPadding);
                 pointAddWindowToggle(View.GONE, false);
             }
 
@@ -342,8 +332,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         pointAboutEd.setVisibility(visibility);
         pointActiveSwitchTv.setVisibility(visibility);
         pointActiveSwitch.setVisibility(visibility);
-        pointAddCancelBtn.setVisibility(visibility);
-        pointAddSaveBtn.setVisibility(visibility);
         pointAddWindowExpanded = isExpanded;
     }
 
