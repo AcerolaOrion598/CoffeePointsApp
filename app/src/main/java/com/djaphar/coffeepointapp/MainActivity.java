@@ -3,6 +3,7 @@ package com.djaphar.coffeepointapp;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -54,10 +55,14 @@ public class MainActivity extends AppCompatActivity {
                 MapFragment mapFragment = ((MapFragment) currentFragment);
                 ConstraintLayout pointAddWindow = mapFragment.getPointAddWindow();
                 ConstraintLayout pointInfoWindow = mapFragment.getPointInfoWindow();
+                ImageView greenMarkerOnAdd = mapFragment.getGreenMarkerOnAdd();
+                ImageView redMarkerOnAdd= mapFragment.getRedMarkerOnAdd();
                 Button pointAddButton = mapFragment.getPointAddBtn();
                 if (!(pointAddWindow.getVisibility() == View.VISIBLE) && !(pointInfoWindow.getVisibility() == View.VISIBLE)) {
                     super.onBackPressed();
                 } else if (pointAddWindow.getVisibility() == View.VISIBLE) {
+                    ViewDriver.hideView(redMarkerOnAdd, R.anim.bottom_view_hide_animation, this);
+                    ViewDriver.hideView(greenMarkerOnAdd, R.anim.bottom_view_hide_animation, this);
                     ViewDriver.hideView(pointAddWindow, R.anim.top_view_hide_animation, this);
                     ViewDriver.showView(pointAddButton, R.anim.top_view_show_animation, this);
                 } else {

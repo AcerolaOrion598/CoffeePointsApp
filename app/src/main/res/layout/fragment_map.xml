@@ -210,5 +210,29 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/green_marker_on_add"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="100dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/green_marker"
+        android:visibility="invisible"/>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/red_marker_on_add"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="100dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/red_marker"
+        android:visibility="invisible"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

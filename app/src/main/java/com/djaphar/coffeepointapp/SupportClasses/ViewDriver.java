@@ -13,7 +13,7 @@ public class ViewDriver {
     public static Animation showView(View view, int animationResource, Context context) {
         Animation animation = AnimationUtils.loadAnimation(context, animationResource);
 
-        if (view.getVisibility() == View.INVISIBLE) {
+        if (view.getVisibility() == View.INVISIBLE || view.getVisibility() == View.GONE) {
             view.setVisibility(View.VISIBLE);
             view.startAnimation(animation);
         }
