@@ -14,7 +14,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginBottom="@dimen/nav_bar_height"/>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/point_add_btn"
@@ -105,18 +106,18 @@
         android:id="@+id/point_add_window"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="76dp"
+        android:layout_marginTop="20dp"
         android:layout_marginStart="25dp"
         android:layout_marginEnd="25dp"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:background="@drawable/rounded_corners_shape"
         android:elevation="10dp"
-        android:paddingTop="@dimen/point_add_window_vertical_padding"
-        android:paddingStart="@dimen/point_add_window_horizontal_padding"
-        android:paddingEnd="@dimen/point_add_window_horizontal_padding">
+        android:paddingTop="16dp"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp">
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/point_name_ed"

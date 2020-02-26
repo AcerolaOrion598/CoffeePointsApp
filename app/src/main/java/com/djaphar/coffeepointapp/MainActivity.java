@@ -58,11 +58,11 @@ public class MainActivity extends AppCompatActivity {
                 if (!(pointAddWindow.getVisibility() == View.VISIBLE) && !(pointInfoWindow.getVisibility() == View.VISIBLE)) {
                     super.onBackPressed();
                 } else if (pointAddWindow.getVisibility() == View.VISIBLE) {
-                    ViewDriver.hideView(pointAddWindow, R.anim.bottom_window_hide_animation, this);
-                    ViewDriver.showView(pointAddButton, R.anim.add_btn_show_animation, this);
+                    ViewDriver.hideView(pointAddWindow, R.anim.top_view_hide_animation, this);
+                    ViewDriver.showView(pointAddButton, R.anim.top_view_show_animation, this);
                 } else {
                     mapFragment.equalizeMarkers();
-                    ViewDriver.hideView(pointInfoWindow, R.anim.bottom_window_hide_animation, this);
+                    ViewDriver.hideView(pointInfoWindow, R.anim.bottom_view_hide_animation, this);
                 }
                 break;
 

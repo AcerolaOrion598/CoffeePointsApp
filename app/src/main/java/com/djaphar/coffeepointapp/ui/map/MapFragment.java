@@ -55,7 +55,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private Button pointAddBtn, pointAddCancelBtn, pointAddSaveBtn;
     private SwitchCompat pointActiveSwitch;
     private String statusTrueText, statusFalseText;
-    private int whoMoved, statusTrueColor, statusFalseColor, btnShow, btnHide, windowShow, windowHide;
+    private int whoMoved, statusTrueColor, statusFalseColor, topViewShow, topViewHide, bottomViewShow, bottomViewHide;
     private ArrayList<Marker> markers = new ArrayList<>();
     private Context context;
     private Resources resources;
@@ -103,10 +103,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         statusFalseColor = resources.getColor(R.color.colorRed60);
         statusTrueText = getString(R.string.point_status_true);
         statusFalseText = getString(R.string.point_status_false);
-        btnShow = R.anim.add_btn_show_animation;
-        btnHide = R.anim.add_btn_hide_animation;
-        windowShow = R.anim.bottom_window_show_animation;
-        windowHide = R.anim.bottom_window_hide_animation;
+        topViewShow = R.anim.top_view_show_animation;
+        topViewHide = R.anim.top_view_hide_animation;
+        bottomViewShow = R.anim.bottom_view_show_animation;
+        bottomViewHide = R.anim.bottom_view_hide_animation;
         myMarkerSize = (int) resources.getDimension(R.dimen.my_marker_size);
         markerSize = (int) resources.getDimension(R.dimen.marker_size);
         equalizeMarkers();
@@ -120,9 +120,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 pointAboutEd.setText("");
                 pointAddWindowToggle(View.GONE, false);
                 ViewDriver.setStatusTvOptions(pointActiveSwitchTv, statusFalseText, statusFalseColor);
-                ViewDriver.hideView(pointAddBtn, btnHide, context);
-                ViewDriver.hideView(pointInfoWindow, windowHide, context);
-                ViewDriver.showView(pointAddWindow, windowShow, context);
+                ViewDriver.hideView(pointAddBtn, topViewHide, context);
+                ViewDriver.hideView(pointInfoWindow, bottomViewHide, context);
+                ViewDriver.showView(pointAddWindow, topViewShow, context);
             }
         });
 
@@ -138,8 +138,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         pointAddCancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ViewDriver.hideView(pointAddWindow, windowHide, context);
-                ViewDriver.showView(pointAddBtn, btnShow, context);
+                ViewDriver.hideView(pointAddWindow, topViewHide, context);
+                ViewDriver.showView(pointAddBtn, topViewShow, context);
             }
         });
 
@@ -147,8 +147,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             @Override
             public void onClick(View view) {
                 mainViewModel.addPoint();
-                ViewDriver.hideView(pointAddWindow, windowHide, context);
-                ViewDriver.showView(pointAddBtn, btnShow, context);
+                ViewDriver.hideView(pointAddWindow, topViewHide, context);
+                ViewDriver.showView(pointAddBtn, topViewShow, context);
                 Toast.makeText(context, getString(R.string.ononoki_chan), Toast.LENGTH_SHORT).show();
             }
         });
@@ -237,9 +237,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                             pointAbout.setText(point.getAbout());
                             pointOwner.setText(point.getOwner());
 
-                            ViewDriver.hideView(pointAddWindow, windowHide, context);
-                            ViewDriver.showView(pointInfoWindow, windowShow, context);
-                            ViewDriver.showView(pointAddBtn, btnShow, context);
+                            ViewDriver.hideView(pointAddWindow, topViewHide, context);
+                            ViewDriver.showView(pointInfoWindow, bottomViewShow, context);
+                            ViewDriver.showView(pointAddBtn, topViewShow, context);
                         }
 
                         return false;
@@ -258,7 +258,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 ViewDriver.hideView(pointAddWindow, R.anim.fast_fade_out_animation, context);
             }
 
-            ViewDriver.hideView(pointInfoWindow, windowHide, context);
+            ViewDriver.hideView(pointInfoWindow, bottomViewHide, context);
             equalizeMarkers();
         }
     }

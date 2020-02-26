@@ -14,7 +14,7 @@
             android:id="@+id/points_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="60dp" />
+            android:layout_marginBottom="@dimen/nav_bar_height" />
 
     </RelativeLayout>
 
