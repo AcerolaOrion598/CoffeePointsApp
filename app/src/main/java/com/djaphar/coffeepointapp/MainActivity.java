@@ -2,12 +2,8 @@ package com.djaphar.coffeepointapp;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.djaphar.coffeepointapp.SupportClasses.ViewDriver;
 import com.djaphar.coffeepointapp.ui.map.MapFragment;
 import com.djaphar.coffeepointapp.ui.points.PointsFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -53,21 +49,11 @@ public class MainActivity extends AppCompatActivity {
         switch (names) {
             case MapFragment:
                 MapFragment mapFragment = ((MapFragment) currentFragment);
-                ConstraintLayout pointAddWindow = mapFragment.getPointAddWindow();
                 ConstraintLayout pointInfoWindow = mapFragment.getPointInfoWindow();
-                ImageView greenMarkerOnAdd = mapFragment.getGreenMarkerOnAdd();
-                ImageView redMarkerOnAdd= mapFragment.getRedMarkerOnAdd();
-                Button pointAddButton = mapFragment.getPointAddBtn();
-                if (!(pointAddWindow.getVisibility() == View.VISIBLE) && !(pointInfoWindow.getVisibility() == View.VISIBLE)) {
+                if (!(mapFragment.addMarkerVisible()) && !(pointInfoWindow.getVisibility() == View.VISIBLE)) {
                     super.onBackPressed();
-                } else if (pointAddWindow.getVisibility() == View.VISIBLE) {
-                    ViewDriver.hideView(redMarkerOnAdd, R.anim.bottom_view_hide_animation, this);
-                    ViewDriver.hideView(greenMarkerOnAdd, R.anim.bottom_view_hide_animation, this);
-                    ViewDriver.hideView(pointAddWindow, R.anim.top_view_hide_animation, this);
-                    ViewDriver.showView(pointAddButton, R.anim.top_view_show_animation, this);
                 } else {
-                    mapFragment.equalizeMarkers();
-                    ViewDriver.hideView(pointInfoWindow, R.anim.bottom_view_hide_animation, this);
+                    mapFragment.backWasPressed();
                 }
                 break;
 
@@ -77,11 +63,7 @@ public class MainActivity extends AppCompatActivity {
                 if (!(editLayout.getVisibility() == View.VISIBLE)) {
                     super.onBackPressed();
                 } else {
-                    setActionBarTitle(getString(R.string.title_points));
-                    RelativeLayout listLayout = pointsFragment.getPointListLayout();
-                    editLayout.setBackgroundColor(getResources().getColor(R.color.colorWhite));
-                    listLayout.setVisibility(View.VISIBLE);
-                    ViewDriver.hideView(editLayout, R.anim.full_screen_hide_animation, this);
+                    pointsFragment.backWasPressed();
                 }
                 break;
 

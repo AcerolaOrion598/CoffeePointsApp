@@ -38,6 +38,7 @@ public class PointsFragment extends Fragment {
     private MainViewModel mainViewModel;
     private RecyclerView recyclerView;
     private Context context;
+    private Resources resources;
     private RelativeLayout pointListLayout;
     private ConstraintLayout pointEditLayout;
     private ArrayList<Point> points;
@@ -71,7 +72,7 @@ public class PointsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         context = getContext();
-        Resources resources = getResources();
+        resources = getResources();
         statusTrueColor = resources.getColor(R.color.colorGreen60);
         statusFalseColor = resources.getColor(R.color.colorRed60);
         statusTrueText = getString(R.string.point_status_true);
@@ -118,11 +119,14 @@ public class PointsFragment extends Fragment {
         });
     }
 
-    public ConstraintLayout getPointEditLayout() {
-        return pointEditLayout;
+    public void backWasPressed() {
+        mainActivity.setActionBarTitle(getString(R.string.title_points));
+        pointEditLayout.setBackgroundColor(resources.getColor(R.color.colorWhite));
+        pointListLayout.setVisibility(View.VISIBLE);
+        ViewDriver.hideView(pointEditLayout, R.anim.full_screen_hide_animation, context);
     }
 
-    public RelativeLayout getPointListLayout() {
-        return pointListLayout;
+    public ConstraintLayout getPointEditLayout() {
+        return pointEditLayout;
     }
 }

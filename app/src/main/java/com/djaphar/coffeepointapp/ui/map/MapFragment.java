@@ -112,12 +112,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         bottomViewHide = R.anim.bottom_view_hide_animation;
         myMarkerSize = (int) resources.getDimension(R.dimen.my_marker_size);
         markerSize = (int) resources.getDimension(R.dimen.marker_size);
-        equalizeMarkers();
+        equalizeMarkers(0.87f);
 
         pointAddBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                equalizeMarkers();
+                equalizeMarkers(0.4f);
                 pointActiveSwitch.setChecked(false);
                 pointNameEd.setText("");
                 pointAboutEd.setText("");
@@ -142,10 +142,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         pointAddCancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ViewDriver.hideView(redMarkerOnAdd, bottomViewHide, context);
-                ViewDriver.hideView(greenMarkerOnAdd, bottomViewHide, context);
-                ViewDriver.hideView(pointAddWindow, topViewHide, context);
-                ViewDriver.showView(pointAddBtn, topViewShow, context);
+                addPointModeEnd(bottomViewHide);
             }
         });
 
@@ -153,10 +150,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             @Override
             public void onClick(View view) {
                 mainViewModel.addPoint();
-                ViewDriver.hideView(redMarkerOnAdd, R.anim.fast_fade_out_animation, context);
-                ViewDriver.hideView(greenMarkerOnAdd, R.anim.fast_fade_out_animation, context);
-                ViewDriver.hideView(pointAddWindow, topViewHide, context);
-                ViewDriver.showView(pointAddBtn, topViewShow, context);
+                addPointModeEnd(R.anim.fast_fade_out_half_animation);
                 Toast.makeText(context, getString(R.string.ononoki_chan), Toast.LENGTH_SHORT).show();
             }
         });
@@ -199,59 +193,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         mainViewModel.getPoints().observe(getViewLifecycleOwner(), new Observer<ArrayList<Point>>() {
             @Override
             public void onChanged(ArrayList<Point> points) {
-                for (Marker marker : markers) {
-                    marker.remove();
-                }
+                removeMarkers();
                 markers.clear();
-                for (Point point : points) {
-                    Bitmap customIcon;
-                    if (point.isActive()) {
-                        customIcon = BitmapFactory.decodeResource(resources, R.drawable.green_marker);
-                    } else {
-                        customIcon = BitmapFactory.decodeResource(resources, R.drawable.red_marker);
-                    }
-
-                    Bitmap scaledCustomIcon;
-                    if (point.getOwnerId() == ownerId) {
-                        scaledCustomIcon = Bitmap.createScaledBitmap(customIcon, myMarkerSize, myMarkerSize, false);
-                    } else {
-                        scaledCustomIcon = Bitmap.createScaledBitmap(customIcon, markerSize, markerSize, false);
-                    }
-                    MarkerOptions options = new MarkerOptions();
-                    options.position(point.getCoordinates())
-                            .title(point.getHint())
-                            .alpha(0.87f)
-                            .icon(BitmapDescriptorFactory.fromBitmap(scaledCustomIcon));
-                    Marker marker = gMap.addMarker(options);
-                    marker.setTag(point);
-                    markers.add(marker);
-                }
+                drawMarkers(points);
 
                 gMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
                     public boolean onMarkerClick(Marker marker) {
-                        for (Marker m : markers) {
-                            m.setAlpha(0.4f);
-                        }
-                        marker.setAlpha(1.0f);
-                        Point point = (Point) marker.getTag();
-                        if (point != null) {
-                            if (point.isActive()) {
-                                ViewDriver.setStatusTvOptions(pointActive, statusTrueText, statusTrueColor);
-                            } else {
-                                ViewDriver.setStatusTvOptions(pointActive, statusFalseText, statusFalseColor);
-                            }
-                            pointName.setText(point.getName());
-                            pointAbout.setText(point.getAbout());
-                            pointOwner.setText(point.getOwner());
-
-                            ViewDriver.hideView(redMarkerOnAdd, bottomViewHide, context);
-                            ViewDriver.hideView(greenMarkerOnAdd, bottomViewHide, context);
-                            ViewDriver.hideView(pointAddWindow, topViewHide, context);
-                            ViewDriver.showView(pointInfoWindow, bottomViewShow, context);
-                            ViewDriver.showView(pointAddBtn, topViewShow, context);
-                        }
-
+                        showPointInfo(marker);
                         return false;
                     }
                 });
@@ -265,16 +214,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         if (whoMoved == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
             if (pointAddWindow.getVisibility() == View.VISIBLE) {
                 addWindowHidden = true;
+                ViewDriver.hideView(pointAddWindow, R.anim.fast_fade_out_animation, context);
                 if (greenMarkerOnAdd.getVisibility() == View.VISIBLE) {
                     ViewDriver.toggleViewInHalf(greenMarkerOnAdd, R.anim.fast_fade_out_half_animation, context);
                 } else {
                     ViewDriver.toggleViewInHalf(redMarkerOnAdd, R.anim.fast_fade_out_half_animation, context);
                 }
-                ViewDriver.hideView(pointAddWindow, R.anim.fast_fade_out_animation, context);
+            } else {
+                equalizeMarkers(0.87f);
             }
 
             ViewDriver.hideView(pointInfoWindow, bottomViewHide, context);
-            equalizeMarkers();
         }
     }
 
@@ -365,29 +315,88 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         }
     }
 
-    public void equalizeMarkers() {
-        for (Marker marker : markers) {
-            marker.setAlpha(0.87f);
+    private void showPointInfo(Marker marker) {
+        equalizeMarkers(0.4f);
+        marker.setAlpha(1.0f);
+        Point point = (Point) marker.getTag();
+        if (point != null) {
+            if (point.isActive()) {
+                ViewDriver.setStatusTvOptions(pointActive, statusTrueText, statusTrueColor);
+            } else {
+                ViewDriver.setStatusTvOptions(pointActive, statusFalseText, statusFalseColor);
+            }
+            pointName.setText(point.getName());
+            pointAbout.setText(point.getAbout());
+            pointOwner.setText(point.getOwner());
+
+            ViewDriver.hideView(redMarkerOnAdd, bottomViewHide, context);
+            ViewDriver.hideView(greenMarkerOnAdd, bottomViewHide, context);
+            ViewDriver.hideView(pointAddWindow, topViewHide, context);
+            ViewDriver.showView(pointInfoWindow, bottomViewShow, context);
+            ViewDriver.showView(pointAddBtn, topViewShow, context);
         }
     }
 
-    public ConstraintLayout getPointAddWindow() {
-        return pointAddWindow;
+    private void drawMarkers(ArrayList<Point> points) {
+        for (Point point : points) {
+            Bitmap customIcon;
+            if (point.isActive()) {
+                customIcon = BitmapFactory.decodeResource(resources, R.drawable.green_marker);
+            } else {
+                customIcon = BitmapFactory.decodeResource(resources, R.drawable.red_marker);
+            }
+
+            Bitmap scaledCustomIcon;
+            if (point.getOwnerId() == ownerId) {
+                scaledCustomIcon = Bitmap.createScaledBitmap(customIcon, myMarkerSize, myMarkerSize, false);
+            } else {
+                scaledCustomIcon = Bitmap.createScaledBitmap(customIcon, markerSize, markerSize, false);
+            }
+            MarkerOptions options = new MarkerOptions();
+            options.position(point.getCoordinates())
+                    .title(point.getHint())
+                    .alpha(0.87f)
+                    .icon(BitmapDescriptorFactory.fromBitmap(scaledCustomIcon));
+            Marker marker = gMap.addMarker(options);
+            marker.setTag(point);
+            markers.add(marker);
+        }
+    }
+
+    private void removeMarkers() {
+        for (Marker marker : markers) {
+            marker.remove();
+        }
+    }
+
+    private void equalizeMarkers(float opacity) {
+        for (Marker marker : markers) {
+            marker.setAlpha(opacity);
+        }
+    }
+
+    private void addPointModeEnd(int animationResource) {
+        ViewDriver.hideView(redMarkerOnAdd, animationResource, context);
+        ViewDriver.hideView(greenMarkerOnAdd, animationResource, context);
+        ViewDriver.hideView(pointAddWindow, topViewHide, context);
+        ViewDriver.showView(pointAddBtn, topViewShow, context);
+        equalizeMarkers(0.87f);
+    }
+
+    public void backWasPressed() {
+        if (pointAddWindow.getVisibility() == View.VISIBLE) {
+            addPointModeEnd(bottomViewHide);
+        } else if (pointInfoWindow.getVisibility() == View.VISIBLE) {
+            ViewDriver.hideView(pointInfoWindow, bottomViewHide, context);
+            equalizeMarkers(0.87f);
+        }
+    }
+
+    public boolean addMarkerVisible() {
+        return greenMarkerOnAdd.getVisibility() == View.VISIBLE || redMarkerOnAdd.getVisibility() == View.VISIBLE;
     }
 
     public ConstraintLayout getPointInfoWindow() {
         return pointInfoWindow;
-    }
-
-    public Button getPointAddBtn() {
-        return pointAddBtn;
-    }
-
-    public ImageView getGreenMarkerOnAdd() {
-        return greenMarkerOnAdd;
-    }
-
-    public ImageView getRedMarkerOnAdd() {
-        return redMarkerOnAdd;
     }
 }
