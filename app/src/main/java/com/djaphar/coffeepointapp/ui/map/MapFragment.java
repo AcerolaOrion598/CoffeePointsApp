@@ -45,7 +45,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener, GoogleMap.OnCameraIdleListener {
 
@@ -55,23 +55,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private EditText pointNameEd, pointAboutEd;
     private Button pointAddBtn, pointAddCancelBtn, pointAddSaveBtn;
     private SwitchCompat pointActiveSwitch;
+    private ImageView greenMarkerOnAdd, redMarkerOnAdd;
     private String statusTrueText, statusFalseText;
-    private int whoMoved, statusTrueColor, statusFalseColor, topViewShow, topViewHide, bottomViewShow, bottomViewHide;
+    private int whoMoved, statusTrueColor, statusFalseColor, topViewShow, topViewHide, bottomViewShow, bottomViewHide,
+            myMarkerSize, markerSize;
     private ArrayList<Marker> markers = new ArrayList<>();
     private Context context;
     private Resources resources;
     private MainActivity mainActivity;
     private String[] perms = new String[2];
-    private LocationManager locationManager;
     private boolean alreadyOpened = false, addWindowHidden = false, pointAddWindowExpanded = false;
     private GoogleMap gMap;
     private SupportMapFragment supportMapFragment;
-    private int myMarkerSize, markerSize;
-    private ImageView greenMarkerOnAdd, redMarkerOnAdd;
     private static final int ownerId = 3;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         View root = inflater.inflate(R.layout.fragment_map, container, false);
         pointInfoWindow = root.findViewById(R.id.point_info_window);
         pointAddWindow = root.findViewById(R.id.point_add_window);
@@ -166,13 +165,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked) {
-                    ViewDriver.hideView(redMarkerOnAdd, bottomViewHide, context);
-                    ViewDriver.showView(greenMarkerOnAdd, bottomViewShow, context);
-                    ViewDriver.setStatusTvOptions(pointActiveSwitchTv, statusTrueText, statusTrueColor);
+                    swapMarkerIcons(redMarkerOnAdd, greenMarkerOnAdd);
                 } else {
-                    ViewDriver.hideView(greenMarkerOnAdd, bottomViewHide, context);
-                    ViewDriver.showView(redMarkerOnAdd, bottomViewShow, context);
-                    ViewDriver.setStatusTvOptions(pointActiveSwitchTv, statusFalseText, statusFalseColor);
+                    swapMarkerIcons(greenMarkerOnAdd, redMarkerOnAdd);
                 }
             }
         });
@@ -270,6 +265,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         if (whoMoved == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
             if (pointAddWindow.getVisibility() == View.VISIBLE) {
                 addWindowHidden = true;
+                if (greenMarkerOnAdd.getVisibility() == View.VISIBLE) {
+                    ViewDriver.toggleViewInHalf(greenMarkerOnAdd, R.anim.fast_fade_out_half_animation, context);
+                } else {
+                    ViewDriver.toggleViewInHalf(redMarkerOnAdd, R.anim.fast_fade_out_half_animation, context);
+                }
                 ViewDriver.hideView(pointAddWindow, R.anim.fast_fade_out_animation, context);
             }
 
@@ -288,6 +288,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             if (addWindowHidden) {
                 addWindowHidden = false;
                 ViewDriver.showView(pointAddWindow, R.anim.fast_fade_in_animation, context);
+                if (greenMarkerOnAdd.getVisibility() == View.VISIBLE) {
+                    ViewDriver.toggleViewInHalf(greenMarkerOnAdd, R.anim.fast_fade_in_half_animation, context);
+                } else {
+                    ViewDriver.toggleViewInHalf(redMarkerOnAdd, R.anim.fast_fade_in_half_animation, context);
+                }
             }
             mainViewModel.sendScreenBounds(getScreenBounds());
         }
@@ -301,7 +306,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     }
 
     private void getDeviceLocation() {
-        locationManager = (LocationManager) mainActivity.getSystemService(Context.LOCATION_SERVICE);
+        LocationManager locationManager = (LocationManager) mainActivity.getSystemService(Context.LOCATION_SERVICE);
 
         try {
             if (ActivityCompat.checkSelfPermission(context, perms[0]) != PackageManager.PERMISSION_GRANTED &&
@@ -348,6 +353,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         pointActiveSwitchTv.setVisibility(visibility);
         pointActiveSwitch.setVisibility(visibility);
         pointAddWindowExpanded = isExpanded;
+    }
+
+    private void swapMarkerIcons(ImageView markerToHide, ImageView markerToShow) {
+        ViewDriver.hideView(markerToHide, bottomViewHide, context);
+        ViewDriver.showView(markerToShow, bottomViewShow, context);
+        if (markerToShow == greenMarkerOnAdd) {
+            ViewDriver.setStatusTvOptions(pointActiveSwitchTv, statusTrueText, statusTrueColor);
+        } else {
+            ViewDriver.setStatusTvOptions(pointActiveSwitchTv, statusFalseText, statusFalseColor);
+        }
     }
 
     public void equalizeMarkers() {

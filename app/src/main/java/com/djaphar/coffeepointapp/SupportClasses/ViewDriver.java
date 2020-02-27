@@ -21,15 +21,19 @@ public class ViewDriver {
         return animation;
     }
 
-    public static Animation hideView(View view, int animationResource, Context context) {
+    public static void hideView(View view, int animationResource, Context context) {
         Animation animation = AnimationUtils.loadAnimation(context, animationResource);
 
         if (view.getVisibility() == View.VISIBLE) {
             view.startAnimation(animation);
             view.setVisibility(View.INVISIBLE);
         }
+    }
 
-        return animation;
+    public static void toggleViewInHalf(View view, int animationResource, Context context) {
+        Animation animation = AnimationUtils.loadAnimation(context, animationResource);
+        animation.setFillAfter(true);
+        view.startAnimation(animation);
     }
 
     public static void setStatusTvOptions(TextView tv, String text, int color) {
