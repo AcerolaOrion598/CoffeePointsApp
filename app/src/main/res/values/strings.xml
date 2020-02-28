@@ -11,6 +11,7 @@
     <string name="new_point_btn">Новая точка</string>
     <string name="point_name_hint">Название точки</string>
     <string name="point_about_hint">Краткое описание точки</string>
+    <string name="point_hint_hint">Хинт</string>
     <string name="save_btn">Сохранить</string>
     <string name="cancel_btn">Отмена</string>
     <string name="delete_btn">Удалить</string>

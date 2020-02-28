@@ -7,9 +7,9 @@ public class Point {
     private LatLng coordinates;
     private String name, about, hint, owner;
     private boolean active;
-    private int ownerId;
+    private int ownerId, id;
 
-    public Point(LatLng coordinates, String name, String about, String hint, String owner, boolean active, int ownerId) {
+    public Point(LatLng coordinates, String name, String about, String hint, String owner, boolean active, int ownerId, int id) {
         this.coordinates = coordinates;
         this.name = name;
         this.about = about;
@@ -17,6 +17,7 @@ public class Point {
         this.owner = owner;
         this.active = active;
         this.ownerId = ownerId;
+        this.id = id;
     }
 
     public void setCoordinates(LatLng coordinates) {
@@ -47,6 +48,10 @@ public class Point {
         this.ownerId = ownerId;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public LatLng getCoordinates() {
         return coordinates;
     }
@@ -73,5 +78,9 @@ public class Point {
 
     public int getOwnerId() {
         return ownerId;
+    }
+
+    public int getId() {
+        return id;
     }
 }

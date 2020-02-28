@@ -47,12 +47,12 @@
         android:paddingTop="20dp"
         android:paddingStart="29dp"
         android:paddingEnd="29dp"
-        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:background="@drawable/rounded_corners_shape"
-        android:elevation="10dp">
+        android:elevation="10dp"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/point_name"
@@ -88,7 +88,7 @@
 
         <TextView
             android:id="@+id/point_active"
-            android:layout_width="wrap_content"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="11dp"
             android:layout_marginBottom="20dp"
@@ -97,6 +97,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/point_owner"
             app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/point_active_info_window_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toEndOf="@+id/point_active"
+            app:layout_constraintTop_toBottomOf="@+id/point_owner"
+            android:visibility="gone"/>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/point_edit_btn"
@@ -143,7 +152,6 @@
         android:layout_marginTop="20dp"
         android:layout_marginStart="25dp"
         android:layout_marginEnd="25dp"
-        android:visibility="invisible"
         android:focusable="true"
         android:focusableInTouchMode="true"
         app:layout_constraintTop_toTopOf="parent"
@@ -153,7 +161,8 @@
         android:elevation="10dp"
         android:paddingTop="16dp"
         android:paddingStart="15dp"
-        android:paddingEnd="15dp">
+        android:paddingEnd="15dp"
+        android:visibility="invisible">
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/point_name_ed"
@@ -173,6 +182,24 @@
             tools:ignore="RtlSymmetry" />
 
         <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/point_hint_ed"
+            android:textCursorDrawable="@drawable/cursor_color"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:paddingStart="15dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:textSize="12sp"
+            android:background="@drawable/edit_text_w_stroke"
+            android:hint="@string/point_hint_hint"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/point_name_ed"
+            tools:ignore="RtlSymmetry"
+            android:visibility="gone"/>
+
+        <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/point_about_ed"
             android:textCursorDrawable="@drawable/cursor_color"
             android:layout_width="match_parent"
@@ -186,7 +213,7 @@
             android:hint="@string/point_about_hint"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/point_name_ed"
+            app:layout_constraintTop_toBottomOf="@+id/point_hint_ed"
             tools:ignore="RtlSymmetry"
             android:visibility="gone"/>
 
@@ -199,8 +226,7 @@
             android:textSize="12sp"
             android:fontFamily="@font/roboto"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/point_about_ed"
-            android:visibility="gone"/>
+            app:layout_constraintTop_toBottomOf="@+id/point_about_ed" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/point_active_switch"
@@ -208,8 +234,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             app:layout_constraintStart_toEndOf="@+id/point_active_switch_tv"
-            app:layout_constraintTop_toBottomOf="@+id/point_about_ed"
-            android:visibility="gone"/>
+            app:layout_constraintTop_toBottomOf="@+id/point_about_ed" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/point_add_save_btn"
