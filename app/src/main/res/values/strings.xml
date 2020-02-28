@@ -14,6 +14,8 @@
     <string name="save_btn">Сохранить</string>
     <string name="cancel_btn">Отмена</string>
     <string name="delete_btn">Удалить</string>
+    <string name="edit_btn">Изменить</string>
     <string name="ononoki_chan">Yay! Peace! Peace!</string>
     <string name="shinobu_chan">Ka Ka Ka!</string>
+    <string name="mayoi_chan">Shitsurei! Kamimashita!</string>
 </resources>

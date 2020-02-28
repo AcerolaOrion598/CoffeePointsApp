@@ -74,6 +74,10 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void addPoint() {
+        //Тут лезем инсёртить в бд
+    }
+
+    public void editPoint() {
         //Тут лезем апдейтить бд
     }
 }
