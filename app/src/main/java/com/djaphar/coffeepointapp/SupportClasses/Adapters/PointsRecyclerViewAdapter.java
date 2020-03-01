@@ -1,4 +1,4 @@
-package com.djaphar.coffeepointapp.SupportClasses;
+package com.djaphar.coffeepointapp.SupportClasses.Adapters;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import com.djaphar.coffeepointapp.MainActivity;
 import com.djaphar.coffeepointapp.R;
+import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Point;
+import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.ViewDriver;
 
 import java.util.ArrayList;
 

@@ -12,6 +12,13 @@
     <string name="point_name_hint">Название точки</string>
     <string name="point_about_hint">Краткое описание точки</string>
     <string name="point_hint_hint">Хинт</string>
+    <string name="ed_email_hint">Email</string>
+    <string name="ed_password_hint">Пароль</string>
+    <string name="register_tv">Зарегистрироваться</string>
+    <string name="log_in_tv">У меня уже есть аккаунт</string>
+    <string name="wrong_credentials">Неправильный email или пароль!</string>
+    <string name="log_in_btn">Войти</string>
+    <string name="register_btn">Зарегистрироваться</string>
     <string name="save_btn">Сохранить</string>
     <string name="cancel_btn">Отмена</string>
     <string name="delete_btn">Удалить</string>

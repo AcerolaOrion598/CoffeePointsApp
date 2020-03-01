@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/auth_navigation"
+    app:startDestination="@id/navigation_log_in">
+
+    <fragment
+        android:id="@+id/navigation_log_in"
+        android:name="com.djaphar.coffeepointapp.ui.login.LogInFragment"
+        tools:layout="@layout/fragment_log_in"/>
+
+    <fragment
+        android:id="@+id/navigation_register"
+        android:name="com.djaphar.coffeepointapp.ui.register.RegisterFragment"
+        tools:layout="@layout/fragment_register"/>
+
+</navigation>

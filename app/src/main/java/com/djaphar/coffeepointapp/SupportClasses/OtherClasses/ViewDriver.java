@@ -1,4 +1,4 @@
-package com.djaphar.coffeepointapp.SupportClasses;
+package com.djaphar.coffeepointapp.SupportClasses.OtherClasses;
 
 import android.content.Context;
 import android.view.View;

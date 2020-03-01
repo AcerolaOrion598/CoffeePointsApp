@@ -9,16 +9,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.djaphar.coffeepointapp.MainActivity;
 import com.djaphar.coffeepointapp.R;
-import com.djaphar.coffeepointapp.SupportClasses.Point;
-import com.djaphar.coffeepointapp.SupportClasses.PointsRecyclerViewAdapter;
-import com.djaphar.coffeepointapp.SupportClasses.ViewDriver;
+import com.djaphar.coffeepointapp.SupportClasses.Adapters.PointsRecyclerViewAdapter;
+import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Credentials;
+import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Point;
+import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.ViewDriver;
 import com.djaphar.coffeepointapp.ViewModel.MainViewModel;
 
 import java.util.ArrayList;
@@ -28,7 +28,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -79,25 +78,19 @@ public class PointsFragment extends Fragment {
         statusFalseText = getString(R.string.point_status_false);
 
 
-        mainViewModel.getPoints().observe(getViewLifecycleOwner(), new Observer<ArrayList<Point>>() {
-            @Override
-            public void onChanged(ArrayList<Point> mPoints) {
-                points = mPoints;
-                PointsRecyclerViewAdapter adapter = new PointsRecyclerViewAdapter(points, pointListLayout, pointEditLayout,
-                                            mainActivity, pointNameFormEd, pointAboutFormEd, pointActiveSwitchFormTv, pointActiveSwitchForm);
-                recyclerView.setAdapter(adapter);
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            }
+        mainViewModel.getPoints().observe(getViewLifecycleOwner(), mPoints -> {
+            points = mPoints;
+            PointsRecyclerViewAdapter adapter = new PointsRecyclerViewAdapter(points, pointListLayout, pointEditLayout,
+                                        mainActivity, pointNameFormEd, pointAboutFormEd, pointActiveSwitchFormTv, pointActiveSwitchForm);
+            recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
         });
 
-        pointActiveSwitchForm.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (isChecked) {
-                    ViewDriver.setStatusTvOptions(pointActiveSwitchFormTv, statusTrueText, statusTrueColor);
-                } else {
-                    ViewDriver.setStatusTvOptions(pointActiveSwitchFormTv, statusFalseText, statusFalseColor);
-                }
+        pointActiveSwitchForm.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            if (isChecked) {
+                ViewDriver.setStatusTvOptions(pointActiveSwitchFormTv, statusTrueText, statusTrueColor);
+            } else {
+                ViewDriver.setStatusTvOptions(pointActiveSwitchFormTv, statusFalseText, statusFalseColor);
             }
         });
 
@@ -117,6 +110,12 @@ public class PointsFragment extends Fragment {
                 }
             }
         });
+
+        pointEditSaveButton.setOnClickListener(view1 -> {
+            Credentials credentials = new Credentials(pointNameFormEd.getText().toString(), pointAboutFormEd.getText().toString());
+//            mainViewModel.logIn(credentials);
+        });
+
     }
 
     public void backWasPressed() {

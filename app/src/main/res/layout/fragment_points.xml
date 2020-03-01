@@ -100,7 +100,7 @@
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
             android:textColor="@color/colorWhite87"
-            android:textSize="12sp" />
+            android:textSize="12sp"/>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/point_edit_delete_btn"

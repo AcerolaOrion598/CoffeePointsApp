@@ -1,4 +1,4 @@
-package com.djaphar.coffeepointapp.SupportClasses;
+package com.djaphar.coffeepointapp.SupportClasses.ApiClasses;
 
 import com.google.android.gms.maps.model.LatLng;
 

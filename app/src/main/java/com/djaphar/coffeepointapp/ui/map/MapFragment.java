@@ -14,17 +14,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.djaphar.coffeepointapp.MainActivity;
 import com.djaphar.coffeepointapp.R;
-import com.djaphar.coffeepointapp.SupportClasses.PermissionDriver;
-import com.djaphar.coffeepointapp.SupportClasses.Point;
-import com.djaphar.coffeepointapp.SupportClasses.ViewDriver;
+import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Point;
+import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.PermissionDriver;
+import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.ViewDriver;
 import com.djaphar.coffeepointapp.ViewModel.MainViewModel;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -35,16 +33,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
 import java.util.ArrayList;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener, GoogleMap.OnCameraIdleListener {
@@ -120,97 +115,71 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         markerSize = (int) resources.getDimension(R.dimen.marker_size);
         equalizeMarkers(0.87f);
 
-        pointAddBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                focusedMarker = null;
-                focusedMarkerInfo = null;
-                equalizeMarkers(0.4f);
-                addPointModeStart(false, "", "", "", redMarkerOnAdd, true);
+        pointAddBtn.setOnClickListener(lView -> {
+            focusedMarker = null;
+            focusedMarkerInfo = null;
+            equalizeMarkers(0.4f);
+            addPointModeStart(false, "", "", "", redMarkerOnAdd, true);
+        });
+
+        pointNameEd.setOnFocusChangeListener((lView, focused) -> {
+            if (focused) {
+                pointAddWindowToggle(View.VISIBLE, true);
             }
         });
 
-        pointNameEd.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean focused) {
-                if (focused) {
-                    pointAddWindowToggle(View.VISIBLE, true);
-                }
+        pointAddCancelBtn.setOnClickListener(lView -> addPointModeEnd(bottomViewHide, false));
+
+        pointAddSaveBtn.setOnClickListener(lView -> {
+            if (focusedMarker == null) {
+                addPoint(); //Значит добавляем новую точку
+                Toast.makeText(context, R.string.ononoki_chan, Toast.LENGTH_SHORT).show();
+            } else {
+                editPoint(); //Значит изменяем уже существующую
+                Toast.makeText(context, R.string.shinobu_chan, Toast.LENGTH_SHORT).show();
             }
+            addPointModeEnd(R.anim.fast_fade_out_half_animation,true);
         });
 
-        pointAddCancelBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addPointModeEnd(bottomViewHide, false);
-            }
-        });
-
-        pointAddSaveBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (focusedMarker == null) {
-                    addPoint(); //Значит добавляем новую точку
-                    Toast.makeText(context, R.string.ononoki_chan, Toast.LENGTH_SHORT).show();
+        pointEditBtn.setOnClickListener(lView -> {
+            if (focusedMarkerInfo != null) {
+                editMode = true;
+                if (focusedMarkerInfo.isActive()) {
+                    addPointModeStart(focusedMarkerInfo.isActive(), focusedMarkerInfo.getName(), focusedMarkerInfo.getHint(),
+                            focusedMarkerInfo.getAbout(), greenMarkerOnAdd, false);
                 } else {
-                    editPoint(); //Значит изменяем уже существующую
-                    Toast.makeText(context, R.string.shinobu_chan, Toast.LENGTH_SHORT).show();
+                    addPointModeStart(focusedMarkerInfo.isActive(), focusedMarkerInfo.getName(), focusedMarkerInfo.getHint(),
+                            focusedMarkerInfo.getAbout(), redMarkerOnAdd, false);
                 }
-                addPointModeEnd(R.anim.fast_fade_out_half_animation,true);
+                focusedMarker.remove();
+                editableMarkerRemoved = true;
             }
         });
 
-        pointEditBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (focusedMarkerInfo != null) {
-                    editMode = true;
-                    if (focusedMarkerInfo.isActive()) {
-                        addPointModeStart(focusedMarkerInfo.isActive(), focusedMarkerInfo.getName(), focusedMarkerInfo.getHint(),
-                                focusedMarkerInfo.getAbout(), greenMarkerOnAdd, false);
-                    } else {
-                        addPointModeStart(focusedMarkerInfo.isActive(), focusedMarkerInfo.getName(), focusedMarkerInfo.getHint(),
-                                focusedMarkerInfo.getAbout(), redMarkerOnAdd, false);
-                    }
-                    focusedMarker.remove();
-                    editableMarkerRemoved = true;
-                }
+        pointDeleteBtn.setOnClickListener(lView -> {
+            if (focusedMarker != null) {
+                Toast.makeText(context, R.string.mayoi_chan, Toast.LENGTH_SHORT).show();
+                focusedMarker.remove();
+                equalizeMarkers(0.87f);
+                ViewDriver.hideView(pointInfoWindow, bottomViewHide, context);
             }
         });
 
-        pointDeleteBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (focusedMarker != null) {
-                    Toast.makeText(context, R.string.mayoi_chan, Toast.LENGTH_SHORT).show();
-                    focusedMarker.remove();
-                    equalizeMarkers(0.87f);
-                    ViewDriver.hideView(pointInfoWindow, bottomViewHide, context);
-                }
-            }
-        });
-
-        pointActiveSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (!editMode || editableMarkerRemoved) {
-                    if (isChecked) {
-                        swapMarkerIcons(redMarkerOnAdd, greenMarkerOnAdd);
-                    } else {
-                        swapMarkerIcons(greenMarkerOnAdd, redMarkerOnAdd);
-                    }
-                }
-            }
-        });
-
-        pointActiveInfoWindowSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (isChecked) { //Отправляем isChecked шоб апдейтить бд
-                    ViewDriver.setStatusTvOptions(pointActive, statusTrueText, statusTrueColor);
+        pointActiveSwitch.setOnCheckedChangeListener((lView, isChecked) -> {
+            if (!editMode || editableMarkerRemoved) {
+                if (isChecked) {
+                    swapMarkerIcons(redMarkerOnAdd, greenMarkerOnAdd);
                 } else {
-                    ViewDriver.setStatusTvOptions(pointActive, statusFalseText, statusFalseColor);
+                    swapMarkerIcons(greenMarkerOnAdd, redMarkerOnAdd);
                 }
+            }
+        });
+
+        pointActiveInfoWindowSwitch.setOnCheckedChangeListener((lView, isChecked) -> {
+            if (isChecked) { //Отправляем isChecked шоб апдейтить бд
+                ViewDriver.setStatusTvOptions(pointActive, statusTrueText, statusTrueColor);
+            } else {
+                ViewDriver.setStatusTvOptions(pointActive, statusFalseText, statusFalseColor);
             }
         });
 
@@ -238,23 +207,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         gMap.setOnCameraIdleListener(this);
 
         mainViewModel.sendScreenBounds(getScreenBounds());
-        mainViewModel.getPoints().observe(getViewLifecycleOwner(), new Observer<ArrayList<Point>>() {
-            @Override
-            public void onChanged(ArrayList<Point> points) {
-                removeMarkers();
-                markers.clear();
-                drawMarkers(points);
+        mainViewModel.getPoints().observe(getViewLifecycleOwner(), points -> {
+            removeMarkers();
+            markers.clear();
+            drawMarkers(points);
 
-                gMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                    @Override
-                    public boolean onMarkerClick(Marker marker) {
-                        showPointInfo(marker);
-                        focusedMarker = marker;
-                        focusedMarkerInfo = (Point) marker.getTag();
-                        return false;
-                    }
-                });
-            }
+            gMap.setOnMarkerClickListener(marker -> {
+                showPointInfo(marker);
+                focusedMarker = marker;
+                focusedMarkerInfo = (Point) marker.getTag();
+                return false;
+            });
         });
     }
 

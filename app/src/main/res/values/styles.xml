@@ -8,6 +8,9 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     </style>
+    <style name="AppTheme.Launcher">
+        <item name="android:windowBackground">@drawable/launch_screen</item>
+    </style>
     <style name="MyActionBarStyle" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
         <item name="height">60dp</item>
         <item name="background">@color/colorAccent</item>
