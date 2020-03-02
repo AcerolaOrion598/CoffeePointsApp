@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -28,7 +27,6 @@ public class ProfileFragment extends Fragment {
     private TextView userNameTv, userAboutTv;
     private EditText userNameEd, userAboutEd;
     private Button editProfileBtn, saveProfileBtn, cancelProfileBtn;
-    private Animation animation;
     private ConstraintLayout editProfileContainer, profileContainer;
     private Context context;
     private String userName, userAbout;
@@ -72,20 +70,11 @@ public class ProfileFragment extends Fragment {
             mainActivity.setActionBarTitle(getString(R.string.title_profile_edit));
             userNameEd.setText(userName);
             userAboutEd.setText(userAbout);
-            animation = ViewDriver.showView(editProfileContainer, R.anim.full_screen_show_animation, context);
-            animation.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    profileContainer.setVisibility(View.INVISIBLE);
-                    editProfileContainer.setBackgroundColor(context.getResources().getColor(R.color.colorWhite87));
-                }
-
-                @Override
-                public void onAnimationStart(Animation animation) { }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) { }
-            });
+            ViewDriver.hideView(profileContainer, R.anim.top_view_hide_animation, context);
+            ViewDriver.hideView(editProfileBtn, R.anim.bottom_view_hide_animation, context);
+            ViewDriver.showView(editProfileContainer, R.anim.top_view_show_animation, context);
+            ViewDriver.showView(saveProfileBtn, R.anim.bottom_view_show_animation, context);
+            ViewDriver.showView(cancelProfileBtn, R.anim.bottom_view_show_animation, context);
         });
 
         saveProfileBtn.setOnClickListener(lView -> { });
@@ -95,9 +84,11 @@ public class ProfileFragment extends Fragment {
 
     public void backWasPressed() {
         mainActivity.setActionBarTitle(getString(R.string.title_profile));
-        editProfileContainer.setBackgroundColor(context.getResources().getColor(R.color.colorWhite));
-        profileContainer.setVisibility(View.VISIBLE);
-        ViewDriver.hideView(editProfileContainer, R.anim.full_screen_hide_animation, context);
+        ViewDriver.hideView(editProfileContainer, R.anim.top_view_hide_animation, context);
+        ViewDriver.hideView(saveProfileBtn, R.anim.bottom_view_hide_animation, context);
+        ViewDriver.hideView(cancelProfileBtn, R.anim.bottom_view_hide_animation, context);
+        ViewDriver.showView(profileContainer, R.anim.top_view_show_animation, context);
+        ViewDriver.showView(editProfileBtn, R.anim.bottom_view_show_animation, context);
     }
 
     public ConstraintLayout getEditProfileContainer() {

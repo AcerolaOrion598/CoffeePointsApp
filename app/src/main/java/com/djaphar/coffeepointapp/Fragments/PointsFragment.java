@@ -46,7 +46,7 @@ public class PointsFragment extends Fragment {
     private SwitchCompat pointActiveSwitchForm;
     private String statusTrueText, statusFalseText;
     private int statusTrueColor, statusFalseColor;
-    private Button pointEditSaveButton;
+    private Button pointEditSaveButton, pointEditBackButton;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
@@ -59,6 +59,7 @@ public class PointsFragment extends Fragment {
         pointActiveSwitchFormTv = root.findViewById(R.id.point_active_switch_form_tv);
         pointActiveSwitchForm = root.findViewById(R.id.point_active_switch_form);
         pointEditSaveButton = root.findViewById(R.id.point_edit_save_btn);
+        pointEditBackButton = root.findViewById(R.id.point_edit_back_btn);
         mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
             mainActivity.setActionBarTitle(getString(R.string.title_points));
@@ -110,8 +111,9 @@ public class PointsFragment extends Fragment {
             }
         });
 
-        pointEditSaveButton.setOnClickListener(view1 -> { });
+        pointEditSaveButton.setOnClickListener(lView -> { });
 
+        pointEditBackButton.setOnClickListener(lView -> backWasPressed());
     }
 
     public void backWasPressed() {

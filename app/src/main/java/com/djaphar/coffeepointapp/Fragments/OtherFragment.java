@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.djaphar.coffeepointapp.Activities.MainActivity;
@@ -26,7 +26,7 @@ public class OtherFragment extends Fragment {
     private MainActivity mainActivity;
     private TextView aboutAppTv, exitTv;
     private Context context;
-    private Animation animation;
+    private Button backProfileBtn;
     private ConstraintLayout aboutAppContainer, otherContainer;
 
     @Nullable
@@ -38,6 +38,8 @@ public class OtherFragment extends Fragment {
         exitTv = root.findViewById(R.id.exit_tv);
         aboutAppContainer = root.findViewById(R.id.about_app_container);
         otherContainer = root.findViewById(R.id.other_container);
+        backProfileBtn = root.findViewById(R.id.back_profile_button);
+        backProfileBtn.setStateListAnimator(null);
         context = getContext();
         mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
@@ -59,21 +61,12 @@ public class OtherFragment extends Fragment {
 
         aboutAppTv.setOnClickListener(lView -> {
             mainActivity.setActionBarTitle(getString(R.string.about_app));
-            animation = ViewDriver.showView(aboutAppContainer, R.anim.full_screen_show_animation, context);
-            animation.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    otherContainer.setVisibility(View.INVISIBLE);
-                    aboutAppContainer.setBackgroundColor(context.getResources().getColor(R.color.colorWhite87));
-                }
-
-                @Override
-                public void onAnimationStart(Animation animation) { }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) { }
-            });
+            ViewDriver.hideView(otherContainer, R.anim.top_view_hide_animation, context);
+            ViewDriver.showView(aboutAppContainer, R.anim.top_view_show_animation, context);
+            ViewDriver.showView(backProfileBtn, R.anim.bottom_view_show_animation, context);
         });
+
+        backProfileBtn.setOnClickListener(lView -> backWasPressed());
 
         exitTv.setOnClickListener(lView -> createDialog());
     }
@@ -93,9 +86,9 @@ public class OtherFragment extends Fragment {
 
     public void backWasPressed() {
         mainActivity.setActionBarTitle(getString(R.string.title_other));
-        aboutAppContainer.setBackgroundColor(context.getResources().getColor(R.color.colorWhite));
-        otherContainer.setVisibility(View.VISIBLE);
-        ViewDriver.hideView(aboutAppContainer, R.anim.full_screen_hide_animation, context);
+        ViewDriver.hideView(aboutAppContainer, R.anim.top_view_hide_animation, context);
+        ViewDriver.hideView(backProfileBtn, R.anim.bottom_view_hide_animation, context);
+        ViewDriver.showView(otherContainer, R.anim.top_view_show_animation, context);
     }
 
     public ConstraintLayout getAboutAppContainer() {

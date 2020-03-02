@@ -4,18 +4,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:paddingStart="30dp"
+    android:paddingEnd="30dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/profile_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:paddingStart="43dp"
-        android:paddingEnd="43dp"
+        android:paddingStart="13dp"
+        android:paddingEnd="13dp"
         android:layout_marginBottom="60dp">
 
         <TextView
@@ -42,32 +43,29 @@
             android:fontFamily="@font/roboto"
             android:textColor="@color/colorBlack60" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/edit_profile_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginBottom="18dp"
-            android:background="@drawable/save_button"
-            android:text="@string/edit_btn"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:textColor="@color/colorWhite87"
-            android:textSize="12sp" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/edit_profile_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="78dp"
+        android:background="@drawable/save_button"
+        android:text="@string/edit_btn"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:textColor="@color/colorWhite87"
+        android:textSize="12sp" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/edit_profile_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:paddingStart="30dp"
-        android:paddingEnd="30dp"
         android:layout_marginBottom="60dp"
         android:background="@color/colorWhite"
         android:visibility="invisible">
@@ -108,35 +106,37 @@
             android:textSize="12sp"
             tools:ignore="RtlSymmetry" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/save_profile_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginBottom="18dp"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:text="@string/save_btn"
-            android:background="@drawable/save_button"
-            android:textColor="@color/colorWhite87"
-            android:textSize="12sp" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/cancel_profile_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/save_profile_btn"
-            android:layout_marginBottom="18dp"
-            android:layout_marginEnd="8dp"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:text="@string/cancel_btn"
-            android:background="@drawable/cancel_button"
-            android:textColor="@color/colorPrimary"
-            android:textSize="12sp" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/save_profile_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="78dp"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:text="@string/save_btn"
+        android:background="@drawable/save_button"
+        android:textColor="@color/colorWhite87"
+        android:textSize="12sp"
+        android:visibility="invisible"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/cancel_profile_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/save_profile_btn"
+        android:layout_marginBottom="78dp"
+        android:layout_marginEnd="8dp"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:text="@string/cancel_btn"
+        android:background="@drawable/cancel_button"
+        android:textColor="@color/colorPrimary"
+        android:textSize="12sp"
+        android:visibility="invisible"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

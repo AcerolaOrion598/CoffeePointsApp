@@ -28,6 +28,7 @@
     <string name="cancel_btn">Отмена</string>
     <string name="delete_btn">Удалить</string>
     <string name="edit_btn">Изменить</string>
+    <string name="void_btn">Назад</string>
     <string name="about_app">О приложении</string>
     <string name="exit">Выйти</string>
     <string name="exit_dialog_title">Выйти?</string>
