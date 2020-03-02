@@ -1,4 +1,4 @@
-package com.djaphar.coffeepointapp.ViewModel;
+package com.djaphar.coffeepointapp.ViewModels;
 
 import android.app.Application;
 import android.widget.Toast;

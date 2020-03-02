@@ -1,4 +1,4 @@
-package com.djaphar.coffeepointapp.ui.points;
+package com.djaphar.coffeepointapp.Fragments;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -13,13 +13,12 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.djaphar.coffeepointapp.MainActivity;
+import com.djaphar.coffeepointapp.Activities.MainActivity;
 import com.djaphar.coffeepointapp.R;
 import com.djaphar.coffeepointapp.SupportClasses.Adapters.PointsRecyclerViewAdapter;
-import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Credentials;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Point;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.ViewDriver;
-import com.djaphar.coffeepointapp.ViewModel.MainViewModel;
+import com.djaphar.coffeepointapp.ViewModels.MainViewModel;
 
 import java.util.ArrayList;
 
@@ -111,10 +110,7 @@ public class PointsFragment extends Fragment {
             }
         });
 
-        pointEditSaveButton.setOnClickListener(view1 -> {
-            Credentials credentials = new Credentials(pointNameFormEd.getText().toString(), pointAboutFormEd.getText().toString());
-//            mainViewModel.logIn(credentials);
-        });
+        pointEditSaveButton.setOnClickListener(view1 -> { });
 
     }
 

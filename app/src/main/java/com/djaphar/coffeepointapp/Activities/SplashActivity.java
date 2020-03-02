@@ -1,10 +1,10 @@
-package com.djaphar.coffeepointapp;
+package com.djaphar.coffeepointapp.Activities;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.djaphar.coffeepointapp.ViewModel.AuthViewModel;
+import com.djaphar.coffeepointapp.ViewModels.AuthViewModel;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;

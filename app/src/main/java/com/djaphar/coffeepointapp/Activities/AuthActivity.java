@@ -1,11 +1,12 @@
-package com.djaphar.coffeepointapp;
+package com.djaphar.coffeepointapp.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.djaphar.coffeepointapp.R;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Credentials;
-import com.djaphar.coffeepointapp.ViewModel.AuthViewModel;
+import com.djaphar.coffeepointapp.ViewModels.AuthViewModel;
 
 import java.util.Objects;
 
@@ -29,9 +30,10 @@ public class AuthActivity extends AppCompatActivity {
         actionBarTitle = findViewById(R.id.action_bar_title);
         authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
         authViewModel.getUser().observe(this, user -> {
-            if (user != null) {
-                startMainActivity();
+            if (user == null) {
+                return;
             }
+            startMainActivity();
         });
     }
 

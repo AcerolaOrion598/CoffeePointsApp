@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.widget.SwitchCompat;
 
-public abstract class ViewDriver {
+public class ViewDriver {
 
     public static Animation showView(View view, int animationResource, Context context) {
         Animation animation = AnimationUtils.loadAnimation(context, animationResource);

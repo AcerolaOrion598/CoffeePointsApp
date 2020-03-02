@@ -1,4 +1,4 @@
-package com.djaphar.coffeepointapp.ViewModel;
+package com.djaphar.coffeepointapp.ViewModels;
 
 import android.app.Application;
 
@@ -10,20 +10,16 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-public class OtherViewModel extends AndroidViewModel {
+public class ProfileViewModel extends AndroidViewModel {
 
-    private UserDao userDao;
     private LiveData<User> user;
+    private UserDao userDao;
 
-    public OtherViewModel(@NonNull Application application) {
+    public ProfileViewModel(@NonNull Application application) {
         super(application);
         UserRoom userRoom = UserRoom.getDatabase(application);
         userDao = userRoom.userDao();
         user = userDao.getUser();
-    }
-
-    public void logout() {
-        UserRoom.databaseWriteExecutor.execute(() -> userDao.deleteUser());
     }
 
     public LiveData<User> getUser() {

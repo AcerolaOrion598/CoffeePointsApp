@@ -1,4 +1,4 @@
-package com.djaphar.coffeepointapp.ui.register;
+package com.djaphar.coffeepointapp.Fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.djaphar.coffeepointapp.AuthActivity;
+import com.djaphar.coffeepointapp.Activities.AuthActivity;
 import com.djaphar.coffeepointapp.R;
 
 import androidx.annotation.NonNull;

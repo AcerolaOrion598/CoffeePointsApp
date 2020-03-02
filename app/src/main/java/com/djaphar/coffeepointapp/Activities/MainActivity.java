@@ -1,12 +1,15 @@
-package com.djaphar.coffeepointapp;
+package com.djaphar.coffeepointapp.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import com.djaphar.coffeepointapp.ui.map.MapFragment;
-import com.djaphar.coffeepointapp.ui.points.PointsFragment;
+import com.djaphar.coffeepointapp.Fragments.MapFragment;
+import com.djaphar.coffeepointapp.Fragments.OtherFragment;
+import com.djaphar.coffeepointapp.Fragments.PointsFragment;
+import com.djaphar.coffeepointapp.Fragments.ProfileFragment;
+import com.djaphar.coffeepointapp.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.Objects;
@@ -70,11 +73,23 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case ProfileFragment:
-                super.onBackPressed();
+                ProfileFragment profileFragment = ((ProfileFragment) currentFragment);
+                ConstraintLayout editProfileContainer = profileFragment.getEditProfileContainer();
+                if (!(editProfileContainer.getVisibility() == View.VISIBLE)) {
+                    super.onBackPressed();
+                } else {
+                    profileFragment.backWasPressed();
+                }
                 break;
 
             case OtherFragment:
-                super.onBackPressed();
+                OtherFragment otherFragment = ((OtherFragment) currentFragment);
+                ConstraintLayout aboutAppContainer = otherFragment.getAboutAppContainer();
+                if (!(aboutAppContainer.getVisibility() == View.VISIBLE)) {
+                    super.onBackPressed();
+                } else {
+                    otherFragment.backWasPressed();
+                }
                 break;
         }
     }

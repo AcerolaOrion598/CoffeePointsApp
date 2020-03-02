@@ -8,12 +8,12 @@
 
     <fragment
         android:id="@+id/navigation_log_in"
-        android:name="com.djaphar.coffeepointapp.ui.login.LogInFragment"
+        android:name="com.djaphar.coffeepointapp.Fragments.LogInFragment"
         tools:layout="@layout/fragment_log_in"/>
 
     <fragment
         android:id="@+id/navigation_register"
-        android:name="com.djaphar.coffeepointapp.ui.register.RegisterFragment"
+        android:name="com.djaphar.coffeepointapp.Fragments.RegisterFragment"
         tools:layout="@layout/fragment_register"/>
 
 </navigation>

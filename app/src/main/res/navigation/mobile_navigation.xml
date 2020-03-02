@@ -8,25 +8,25 @@
 
     <fragment
         android:id="@+id/navigation_map"
-        android:name="com.djaphar.coffeepointapp.ui.map.MapFragment"
+        android:name="com.djaphar.coffeepointapp.Fragments.MapFragment"
         android:label="@string/title_map"
         tools:layout="@layout/fragment_map" />
 
     <fragment
         android:id="@+id/navigation_points"
-        android:name="com.djaphar.coffeepointapp.ui.points.PointsFragment"
+        android:name="com.djaphar.coffeepointapp.Fragments.PointsFragment"
         android:label="@string/title_points"
         tools:layout="@layout/fragment_points" />
 
     <fragment
         android:id="@+id/navigation_profile"
-        android:name="com.djaphar.coffeepointapp.ui.profile.ProfileFragment"
+        android:name="com.djaphar.coffeepointapp.Fragments.ProfileFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile" />
 
     <fragment
         android:id="@+id/navigation_other"
-        android:name="com.djaphar.coffeepointapp.ui.other.OtherFragment"
+        android:name="com.djaphar.coffeepointapp.Fragments.OtherFragment"
         android:label="@string/title_other"
         tools:layout="@layout/fragment_other" />
 </navigation>

@@ -1,4 +1,4 @@
-package com.djaphar.coffeepointapp.ui.map;
+package com.djaphar.coffeepointapp.Fragments;
 
 import android.Manifest;
 import android.content.Context;
@@ -18,12 +18,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.djaphar.coffeepointapp.MainActivity;
+import com.djaphar.coffeepointapp.Activities.MainActivity;
 import com.djaphar.coffeepointapp.R;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Point;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.PermissionDriver;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.ViewDriver;
-import com.djaphar.coffeepointapp.ViewModel.MainViewModel;
+import com.djaphar.coffeepointapp.ViewModels.MainViewModel;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;

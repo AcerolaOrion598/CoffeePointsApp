@@ -44,33 +44,33 @@ public class User {
     }
 
     @NonNull
-    String get_id() {
+    public String get_id() {
         return _id;
     }
 
     @NonNull
-    String getEmail() {
+    public String getEmail() {
         return email;
     }
 
     @NonNull
-    String getPassword() {
+    public String getPassword() {
         return password;
     }
 
-    String getName() {
+    public String getName() {
         return name;
     }
 
-    String getRole() {
+    public String getRole() {
         return role;
     }
 
-    String getAbout() {
+    public String getAbout() {
         return about;
     }
 
-    String getToken() {
+    public String getToken() {
         return token;
     }
 }
