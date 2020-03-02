@@ -29,6 +29,9 @@ public class RegisterFragment extends Fragment {
         logInTv = root.findViewById(R.id.log_in_tv);
         wrongCredentialsRegisterTv = root.findViewById(R.id.wrong_credentials_register_tv);
         authActivity = (AuthActivity) getActivity();
+        if (authActivity != null) {
+            authActivity.setActionBarTitle(getString(R.string.title_register));
+        }
         return root;
     }
 

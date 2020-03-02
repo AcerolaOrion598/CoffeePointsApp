@@ -1,17 +1,14 @@
 package com.djaphar.coffeepointapp;
 
-import android.os.AsyncTask;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.UserDao;
-import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.UserRoom;
 import com.djaphar.coffeepointapp.ui.map.MapFragment;
 import com.djaphar.coffeepointapp.ui.points.PointsFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import java.lang.ref.WeakReference;
 import java.util.Objects;
 
 import androidx.appcompat.app.ActionBar;
@@ -56,8 +53,6 @@ public class MainActivity extends AppCompatActivity {
                 MapFragment mapFragment = ((MapFragment) currentFragment);
                 ConstraintLayout pointInfoWindow = mapFragment.getPointInfoWindow();
                 if (!(mapFragment.addMarkerVisible()) && !(pointInfoWindow.getVisibility() == View.VISIBLE)) {
-                    DeleteUser deleteUser = new DeleteUser(this);
-                    deleteUser.execute();
                     super.onBackPressed();
                 } else {
                     mapFragment.backWasPressed();
@@ -77,6 +72,10 @@ public class MainActivity extends AppCompatActivity {
             case ProfileFragment:
                 super.onBackPressed();
                 break;
+
+            case OtherFragment:
+                super.onBackPressed();
+                break;
         }
     }
 
@@ -84,23 +83,13 @@ public class MainActivity extends AppCompatActivity {
         actionBarTitle.setText(title);
     }
 
-    enum FragmentNames {
-        MapFragment, PointsFragment, ProfileFragment
+    public void logout() {
+        Intent intent = new Intent(this, AuthActivity.class);
+        startActivity(intent);
+        finish();
     }
 
-    static class DeleteUser extends AsyncTask<Void, Void, Void> {
-        private WeakReference<MainActivity> weakActivity;
-
-        DeleteUser(MainActivity activity) {
-            weakActivity = new WeakReference<>(activity);
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            UserRoom userRoom = UserRoom.getDatabase(weakActivity.get());
-            UserDao userDao = userRoom.userDao();
-            userDao.deleteUser();
-            return null;
-        }
+    enum FragmentNames {
+        MapFragment, PointsFragment, ProfileFragment, OtherFragment
     }
 }

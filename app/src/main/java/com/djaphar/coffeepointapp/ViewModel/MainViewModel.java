@@ -15,7 +15,6 @@ import androidx.lifecycle.MutableLiveData;
 public class MainViewModel extends AndroidViewModel {
 
     private MutableLiveData<ArrayList<Point>> points;
-//    private final static String baseUrl = "http://212.109.219.69:3007/";
 
     public MainViewModel(@NonNull Application application) {
         super(application);
@@ -81,30 +80,4 @@ public class MainViewModel extends AndroidViewModel {
     public void editPoint() {
         //Тут лезем апдейтить бд
     }
-
-//    public void logIn(Credentials credentials) {
-//        Retrofit retrofit = new Retrofit.Builder()
-//                .baseUrl(baseUrl)
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build();
-//
-//        PointsApi pointsApi = retrofit.create(PointsApi.class);
-//        Call<User> call = pointsApi.logIn(credentials);
-//        call.enqueue(new Callback<User>() {
-//            @Override
-//            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
-//                if (!response.isSuccessful()) {
-//                    Toast.makeText(getApplication(), response.message(), Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//
-//                User user = response.body();
-//            }
-//
-//            @Override
-//            public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
-//                Toast.makeText(getApplication(), t.getMessage(), Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
 }

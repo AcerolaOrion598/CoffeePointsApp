@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingStart="25dp"
+    android:paddingTop="31dp"
+    tools:ignore="RtlSymmetry">
+
+    <TextView
+        android:id="@+id/about_app_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/about_app"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@color/colorBlue87"
+        android:textSize="16sp"
+        android:fontFamily="@font/roboto" />
+
+    <TextView
+        android:id="@+id/exit_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/exit"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/about_app_tv"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/colorBlue87"
+        android:textSize="16sp"
+        android:fontFamily="@font/roboto" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

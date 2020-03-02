@@ -23,4 +23,10 @@
         android:name="com.djaphar.coffeepointapp.ui.profile.ProfileFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/navigation_other"
+        android:name="com.djaphar.coffeepointapp.ui.other.OtherFragment"
+        android:label="@string/title_other"
+        tools:layout="@layout/fragment_other" />
 </navigation>

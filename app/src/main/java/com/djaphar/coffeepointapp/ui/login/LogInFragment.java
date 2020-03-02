@@ -32,6 +32,9 @@ public class LogInFragment extends Fragment  {
         logInEmailEd = root.findViewById(R.id.log_in_email_ed);
         loginPasswordEd = root.findViewById(R.id.log_in_password_ed);
         authActivity = (AuthActivity) getActivity();
+        if (authActivity != null) {
+            authActivity.setActionBarTitle(getString(R.string.title_log_in));
+        }
         return root;
     }
 

@@ -33,7 +33,7 @@ public class User {
     @ColumnInfo(name = "token")
     private String token;
 
-    public User(@NonNull String _id, @NonNull String email, @NonNull String password, String name, String role, String about, String token) {
+    User(@NonNull String _id, @NonNull String email, @NonNull String password, String name, String role, String about, String token) {
         this._id = _id;
         this.email = email;
         this.password = password;
@@ -44,33 +44,33 @@ public class User {
     }
 
     @NonNull
-    public String get_id() {
+    String get_id() {
         return _id;
     }
 
     @NonNull
-    public String getEmail() {
+    String getEmail() {
         return email;
     }
 
     @NonNull
-    public String getPassword() {
+    String getPassword() {
         return password;
     }
 
-    public String getName() {
+    String getName() {
         return name;
     }
 
-    public String getRole() {
+    String getRole() {
         return role;
     }
 
-    public String getAbout() {
+    String getAbout() {
         return about;
     }
 
-    public String getToken() {
+    String getToken() {
         return token;
     }
 }

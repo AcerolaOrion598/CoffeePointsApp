@@ -5,6 +5,8 @@
     <string name="title_profile">Профиль</string>
     <string name="title_other">Другое</string>
     <string name="title_point_edit">Редактировать Точку</string>
+    <string name="title_log_in">Вход</string>
+    <string name="title_register">Регистрация</string>
     <string name="point_status_true">Открыта</string>
     <string name="point_status_false">Закрыта</string>
     <string name="maps_key">YOUR_API_KEY</string>
@@ -23,6 +25,12 @@
     <string name="cancel_btn">Отмена</string>
     <string name="delete_btn">Удалить</string>
     <string name="edit_btn">Изменить</string>
+    <string name="about_app">О приложении</string>
+    <string name="exit">Выйти</string>
+    <string name="exit_dialog_title">Выйти?</string>
+    <string name="exit_dialog_message">Вы уверены, что хотите выйти из приложения?</string>
+    <string name="dialog_positive_btn">Да</string>
+    <string name="dialog_negative_btn">Нет</string>
     <string name="ononoki_chan">Yay! Peace! Peace!</string>
     <string name="shinobu_chan">Ka Ka Ka!</string>
     <string name="mayoi_chan">Shitsurei! Kamimashita!</string>
