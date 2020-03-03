@@ -56,7 +56,7 @@ public class OtherFragment extends Fragment {
             if (user != null) {
                 return;
             }
-            logout();
+            mainActivity.logout();
         });
 
         aboutAppTv.setOnClickListener(lView -> {
@@ -68,20 +68,16 @@ public class OtherFragment extends Fragment {
 
         backProfileBtn.setOnClickListener(lView -> backWasPressed());
 
-        exitTv.setOnClickListener(lView -> createDialog());
+        exitTv.setOnClickListener(lView -> createLogoutDialog());
     }
 
-    private void createDialog() {
+    private void createLogoutDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.exit_dialog_title)
                 .setMessage(R.string.exit_dialog_message)
                 .setNegativeButton(R.string.dialog_negative_btn, (dialogInterface, i) -> dialogInterface.cancel())
                 .setPositiveButton(R.string.dialog_positive_btn, (dialogInterface, i) -> otherViewModel.logout())
                 .show();
-    }
-
-    private void logout() {
-        mainActivity.logout();
     }
 
     public void backWasPressed() {

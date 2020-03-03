@@ -14,12 +14,13 @@ import androidx.lifecycle.MutableLiveData;
 
 public class MainViewModel extends AndroidViewModel {
 
-    private MutableLiveData<ArrayList<Point>> points;
+    private MutableLiveData<ArrayList<Point>> points = new MutableLiveData<>();
+    private ArrayList<Point> pointList = new ArrayList<>();
 
     public MainViewModel(@NonNull Application application) {
         super(application);
 
-        ArrayList<Point> pointList = new ArrayList<>();
+        pointList.clear();
         Point point1 = new Point(new LatLng(55.665954, 37.503766), "Моя точка",
                 "Лучшая точка в этом районе", "", "Владелец: Aye", true, 3, 1);
         Point point2 = new Point(new LatLng(55.890356, 37.722421), "Какое-то уникальное название",
@@ -61,13 +62,24 @@ public class MainViewModel extends AndroidViewModel {
         pointList.add(point9);
         pointList.add(point10);
 
-        points = new MutableLiveData<>();
+//        points = new MutableLiveData<>();
         points.setValue(pointList);
     }
 
     public MutableLiveData<ArrayList<Point>> getPoints() {
         return points;
     }
+
+    //Пробная часть
+    public void testOnChange(Point testPoint) {
+        if (pointList.size() == 11) {
+            pointList.remove(10);
+        } else {
+            pointList.add(testPoint);
+        }
+        points.setValue(pointList);
+    }
+    //Пробная часть
 
     public void sendScreenBounds(LatLngBounds bounds) {
         //Тут цепляем границы экрана и шлём их на сервер

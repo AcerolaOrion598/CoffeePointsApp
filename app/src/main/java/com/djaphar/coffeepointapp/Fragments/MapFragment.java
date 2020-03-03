@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.djaphar.coffeepointapp.Activities.MainActivity;
 import com.djaphar.coffeepointapp.R;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Point;
@@ -33,7 +34,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
 import java.util.ArrayList;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
@@ -55,6 +58,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private int whoMoved, statusTrueColor, statusFalseColor, topViewShow, topViewHide, bottomViewShow, bottomViewHide,
             myMarkerSize, markerSize;
     private ArrayList<Marker> markers = new ArrayList<>();
+    private ArrayList<Marker> tempMarkers = new ArrayList<>();
     private Context context;
     private Resources resources;
     private MainActivity mainActivity;
@@ -208,9 +212,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
         mainViewModel.sendScreenBounds(getScreenBounds());
         mainViewModel.getPoints().observe(getViewLifecycleOwner(), points -> {
-            removeMarkers();
-            markers.clear();
             drawMarkers(points);
+            removeMarkers();
+            rewriteMarkerList();
 
             gMap.setOnMarkerClickListener(marker -> {
                 showPointInfo(marker);
@@ -257,7 +261,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                     ViewDriver.toggleViewInHalf(redMarkerOnAdd, R.anim.fast_fade_in_half_animation, context);
                 }
             }
-            mainViewModel.sendScreenBounds(getScreenBounds());
+//            mainViewModel.sendScreenBounds(getScreenBounds());
+            //Пробная часть
+            Point testPoint = new Point(new LatLng(55.861457, 37.793277), "Я тестовая точка",
+                    "Короткое описание, которое заставит меня выбрать именно эту точку сто проц просто",
+                    "", "Владелец: Aye", false, 3,11);
+            mainViewModel.testOnChange(testPoint);
+            //Пробная часть
         }
     }
 
@@ -404,10 +414,27 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     private void drawMarkers(ArrayList<Point> points) {
         for (Point point : points) {
-            Marker marker = gMap.addMarker(setMarkerOptions(point));
-            marker.setTag(point);
-            markers.add(marker);
+            if (!focusedMarker(point) || !editMode) {
+                Marker marker = gMap.addMarker(setMarkerOptions(point));
+                marker.setTag(point);
+                tempMarkers.add(marker);
+            }
         }
+    }
+
+    private void  rewriteMarkerList() {
+        markers.clear();
+        markers.addAll(tempMarkers.subList(0, tempMarkers.size()));
+        tempMarkers.clear();
+    }
+
+    private boolean focusedMarker(Point point) {
+        if (focusedMarkerInfo == null) {
+            return false;
+        }
+        LatLng focusedLatLng = focusedMarkerInfo.getCoordinates();
+        LatLng currentLatLng = point.getCoordinates();
+        return focusedLatLng.latitude == currentLatLng.latitude && focusedLatLng.longitude == currentLatLng.longitude;
     }
 
     private MarkerOptions setMarkerOptions(Point point) {
@@ -424,10 +451,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         } else {
             scaledCustomIcon = Bitmap.createScaledBitmap(customIcon, markerSize, markerSize, false);
         }
+
+        float alphaValue;
+        if (pointAddWindow.getVisibility() == View.VISIBLE) {
+            alphaValue = 0.4f;
+        } else {
+            alphaValue = 0.87f;
+        }
         MarkerOptions options = new MarkerOptions();
         options.position(point.getCoordinates())
                 .title(point.getHint())
-                .alpha(0.87f)
+                .alpha(alphaValue)
                 .icon(BitmapDescriptorFactory.fromBitmap(scaledCustomIcon));
         return options;
     }
