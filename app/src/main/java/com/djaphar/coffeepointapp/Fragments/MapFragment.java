@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.djaphar.coffeepointapp.Activities.MainActivity;
 import com.djaphar.coffeepointapp.R;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Point;
+import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.MyFragment;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.PermissionDriver;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.ViewDriver;
 import com.djaphar.coffeepointapp.ViewModels.MainViewModel;
@@ -42,10 +43,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener, GoogleMap.OnCameraIdleListener {
+public class MapFragment extends MyFragment implements OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener, GoogleMap.OnCameraIdleListener {
 
     private MainViewModel mainViewModel;
     private ConstraintLayout pointInfoWindow, pointAddWindow;
@@ -493,9 +493,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             ViewDriver.hideView(pointInfoWindow, bottomViewHide, context);
             equalizeMarkers(0.87f);
         }
+
     }
 
-    public boolean addMarkerVisible() {
+    public boolean addMarkerIsVisible() {
         return greenMarkerOnAdd.getVisibility() == View.VISIBLE || redMarkerOnAdd.getVisibility() == View.VISIBLE;
     }
 

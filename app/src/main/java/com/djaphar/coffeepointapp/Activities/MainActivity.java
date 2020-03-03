@@ -10,6 +10,7 @@ import com.djaphar.coffeepointapp.Fragments.OtherFragment;
 import com.djaphar.coffeepointapp.Fragments.PointsFragment;
 import com.djaphar.coffeepointapp.Fragments.ProfileFragment;
 import com.djaphar.coffeepointapp.R;
+import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.MyFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.Objects;
@@ -17,7 +18,6 @@ import java.util.Objects;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
@@ -26,7 +26,7 @@ import androidx.navigation.ui.NavigationUI;
 public class MainActivity extends AppCompatActivity {
 
     private TextView actionBarTitle;
-    private Fragment currentFragment;
+    private MyFragment currentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
 
         if (navHostFragment != null) {
-            currentFragment = navHostFragment.getChildFragmentManager().getFragments().get(0);
+            currentFragment = (MyFragment) navHostFragment.getChildFragmentManager().getFragments().get(0);
         }
 
         FragmentNames names = FragmentNames.valueOf(currentFragment.getClass().getSimpleName());
@@ -55,10 +55,9 @@ public class MainActivity extends AppCompatActivity {
             case MapFragment:
                 MapFragment mapFragment = ((MapFragment) currentFragment);
                 ConstraintLayout pointInfoWindow = mapFragment.getPointInfoWindow();
-                if (!(mapFragment.addMarkerVisible()) && !(pointInfoWindow.getVisibility() == View.VISIBLE)) {
+                if (!(mapFragment.addMarkerIsVisible()) && !(pointInfoWindow.getVisibility() == View.VISIBLE)) {
                     super.onBackPressed();
-                } else {
-                    mapFragment.backWasPressed();
+                    return;
                 }
                 break;
 
@@ -67,8 +66,7 @@ public class MainActivity extends AppCompatActivity {
                 ConstraintLayout editLayout = pointsFragment.getPointEditLayout();
                 if (!(editLayout.getVisibility() == View.VISIBLE)) {
                     super.onBackPressed();
-                } else {
-                    pointsFragment.backWasPressed();
+                    return;
                 }
                 break;
 
@@ -77,8 +75,7 @@ public class MainActivity extends AppCompatActivity {
                 ConstraintLayout editProfileContainer = profileFragment.getEditProfileContainer();
                 if (!(editProfileContainer.getVisibility() == View.VISIBLE)) {
                     super.onBackPressed();
-                } else {
-                    profileFragment.backWasPressed();
+                    return;
                 }
                 break;
 
@@ -87,11 +84,11 @@ public class MainActivity extends AppCompatActivity {
                 ConstraintLayout aboutAppContainer = otherFragment.getAboutAppContainer();
                 if (!(aboutAppContainer.getVisibility() == View.VISIBLE)) {
                     super.onBackPressed();
-                } else {
-                    otherFragment.backWasPressed();
+                    return;
                 }
                 break;
         }
+        currentFragment.backWasPressed();
     }
 
     public void setActionBarTitle(String title) {
