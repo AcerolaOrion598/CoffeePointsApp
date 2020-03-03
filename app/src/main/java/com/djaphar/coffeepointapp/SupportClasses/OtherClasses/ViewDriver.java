@@ -21,13 +21,15 @@ public class ViewDriver {
         return animation;
     }
 
-    public static void hideView(View view, int animationResource, Context context) {
+    public static Animation hideView(View view, int animationResource, Context context) {
         Animation animation = AnimationUtils.loadAnimation(context, animationResource);
 
         if (view.getVisibility() == View.VISIBLE) {
             view.startAnimation(animation);
-            view.setVisibility(View.INVISIBLE);
+            view.setVisibility(View.GONE);
         }
+
+        return animation;
     }
 
     public static void toggleViewInHalf(View view, int animationResource, Context context) {

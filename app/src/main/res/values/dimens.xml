@@ -5,4 +5,7 @@
     <dimen name="my_marker_size">40dp</dimen>
     <dimen name="marker_size">25dp</dimen>
     <dimen name="nav_bar_height">60dp</dimen>
+    <dimen name="point_info_window_horizontal_margin">18dp</dimen>
+    <dimen name="point_info_window_bottom_margin">76dp</dimen>
+    <dimen name="point_add_translation_y">-20dp</dimen>
 </resources>

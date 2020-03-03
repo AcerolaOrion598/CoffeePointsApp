@@ -1,6 +1,7 @@
 package com.djaphar.coffeepointapp.Fragments;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -11,8 +12,10 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -45,13 +48,14 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.ViewModelProvider;
 
-public class MapFragment extends MyFragment implements OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener, GoogleMap.OnCameraIdleListener {
+public class MapFragment extends MyFragment implements OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener, GoogleMap.OnCameraIdleListener,
+        View.OnTouchListener {
 
     private MainViewModel mainViewModel;
     private ConstraintLayout pointInfoWindow, pointAddWindow;
     private TextView pointName, pointAbout, pointOwner, pointActive, pointActiveSwitchTv;
     private EditText pointNameEd, pointHintEd, pointAboutEd;
-    private Button pointAddBtn, pointAddCancelBtn, pointAddSaveBtn, pointEditBtn, pointDeleteBtn;
+    private Button pointAddBtn, pointAddCancelBtn, pointAddSaveBtn, pointEditBtn, pointDeleteBtn, moveInfoWindowView, moveAddWindowView;
     private SwitchCompat pointActiveSwitch, pointActiveInfoWindowSwitch;
     private ImageView greenMarkerOnAdd, redMarkerOnAdd;
     private String statusTrueText, statusFalseText;
@@ -68,6 +72,8 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
     private SupportMapFragment supportMapFragment;
     private Marker focusedMarker = null;
     private Point focusedMarkerInfo = null;
+    private ConstraintLayout.LayoutParams pointInfoWindowParams;
+    private float infoWindowCorrectionY, infoWindowStartMotionY, infoWindowEndMotionY, addWindowCorrectionY, addWindowStartMotionY, addWindowEndMotionY;
     private static final int ownerId = 3;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -92,6 +98,8 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         pointActiveInfoWindowSwitch = root.findViewById(R.id.point_active_info_window_switch);
         greenMarkerOnAdd = root.findViewById(R.id.green_marker_on_add);
         redMarkerOnAdd = root.findViewById(R.id.red_marker_on_add);
+        moveInfoWindowView = root.findViewById(R.id.move_info_window_b);
+        moveAddWindowView = root.findViewById(R.id.move_add_window_view);
         mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
             mainActivity.setActionBarTitle(getString(R.string.title_map));
@@ -101,6 +109,7 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         return root;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -117,6 +126,10 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         bottomViewHide = R.anim.bottom_view_hide_animation;
         myMarkerSize = (int) resources.getDimension(R.dimen.my_marker_size);
         markerSize = (int) resources.getDimension(R.dimen.marker_size);
+        pointInfoWindowParams = (ConstraintLayout.LayoutParams) pointInfoWindow.getLayoutParams();
+        pointInfoWindowParams.setMargins((int) resources.getDimension(R.dimen.point_info_window_horizontal_margin), 0,
+                (int) resources.getDimension(R.dimen.point_info_window_horizontal_margin), (int) resources.getDimension(R.dimen.point_info_window_bottom_margin));
+        pointAddWindow.setTranslationY(resources.getDimension(R.dimen.point_add_translation_y));
         equalizeMarkers(0.87f);
 
         pointAddBtn.setOnClickListener(lView -> {
@@ -186,6 +199,9 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
                 ViewDriver.setStatusTvOptions(pointActive, statusFalseText, statusFalseColor);
             }
         });
+
+        moveInfoWindowView.setOnTouchListener(this);
+        moveAddWindowView.setOnTouchListener(this);
 
         if (supportMapFragment == null) {
             supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_container);
@@ -368,7 +384,9 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
             pointOwner.setText(point.getOwner());
 
             addPointModeEnd(bottomViewHide, false);
+            pointInfoWindow.setLayoutParams(pointInfoWindowParams);
             ViewDriver.showView(pointInfoWindow, bottomViewShow, context);
+
             equalizeMarkers(0.4f);
             marker.setAlpha(1.0f);
         }
@@ -493,7 +511,6 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
             ViewDriver.hideView(pointInfoWindow, bottomViewHide, context);
             equalizeMarkers(0.87f);
         }
-
     }
 
     public boolean addMarkerIsVisible() {
@@ -502,5 +519,88 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
 
     public ConstraintLayout getPointInfoWindow() {
         return pointInfoWindow;
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        if (view == moveInfoWindowView) {
+            handleInfoWindowMotion(motionEvent);
+            return false;
+        }
+
+        if (view == moveAddWindowView) {
+            handleAddWindowMotion(motionEvent);
+            return false;
+        }
+
+        return false;
+    }
+
+    private void handleInfoWindowMotion(MotionEvent motionEvent) {
+        switch (motionEvent.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                infoWindowStartMotionY = motionEvent.getRawY();
+                infoWindowCorrectionY = pointInfoWindow.getY() - infoWindowStartMotionY;
+            case MotionEvent.ACTION_MOVE:
+                infoWindowEndMotionY = motionEvent.getRawY();
+                if (infoWindowStartMotionY > infoWindowEndMotionY) {
+                    break;
+                }
+                pointInfoWindow.setY(infoWindowEndMotionY + infoWindowCorrectionY);
+                break;
+            case MotionEvent.ACTION_UP:
+                if (infoWindowEndMotionY != 0 && infoWindowEndMotionY - infoWindowStartMotionY > 200) {
+                    setAnimationForMovingView(pointInfoWindow, bottomViewHide, infoWindowStartMotionY, infoWindowCorrectionY);
+                    equalizeMarkers(0.87f);
+                    break;
+                } else {
+                    pointInfoWindow.setY(infoWindowCorrectionY + infoWindowStartMotionY);
+                    break;
+                }
+        }
+    }
+
+    private void handleAddWindowMotion(MotionEvent motionEvent) {
+        switch (motionEvent.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                addWindowStartMotionY = motionEvent.getRawY();
+                addWindowCorrectionY = pointAddWindow.getY() - addWindowStartMotionY;
+            case MotionEvent.ACTION_MOVE:
+                addWindowEndMotionY = motionEvent.getRawY();
+                if (addWindowEndMotionY > addWindowStartMotionY) {
+                    break;
+                }
+                pointAddWindow.setY(addWindowEndMotionY + addWindowCorrectionY);
+                break;
+            case MotionEvent.ACTION_UP:
+                if (addWindowEndMotionY != 0 && addWindowStartMotionY - addWindowEndMotionY > 200) {
+                    setAnimationForMovingView(pointAddWindow, topViewHide, addWindowStartMotionY, addWindowCorrectionY);
+                    ViewDriver.showView(pointAddBtn, topViewShow, context);
+                    ViewDriver.hideView(greenMarkerOnAdd, bottomViewHide, context);
+                    ViewDriver.hideView(redMarkerOnAdd, bottomViewHide, context);
+                    equalizeMarkers(0.87f);
+                    break;
+                } else {
+                    pointAddWindow.setY(addWindowCorrectionY + addWindowStartMotionY);
+                    break;
+                }
+        }
+    }
+
+    private void setAnimationForMovingView(View view, int animationResource, float start, float tempY) {
+        Animation animation = ViewDriver.hideView(view, animationResource, context);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                view.setY(tempY + start);
+            }
+
+            @Override
+            public void onAnimationStart(Animation animation) { }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) { }
+        });
     }
 }
