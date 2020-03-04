@@ -52,28 +52,27 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         View.OnTouchListener {
 
     private MainViewModel mainViewModel;
-    private ConstraintLayout pointInfoWindow, pointAddWindow;
-    private TextView pointName, pointAbout, pointOwner, pointActive, pointActiveSwitchTv;
-    private EditText pointNameEd, pointHintEd, pointAboutEd;
-    private Button pointAddBtn, pointAddCancelBtn, pointAddSaveBtn, pointEditBtn, pointDeleteBtn, moveInfoWindowView, moveAddWindowView;
-    private SwitchCompat pointActiveSwitch, pointActiveInfoWindowSwitch;
-    private ImageView greenMarkerOnAdd, redMarkerOnAdd;
-    private String statusTrueText, statusFalseText;
-    private int whoMoved, statusTrueColor, statusFalseColor, topViewShow, topViewHide, bottomViewShow, bottomViewHide,
-            myMarkerSize, markerSize;
-    private ArrayList<Marker> markers = new ArrayList<>();
-    private ArrayList<Marker> tempMarkers = new ArrayList<>();
+    private MainActivity mainActivity;
     private Context context;
     private Resources resources;
-    private MainActivity mainActivity;
-    private String[] perms = new String[2];
-    private boolean alreadyOpened = false, addWindowHidden = false, pointAddWindowExpanded = false, editMode = false, editableMarkerRemoved = false;
-    private GoogleMap gMap;
+    private ConstraintLayout pointInfoWindow, pointAddWindow;
+    private ConstraintLayout.LayoutParams pointInfoWindowParams;
+    private TextView pointName, pointAbout, pointOwner, pointActive, pointActiveSwitchTv;
+    private EditText pointNameEd, pointHintEd, pointAboutEd;
+    private Button pointAddBtn, pointAddCancelBtn, pointAddSaveBtn, pointEditBtn, pointDeleteBtn;
+    private SwitchCompat pointActiveSwitch, pointActiveInfoWindowSwitch;
+    private ImageView greenMarkerOnAdd, redMarkerOnAdd;
     private SupportMapFragment supportMapFragment;
+    private GoogleMap gMap;
+    private ArrayList<Marker> markers = new ArrayList<>(), tempMarkers = new ArrayList<>();
     private Marker focusedMarker = null;
     private Point focusedMarkerInfo = null;
-    private ConstraintLayout.LayoutParams pointInfoWindowParams;
+    private String statusTrueText, statusFalseText;
+    private String[] perms = new String[2];
+    private int whoMoved, statusTrueColor, statusFalseColor, topViewShow, topViewHide, bottomViewShow, bottomViewHide,
+    myMarkerSize, markerSize;
     private float infoWindowCorrectionY, infoWindowStartMotionY, infoWindowEndMotionY, addWindowCorrectionY, addWindowStartMotionY, addWindowEndMotionY;
+    private boolean alreadyOpened = false, addWindowHidden = false, pointAddWindowExpanded = false, editMode = false, editableMarkerRemoved = false;
     private static final int ownerId = 3;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -98,8 +97,6 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         pointActiveInfoWindowSwitch = root.findViewById(R.id.point_active_info_window_switch);
         greenMarkerOnAdd = root.findViewById(R.id.green_marker_on_add);
         redMarkerOnAdd = root.findViewById(R.id.red_marker_on_add);
-        moveInfoWindowView = root.findViewById(R.id.move_info_window_b);
-        moveAddWindowView = root.findViewById(R.id.move_add_window_view);
         mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
             mainActivity.setActionBarTitle(getString(R.string.title_map));
@@ -200,8 +197,8 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
             }
         });
 
-        moveInfoWindowView.setOnTouchListener(this);
-        moveAddWindowView.setOnTouchListener(this);
+        pointInfoWindow.setOnTouchListener(this);
+        pointAddWindow.setOnTouchListener(this);
 
         if (supportMapFragment == null) {
             supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_container);
@@ -524,65 +521,66 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
-        if (view == moveInfoWindowView) {
-            handleInfoWindowMotion(motionEvent);
+
+        if (view == pointInfoWindow) {
+            handleInfoWindowMotion(view, motionEvent);
             return false;
         }
 
-        if (view == moveAddWindowView) {
-            handleAddWindowMotion(motionEvent);
+        if (view == pointAddWindow) {
+            handleAddWindowMotion(view, motionEvent);
             return false;
         }
 
         return false;
     }
 
-    private void handleInfoWindowMotion(MotionEvent motionEvent) {
+    private void handleInfoWindowMotion(View view, MotionEvent motionEvent) {
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 infoWindowStartMotionY = motionEvent.getRawY();
-                infoWindowCorrectionY = pointInfoWindow.getY() - infoWindowStartMotionY;
+                infoWindowCorrectionY = view.getY() - infoWindowStartMotionY;
             case MotionEvent.ACTION_MOVE:
                 infoWindowEndMotionY = motionEvent.getRawY();
                 if (infoWindowStartMotionY > infoWindowEndMotionY) {
                     break;
                 }
-                pointInfoWindow.setY(infoWindowEndMotionY + infoWindowCorrectionY);
+                view.setY(infoWindowEndMotionY + infoWindowCorrectionY);
                 break;
             case MotionEvent.ACTION_UP:
                 if (infoWindowEndMotionY != 0 && infoWindowEndMotionY - infoWindowStartMotionY > 200) {
-                    setAnimationForMovingView(pointInfoWindow, bottomViewHide, infoWindowStartMotionY, infoWindowCorrectionY);
+                    setAnimationForMovingView(view, bottomViewHide, infoWindowStartMotionY, infoWindowCorrectionY);
                     equalizeMarkers(0.87f);
                     break;
                 } else {
-                    pointInfoWindow.setY(infoWindowCorrectionY + infoWindowStartMotionY);
+                    view.setY(infoWindowCorrectionY + infoWindowStartMotionY);
                     break;
                 }
         }
     }
 
-    private void handleAddWindowMotion(MotionEvent motionEvent) {
+    private void handleAddWindowMotion(View view, MotionEvent motionEvent) {
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 addWindowStartMotionY = motionEvent.getRawY();
-                addWindowCorrectionY = pointAddWindow.getY() - addWindowStartMotionY;
+                addWindowCorrectionY = view.getY() - addWindowStartMotionY;
             case MotionEvent.ACTION_MOVE:
                 addWindowEndMotionY = motionEvent.getRawY();
                 if (addWindowEndMotionY > addWindowStartMotionY) {
                     break;
                 }
-                pointAddWindow.setY(addWindowEndMotionY + addWindowCorrectionY);
+                view.setY(addWindowEndMotionY + addWindowCorrectionY);
                 break;
             case MotionEvent.ACTION_UP:
                 if (addWindowEndMotionY != 0 && addWindowStartMotionY - addWindowEndMotionY > 200) {
-                    setAnimationForMovingView(pointAddWindow, topViewHide, addWindowStartMotionY, addWindowCorrectionY);
+                    setAnimationForMovingView(view, topViewHide, addWindowStartMotionY, addWindowCorrectionY);
                     ViewDriver.showView(pointAddBtn, topViewShow, context);
                     ViewDriver.hideView(greenMarkerOnAdd, bottomViewHide, context);
                     ViewDriver.hideView(redMarkerOnAdd, bottomViewHide, context);
                     equalizeMarkers(0.87f);
                     break;
                 } else {
-                    pointAddWindow.setY(addWindowCorrectionY + addWindowStartMotionY);
+                    view.setY(addWindowCorrectionY + addWindowStartMotionY);
                     break;
                 }
         }
