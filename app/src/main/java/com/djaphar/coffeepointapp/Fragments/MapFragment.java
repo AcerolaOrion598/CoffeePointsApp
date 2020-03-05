@@ -69,10 +69,11 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
     private Point focusedMarkerInfo = null;
     private String statusTrueText, statusFalseText;
     private String[] perms = new String[2];
+    private Float addWindowEndMotionY = null, testStart = null, testEnd = null;
+    private float infoWindowCorrectionY, infoWindowStartMotionY, infoWindowEndMotionY, addWindowCorrectionY;
     private int whoMoved, statusTrueColor, statusFalseColor, topViewShow, topViewHide, bottomViewShow, bottomViewHide,
     myMarkerSize, markerSize;
-    private float infoWindowCorrectionY, infoWindowStartMotionY, infoWindowEndMotionY, addWindowCorrectionY, addWindowStartMotionY, addWindowEndMotionY;
-    private boolean alreadyOpened = false, addWindowHidden = false, pointAddWindowExpanded = false, editMode = false, editableMarkerRemoved = false;
+    private boolean alreadyOpened = false, addWindowHidden = false, editMode = false, editableMarkerRemoved = false;
     private static final int ownerId = 3;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -127,6 +128,9 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         pointInfoWindowParams.setMargins((int) resources.getDimension(R.dimen.point_info_window_horizontal_margin), 0,
                 (int) resources.getDimension(R.dimen.point_info_window_horizontal_margin), (int) resources.getDimension(R.dimen.point_info_window_bottom_margin));
         pointAddWindow.setTranslationY(resources.getDimension(R.dimen.point_add_translation_y));
+        testStart = pointAddWindow.getY();
+        pointAddWindow.setTranslationY(resources.getDimension(R.dimen.point_add_expanded_translation_y));
+        testEnd = pointAddWindow.getY();
         equalizeMarkers(0.87f);
 
         pointAddBtn.setOnClickListener(lView -> {
@@ -134,12 +138,6 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
             focusedMarkerInfo = null;
             equalizeMarkers(0.4f);
             addPointModeStart(false, "", "", "", redMarkerOnAdd, true);
-        });
-
-        pointNameEd.setOnFocusChangeListener((lView, focused) -> {
-            if (focused) {
-                pointAddWindowToggle(View.VISIBLE, true);
-            }
         });
 
         pointAddCancelBtn.setOnClickListener(lView -> addPointModeEnd(bottomViewHide, false));
@@ -261,9 +259,6 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
     @Override
     public void onCameraIdle() {
         if (whoMoved == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
-            if (pointAddWindowExpanded) {
-                pointAddWindowToggle(View.GONE, false);
-            }
 
             if (addWindowHidden) {
                 addWindowHidden = false;
@@ -334,12 +329,6 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
             alreadyOpened = true;
     }
 
-    private void pointAddWindowToggle(int visibility, boolean isExpanded) {
-        pointHintEd.setVisibility(visibility);
-        pointAboutEd.setVisibility(visibility);
-        pointAddWindowExpanded = isExpanded;
-    }
-
     private void infoWindowEditElementsToggle(int visibility, int constraintBottom) {
         pointDeleteBtn.setVisibility(visibility);
         pointEditBtn.setVisibility(visibility);
@@ -399,7 +388,6 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         pointNameEd.setText(pointName);
         pointHintEd.setText(pointHint);
         pointAboutEd.setText(pointAbout);
-        pointAddWindowToggle(View.GONE, false);
         ViewDriver.hideView(pointAddBtn, topViewHide, context);
         ViewDriver.hideView(pointInfoWindow, bottomViewHide, context);
         if (withMarkerAnimation) {
@@ -407,6 +395,7 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         } else {
             markerToShow.setVisibility(View.VISIBLE);
         }
+        pointAddWindow.setTranslationY(resources.getDimension(R.dimen.point_add_translation_y));
         ViewDriver.showView(pointAddWindow, topViewShow, context);
     }
 
@@ -562,27 +551,29 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
     private void handleAddWindowMotion(View view, MotionEvent motionEvent) {
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                addWindowStartMotionY = motionEvent.getRawY();
+                float addWindowStartMotionY = motionEvent.getRawY();
                 addWindowCorrectionY = view.getY() - addWindowStartMotionY;
+                break;
             case MotionEvent.ACTION_MOVE:
                 addWindowEndMotionY = motionEvent.getRawY();
-                if (addWindowEndMotionY > addWindowStartMotionY) {
+                if (addWindowEndMotionY + addWindowCorrectionY < testStart || addWindowEndMotionY + addWindowCorrectionY > testEnd) {
                     break;
                 }
                 view.setY(addWindowEndMotionY + addWindowCorrectionY);
                 break;
             case MotionEvent.ACTION_UP:
-                if (addWindowEndMotionY != 0 && addWindowStartMotionY - addWindowEndMotionY > 200) {
-                    setAnimationForMovingView(view, topViewHide, addWindowStartMotionY, addWindowCorrectionY);
-                    ViewDriver.showView(pointAddBtn, topViewShow, context);
-                    ViewDriver.hideView(greenMarkerOnAdd, bottomViewHide, context);
-                    ViewDriver.hideView(redMarkerOnAdd, bottomViewHide, context);
-                    equalizeMarkers(0.87f);
-                    break;
-                } else {
-                    view.setY(addWindowCorrectionY + addWindowStartMotionY);
+                float endDiff = addWindowEndMotionY + addWindowCorrectionY - testEnd;
+                if (endDiff > -200) {
+                    view.animate().y(testEnd).setDuration(200);
                     break;
                 }
+
+                float startDiff = addWindowEndMotionY + addWindowCorrectionY - testStart;
+                if (startDiff < 200) {
+                    view.animate().y(testStart).setDuration(200);
+                    break;
+                }
+                break;
         }
     }
 

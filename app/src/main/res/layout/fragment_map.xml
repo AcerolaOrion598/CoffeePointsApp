@@ -165,7 +165,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
         android:layout_marginEnd="25dp"
-        android:translationY="@dimen/point_add_translation_y"
         android:focusable="true"
         android:focusableInTouchMode="true"
         app:layout_constraintTop_toTopOf="parent"
@@ -212,8 +211,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/point_name_ed"
-            tools:ignore="RtlSymmetry"
-            android:visibility="gone"/>
+            tools:ignore="RtlSymmetry" />
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/point_about_ed"
@@ -230,8 +228,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/point_hint_ed"
-            tools:ignore="RtlSymmetry"
-            android:visibility="gone"/>
+            tools:ignore="RtlSymmetry" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/point_active_switch_tv"
