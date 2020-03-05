@@ -29,9 +29,10 @@
         android:translationX="@dimen/point_edit_layout_translation_x"
         android:paddingStart="30dp"
         android:paddingEnd="30dp"
-        android:background="@color/colorWhite"
+        android:background="@color/colorTinyGrey"
         android:clickable="true"
         android:focusable="true"
+        android:elevation="20dp"
         android:visibility="gone">
 
         <androidx.appcompat.widget.AppCompatEditText

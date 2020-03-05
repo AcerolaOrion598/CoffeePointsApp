@@ -32,7 +32,7 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
     private TextView pointActiveSwitchFormTv;
     private SwitchCompat pointActiveSwitchForm;
     private String statusTrueText, statusFalseText;
-    private int statusTrueColor, statusFalseColor, layoutBackgroundColor;
+    private int statusTrueColor, statusFalseColor;
     private Resources resources;
     private Animation animation;
 
@@ -59,42 +59,37 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
         resources = context.getResources();
         statusTrueColor = resources.getColor(R.color.colorGreen60);
         statusFalseColor = resources.getColor(R.color.colorRed60);
-        layoutBackgroundColor = resources.getColor(R.color.colorWhite87);
         statusTrueText = context.getString(R.string.point_status_true);
         statusFalseText = context.getString(R.string.point_status_false);
 
-        viewHolder.parentLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Point point = points.get(viewHolder.getAdapterPosition());
-                pointNameFormEd.setText(point.getName());
-                pointAboutFormEd.setText(point.getAbout());
-                if (point.isActive()) {
-                    ViewDriver.setSwitchAndLabel(pointActiveSwitchForm, pointActiveSwitchFormTv, statusTrueText, statusTrueColor, true);
-                } else {
-                    ViewDriver.setSwitchAndLabel(pointActiveSwitchForm, pointActiveSwitchFormTv, statusFalseText, statusFalseColor, false);
-                }
-                mainActivity.setActionBarTitle(context.getString(R.string.title_point_edit));
-                pointEditLayout.setTranslationX(resources.getDimension(R.dimen.point_edit_layout_translation_x));
-                animation = ViewDriver.showView(pointEditLayout, R.anim.full_screen_show_animation, context);
-                if (animation == null) {
-                    return;
-                }
-                animation.setAnimationListener(new Animation.AnimationListener() {
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        pointListLayout.setVisibility(View.INVISIBLE);
-                        pointEditLayout.setBackgroundColor(layoutBackgroundColor);
-                    }
-
-                    @Override
-                    public void onAnimationStart(Animation animation) { }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) { }
-                });
+        viewHolder.parentLayout.setOnClickListener(view1 -> {
+            Point point = points.get(viewHolder.getAdapterPosition());
+            pointNameFormEd.setText(point.getName());
+            pointAboutFormEd.setText(point.getAbout());
+            if (point.isActive()) {
+                ViewDriver.setSwitchAndLabel(pointActiveSwitchForm, pointActiveSwitchFormTv, statusTrueText, statusTrueColor, true);
+            } else {
+                ViewDriver.setSwitchAndLabel(pointActiveSwitchForm, pointActiveSwitchFormTv, statusFalseText, statusFalseColor, false);
             }
+            mainActivity.setActionBarTitle(context.getString(R.string.title_point_edit));
+            pointEditLayout.setTranslationX(resources.getDimension(R.dimen.point_edit_layout_translation_x));
+            animation = ViewDriver.showView(pointEditLayout, R.anim.full_screen_show_animation, context);
+            if (animation == null) {
+                return;
+            }
+            animation.setAnimationListener(new Animation.AnimationListener() {
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    pointListLayout.setVisibility(View.INVISIBLE);
+                }
+
+                @Override
+                public void onAnimationStart(Animation animation) { }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) { }
+            });
         });
 
         return viewHolder;
@@ -116,7 +111,7 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
         return points.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
         RelativeLayout parentLayout;
         TextView listPointName, listPointStatus;
 

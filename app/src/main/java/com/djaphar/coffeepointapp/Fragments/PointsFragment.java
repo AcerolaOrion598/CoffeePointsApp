@@ -40,7 +40,6 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
     private MainViewModel mainViewModel;
     private MainActivity mainActivity;
     private Context context;
-    private Resources resources;
     private RecyclerView recyclerView;
     private RelativeLayout pointListLayout;
     private ConstraintLayout pointEditLayout;
@@ -48,7 +47,7 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
     private TextView pointActiveSwitchFormTv;
     private SwitchCompat pointActiveSwitchForm;
     private String statusTrueText, statusFalseText;
-    private Button pointEditSaveButton, pointEditBackButton;
+    private Button pointEditSaveButton, pointEditBackButton, pointEditDeleteButton;
     private ArrayList<Point> points;
     private int statusTrueColor, statusFalseColor;
     private float pointEditLayoutCorrectionX, pointEditLayoutEndMotionX, pointEditLayoutStartLimit;
@@ -65,6 +64,7 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
         pointActiveSwitchForm = root.findViewById(R.id.point_active_switch_form);
         pointEditSaveButton = root.findViewById(R.id.point_edit_save_btn);
         pointEditBackButton = root.findViewById(R.id.point_edit_back_btn);
+        pointEditDeleteButton = root.findViewById(R.id.point_edit_delete_btn);
         mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
             mainActivity.setActionBarTitle(getString(R.string.title_points));
@@ -77,7 +77,7 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         context = getContext();
-        resources = getResources();
+        Resources resources = getResources();
         statusTrueColor = resources.getColor(R.color.colorGreen60);
         statusFalseColor = resources.getColor(R.color.colorRed60);
         statusTrueText = getString(R.string.point_status_true);
@@ -117,16 +117,14 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
             }
         });
 
-        pointEditSaveButton.setOnClickListener(lView -> { });
-
+        pointEditSaveButton.setOnClickListener(lView -> {});
+        pointEditDeleteButton.setOnClickListener(lView -> {});
         pointEditBackButton.setOnClickListener(lView -> backWasPressed());
-
         pointEditLayout.setOnTouchListener(this);
     }
 
     public void backWasPressed() {
         mainActivity.setActionBarTitle(getString(R.string.title_points));
-        pointEditLayout.setBackgroundColor(resources.getColor(R.color.colorWhite));
         pointListLayout.setVisibility(View.VISIBLE);
         ViewDriver.hideView(pointEditLayout, R.anim.full_screen_hide_animation, context);
     }
@@ -147,7 +145,6 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
             case MotionEvent.ACTION_MOVE:
                 pointEditLayoutEndMotionX = motionEvent.getRawX();
                 pointListLayout.setVisibility(View.VISIBLE);
-                view.setBackgroundColor(resources.getColor(R.color.colorWhite));
                 if (pointEditLayoutEndMotionX + pointEditLayoutCorrectionX < pointEditLayoutStartLimit) {
                     break;
                 }
@@ -157,14 +154,13 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
                 float startDiff = pointEditLayoutEndMotionX + pointEditLayoutCorrectionX - pointEditLayoutStartLimit;
                 if (startDiff > 300) {
                     view.setX(pointEditLayoutEndMotionX + pointEditLayoutCorrectionX);
-                    ViewDriver.hideView(pointEditLayout, R.anim.full_screen_hide_animation, context);
+                    ViewDriver.hideView(view, R.anim.full_screen_hide_animation, context);
                     break;
                 }
                 ViewPropertyAnimator animator = view.animate().x(pointEditLayoutStartLimit).setDuration(200);
                 animator.setListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationEnd(Animator animator) {
-                        view.setBackgroundColor(resources.getColor(R.color.colorWhite87));
                         pointListLayout.setVisibility(View.GONE);
                     }
 
@@ -179,7 +175,6 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
                 });
                 break;
         }
-
         return false;
     }
 }
