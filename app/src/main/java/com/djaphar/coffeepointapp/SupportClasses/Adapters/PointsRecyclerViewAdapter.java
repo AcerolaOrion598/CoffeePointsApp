@@ -82,6 +82,7 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     pointListLayout.setVisibility(View.INVISIBLE);
+                    pointEditLayout.setClickable(true);
                 }
 
                 @Override

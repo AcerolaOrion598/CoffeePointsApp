@@ -124,6 +124,7 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
     }
 
     public void backWasPressed() {
+        pointEditLayout.setClickable(false);
         mainActivity.setActionBarTitle(getString(R.string.title_points));
         pointListLayout.setVisibility(View.VISIBLE);
         ViewDriver.hideView(pointEditLayout, R.anim.full_screen_hide_animation, context);
@@ -153,6 +154,8 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
             case MotionEvent.ACTION_UP:
                 float startDiff = pointEditLayoutEndMotionX + pointEditLayoutCorrectionX - pointEditLayoutStartLimit;
                 if (startDiff > 300) {
+                    view.setClickable(false);
+                    mainActivity.setActionBarTitle(getString(R.string.title_points));
                     view.setX(pointEditLayoutEndMotionX + pointEditLayoutCorrectionX);
                     ViewDriver.hideView(view, R.anim.full_screen_hide_animation, context);
                     break;
