@@ -1,13 +1,17 @@
 package com.djaphar.coffeepointapp.Fragments;
 
+import android.animation.Animator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewPropertyAnimator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -31,22 +35,23 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class PointsFragment extends MyFragment {
+public class PointsFragment extends MyFragment implements View.OnTouchListener {
 
     private MainViewModel mainViewModel;
-    private RecyclerView recyclerView;
+    private MainActivity mainActivity;
     private Context context;
     private Resources resources;
+    private RecyclerView recyclerView;
     private RelativeLayout pointListLayout;
     private ConstraintLayout pointEditLayout;
-    private ArrayList<Point> points;
-    private MainActivity mainActivity;
     private EditText pointNameFormEd, pointAboutFormEd;
     private TextView pointActiveSwitchFormTv;
     private SwitchCompat pointActiveSwitchForm;
     private String statusTrueText, statusFalseText;
-    private int statusTrueColor, statusFalseColor;
     private Button pointEditSaveButton, pointEditBackButton;
+    private ArrayList<Point> points;
+    private int statusTrueColor, statusFalseColor;
+    private float pointEditLayoutCorrectionX, pointEditLayoutEndMotionX, pointEditLayoutStartLimit;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
@@ -67,6 +72,7 @@ public class PointsFragment extends MyFragment {
         return root;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -76,7 +82,7 @@ public class PointsFragment extends MyFragment {
         statusFalseColor = resources.getColor(R.color.colorRed60);
         statusTrueText = getString(R.string.point_status_true);
         statusFalseText = getString(R.string.point_status_false);
-
+        pointEditLayoutStartLimit = pointEditLayout.getX();
 
         mainViewModel.getPoints().observe(getViewLifecycleOwner(), mPoints -> {
             points = mPoints;
@@ -114,6 +120,8 @@ public class PointsFragment extends MyFragment {
         pointEditSaveButton.setOnClickListener(lView -> { });
 
         pointEditBackButton.setOnClickListener(lView -> backWasPressed());
+
+        pointEditLayout.setOnTouchListener(this);
     }
 
     public void backWasPressed() {
@@ -125,5 +133,53 @@ public class PointsFragment extends MyFragment {
 
     public ConstraintLayout getPointEditLayout() {
         return pointEditLayout;
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+
+        switch (motionEvent.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                float pointEditLayoutStartMotionX = motionEvent.getRawX();
+                pointEditLayoutCorrectionX = view.getX() - pointEditLayoutStartMotionX;
+                break;
+            case MotionEvent.ACTION_MOVE:
+                pointEditLayoutEndMotionX = motionEvent.getRawX();
+                pointListLayout.setVisibility(View.VISIBLE);
+                view.setBackgroundColor(resources.getColor(R.color.colorWhite));
+                if (pointEditLayoutEndMotionX + pointEditLayoutCorrectionX < pointEditLayoutStartLimit) {
+                    break;
+                }
+                view.setX(pointEditLayoutEndMotionX + pointEditLayoutCorrectionX);
+                break;
+            case MotionEvent.ACTION_UP:
+                float startDiff = pointEditLayoutEndMotionX + pointEditLayoutCorrectionX - pointEditLayoutStartLimit;
+                if (startDiff > 300) {
+                    view.setX(pointEditLayoutEndMotionX + pointEditLayoutCorrectionX);
+                    ViewDriver.hideView(pointEditLayout, R.anim.full_screen_hide_animation, context);
+                    break;
+                }
+                ViewPropertyAnimator animator = view.animate().x(pointEditLayoutStartLimit).setDuration(200);
+                animator.setListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationEnd(Animator animator) {
+                        view.setBackgroundColor(resources.getColor(R.color.colorWhite87));
+                        pointListLayout.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onAnimationStart(Animator animator) { }
+
+                    @Override
+                    public void onAnimationCancel(Animator animator) { }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animator) { }
+                });
+                break;
+        }
+
+        return false;
     }
 }

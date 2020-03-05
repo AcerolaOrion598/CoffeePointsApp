@@ -69,8 +69,7 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
     private Point focusedMarkerInfo = null;
     private String statusTrueText, statusFalseText;
     private String[] perms = new String[2];
-    private Float addWindowEndMotionY = null, testStart = null, testEnd = null;
-    private float infoWindowCorrectionY, infoWindowStartMotionY, infoWindowEndMotionY, addWindowCorrectionY;
+    private float infoWindowCorrectionY, infoWindowStartMotionY, infoWindowEndMotionY, addWindowCorrectionY, addWindowEndMotionY, pointAddTopLimit, pointAddBottomLimit;
     private int whoMoved, statusTrueColor, statusFalseColor, topViewShow, topViewHide, bottomViewShow, bottomViewHide,
     myMarkerSize, markerSize;
     private boolean alreadyOpened = false, addWindowHidden = false, editMode = false, editableMarkerRemoved = false;
@@ -126,11 +125,11 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         markerSize = (int) resources.getDimension(R.dimen.marker_size);
         pointInfoWindowParams = (ConstraintLayout.LayoutParams) pointInfoWindow.getLayoutParams();
         pointInfoWindowParams.setMargins((int) resources.getDimension(R.dimen.point_info_window_horizontal_margin), 0,
-                (int) resources.getDimension(R.dimen.point_info_window_horizontal_margin), (int) resources.getDimension(R.dimen.point_info_window_bottom_margin));
+            (int) resources.getDimension(R.dimen.point_info_window_horizontal_margin), (int) resources.getDimension(R.dimen.point_info_window_bottom_margin));
         pointAddWindow.setTranslationY(resources.getDimension(R.dimen.point_add_translation_y));
-        testStart = pointAddWindow.getY();
+        pointAddTopLimit = pointAddWindow.getY();
         pointAddWindow.setTranslationY(resources.getDimension(R.dimen.point_add_expanded_translation_y));
-        testEnd = pointAddWindow.getY();
+        pointAddBottomLimit = pointAddWindow.getY();
         equalizeMarkers(0.87f);
 
         pointAddBtn.setOnClickListener(lView -> {
@@ -529,6 +528,7 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
             case MotionEvent.ACTION_DOWN:
                 infoWindowStartMotionY = motionEvent.getRawY();
                 infoWindowCorrectionY = view.getY() - infoWindowStartMotionY;
+                break;
             case MotionEvent.ACTION_MOVE:
                 infoWindowEndMotionY = motionEvent.getRawY();
                 if (infoWindowStartMotionY > infoWindowEndMotionY) {
@@ -538,7 +538,7 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
                 break;
             case MotionEvent.ACTION_UP:
                 if (infoWindowEndMotionY != 0 && infoWindowEndMotionY - infoWindowStartMotionY > 200) {
-                    setAnimationForMovingView(view, bottomViewHide, infoWindowStartMotionY, infoWindowCorrectionY);
+                    setAnimationForSwipedViewHide(view, bottomViewHide, infoWindowStartMotionY, infoWindowCorrectionY);
                     equalizeMarkers(0.87f);
                     break;
                 } else {
@@ -556,29 +556,33 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
                 break;
             case MotionEvent.ACTION_MOVE:
                 addWindowEndMotionY = motionEvent.getRawY();
-                if (addWindowEndMotionY + addWindowCorrectionY < testStart || addWindowEndMotionY + addWindowCorrectionY > testEnd) {
+                if (addWindowEndMotionY + addWindowCorrectionY < pointAddTopLimit || addWindowEndMotionY + addWindowCorrectionY > pointAddBottomLimit) {
                     break;
                 }
                 view.setY(addWindowEndMotionY + addWindowCorrectionY);
                 break;
             case MotionEvent.ACTION_UP:
-                float endDiff = addWindowEndMotionY + addWindowCorrectionY - testEnd;
-                if (endDiff > -200) {
-                    view.animate().y(testEnd).setDuration(200);
+                float bottomDiff = addWindowEndMotionY + addWindowCorrectionY - pointAddBottomLimit;
+                if (bottomDiff > -200) {
+                    view.animate().y(pointAddBottomLimit).setDuration(200);
                     break;
                 }
 
-                float startDiff = addWindowEndMotionY + addWindowCorrectionY - testStart;
-                if (startDiff < 200) {
-                    view.animate().y(testStart).setDuration(200);
+                float topDiff = addWindowEndMotionY + addWindowCorrectionY - pointAddTopLimit;
+                if (topDiff < 200) {
+                    view.animate().y(pointAddTopLimit).setDuration(200);
                     break;
                 }
                 break;
         }
     }
 
-    private void setAnimationForMovingView(View view, int animationResource, float start, float tempY) {
+    private void setAnimationForSwipedViewHide(View view, int animationResource, float start, float tempY) {
         Animation animation = ViewDriver.hideView(view, animationResource, context);
+        if (animation == null) {
+            return;
+        }
+
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationEnd(Animation animation) {

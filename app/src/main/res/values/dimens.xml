@@ -9,4 +9,5 @@
     <dimen name="point_info_window_bottom_margin">76dp</dimen>
     <dimen name="point_add_translation_y">-230dp</dimen>
     <dimen name="point_add_expanded_translation_y">-20dp</dimen>
+    <dimen name="point_edit_layout_translation_x">0dp</dimen>
 </resources>

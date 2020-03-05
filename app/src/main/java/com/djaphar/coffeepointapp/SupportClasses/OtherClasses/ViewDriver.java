@@ -11,24 +11,30 @@ import androidx.appcompat.widget.SwitchCompat;
 public class ViewDriver {
 
     public static Animation showView(View view, int animationResource, Context context) {
-        Animation animation = AnimationUtils.loadAnimation(context, animationResource);
+        Animation animation = null;
 
         if (view.getVisibility() == View.INVISIBLE || view.getVisibility() == View.GONE) {
             view.setVisibility(View.VISIBLE);
-            view.startAnimation(animation);
+            animation = animateView(view, animationResource, context);
         }
 
         return animation;
     }
 
     public static Animation hideView(View view, int animationResource, Context context) {
-        Animation animation = AnimationUtils.loadAnimation(context, animationResource);
+        Animation animation = null;
 
         if (view.getVisibility() == View.VISIBLE) {
-            view.startAnimation(animation);
+            animation = animateView(view, animationResource, context);
             view.setVisibility(View.GONE);
         }
 
+        return animation;
+    }
+
+    private static Animation animateView(View view, int animationResource, Context context) {
+        Animation animation = AnimationUtils.loadAnimation(context, animationResource);
+        view.startAnimation(animation);
         return animation;
     }
 

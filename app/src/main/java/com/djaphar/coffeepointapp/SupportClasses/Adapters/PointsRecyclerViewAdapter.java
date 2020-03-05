@@ -75,7 +75,11 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
                     ViewDriver.setSwitchAndLabel(pointActiveSwitchForm, pointActiveSwitchFormTv, statusFalseText, statusFalseColor, false);
                 }
                 mainActivity.setActionBarTitle(context.getString(R.string.title_point_edit));
+                pointEditLayout.setTranslationX(resources.getDimension(R.dimen.point_edit_layout_translation_x));
                 animation = ViewDriver.showView(pointEditLayout, R.anim.full_screen_show_animation, context);
+                if (animation == null) {
+                    return;
+                }
                 animation.setAnimationListener(new Animation.AnimationListener() {
 
                     @Override
