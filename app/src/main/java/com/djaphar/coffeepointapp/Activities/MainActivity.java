@@ -55,7 +55,8 @@ public class MainActivity extends AppCompatActivity {
             case MapFragment:
                 MapFragment mapFragment = ((MapFragment) currentFragment);
                 ConstraintLayout pointInfoWindow = mapFragment.getPointInfoWindow();
-                if (!(mapFragment.addMarkerIsVisible()) && !(pointInfoWindow.getVisibility() == View.VISIBLE)) {
+                ConstraintLayout pointEditWindow = mapFragment.getPointEditWindow();
+                if (!(pointInfoWindow.getVisibility() == View.VISIBLE) && !(pointEditWindow.getVisibility() == View.VISIBLE)) {
                     super.onBackPressed();
                     return;
                 }

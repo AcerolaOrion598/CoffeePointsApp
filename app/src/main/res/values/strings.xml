@@ -10,7 +10,7 @@
     <string name="title_register">Регистрация</string>
     <string name="point_status_true">Открыта</string>
     <string name="point_status_false">Закрыта</string>
-    <string name="maps_key">YOUR_API_KEY</string>
+    <string name="maps_key">AIzaSyCZOEHFd_tdIdZmQbL2XMnhCve0JazriEE</string>
     <string name="new_point_btn">Новая точка</string>
     <string name="point_name_hint">Название точки</string>
     <string name="point_about_hint">Краткое описание точки</string>
