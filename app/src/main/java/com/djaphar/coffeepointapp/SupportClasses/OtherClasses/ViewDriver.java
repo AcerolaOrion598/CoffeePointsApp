@@ -38,12 +38,6 @@ public class ViewDriver {
         return animation;
     }
 
-    public static void toggleViewInHalf(View view, int animationResource, Context context) {
-        Animation animation = AnimationUtils.loadAnimation(context, animationResource);
-        animation.setFillAfter(true);
-        view.startAnimation(animation);
-    }
-
     public static void setStatusTvOptions(TextView tv, String text, int color) {
         tv.setTextColor(color);
         tv.setText(text);

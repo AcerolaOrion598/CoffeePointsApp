@@ -8,6 +8,9 @@ import retrofit2.http.POST;
 
 public interface PointsApi {
 
-    @POST("api/auth/login")
-    Call<User> logIn(@Body Credentials credentials);
+    @POST("api/supervisors/auth")
+    Call<SecondaryCredentials> testGetCode(@Body FirstCredentials testCredentials);
+
+    @POST("api/supervisors/codecheck")
+    Call<User> testLogIn(@Body SecondaryCredentials secondaryCredentials);
 }

@@ -9,68 +9,48 @@ import androidx.room.PrimaryKey;
 public class User {
 
     @NonNull
-    @PrimaryKey
-    @ColumnInfo(name = "_id")
-    private String _id;
-
-    @NonNull
-    @ColumnInfo(name = "email")
-    private String email;
-
-    @NonNull
-    @ColumnInfo(name = "password")
-    private String password;
-
-    @ColumnInfo(name = "name")
-    private String name;
-
     @ColumnInfo(name = "role")
     private String role;
 
-    @ColumnInfo(name = "about")
-    private String about;
+    @NonNull
+    @PrimaryKey
+    @ColumnInfo(name = "phone_number")
+    private String phoneNumber;
 
-    @ColumnInfo(name = "token")
-    private String token;
+    @NonNull
+    @ColumnInfo(name = "supervisor_status")
+    private String supervisorStatus;
 
-    User(@NonNull String _id, @NonNull String email, @NonNull String password, String name, String role, String about, String token) {
-        this._id = _id;
-        this.email = email;
-        this.password = password;
-        this.name = name;
+    User(@NonNull String role, @NonNull String phoneNumber, @NonNull String supervisorStatus) {
         this.role = role;
-        this.about = about;
-        this.token = token;
+        this.phoneNumber = phoneNumber;
+        this.supervisorStatus = supervisorStatus;
     }
 
     @NonNull
-    public String get_id() {
-        return _id;
-    }
-
-    @NonNull
-    public String getEmail() {
-        return email;
-    }
-
-    @NonNull
-    public String getPassword() {
-        return password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
     public String getRole() {
         return role;
     }
 
-    public String getAbout() {
-        return about;
+    @NonNull
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public String getToken() {
-        return token;
+    @NonNull
+     public String getSupervisorStatus() {
+        return supervisorStatus;
+    }
+
+    public void setRole(@NonNull String role) {
+        this.role = role;
+    }
+
+    public void setPhoneNumber(@NonNull String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setSupervisorStatus(@NonNull String supervisorStatus) {
+        this.supervisorStatus = supervisorStatus;
     }
 }

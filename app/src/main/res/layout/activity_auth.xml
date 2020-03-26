@@ -1,22 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/auth_container"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingStart="20dp"
+    android:paddingEnd="20dp">
 
-    <fragment
-        android:id="@+id/auth_host_fragment"
-        android:name="androidx.navigation.fragment.NavHostFragment"
+    <TextView
+        android:id="@+id/auth_instruction_tv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:defaultNavHost="false"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="30dp"
+        android:fontFamily="@font/roboto"
+        android:textColor="@color/colorBlack60"
+        android:textSize="16sp"
+        android:text="@string/auth_instruction_tv_num_text"/>
+
+    <TextView
+        android:id="@+id/auth_instruction_phone_number_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/auth_instruction_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/roboto_medium"
+        android:textColor="@color/colorBlack87"
+        android:textSize="20sp" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/phone_number_ed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:focusableInTouchMode="true"
+        android:hint="@string/phone_number_ed_text"
+        android:background="@drawable/edit_text_w_stroke"
+        android:textSize="22sp"
+        android:fontFamily="@font/roboto"
+        android:paddingStart="15dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:layout_marginTop="200dp"
+        android:inputType="phone"
+        tools:ignore="RtlSymmetry" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/sms_code_ed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:focusableInTouchMode="true"
+        android:hint="@string/sms_code_ed_text"
+        android:background="@drawable/edit_text_w_stroke"
+        android:textSize="22sp"
+        android:fontFamily="@font/roboto"
+        android:paddingStart="15dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:layout_marginTop="200dp"
+        android:inputType="phone"
+        tools:ignore="RtlSymmetry"
+        android:visibility="invisible"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/request_code_btn"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        app:navGraph="@navigation/auth_navigation" />
+        android:text="@string/request_code_btn_text"
+        android:background="@drawable/expanded_button"
+        android:fontFamily="@font/roboto"
+        android:textColor="@color/colorWhite87"
+        android:textSize="24sp"
+        android:layout_marginBottom="20dp"
+        android:enabled="false"
+        android:textAllCaps="false"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/login_btn"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="@string/log_in_btn"
+        android:background="@drawable/expanded_button"
+        android:fontFamily="@font/roboto"
+        android:textColor="@color/colorWhite87"
+        android:textSize="24sp"
+        android:layout_marginBottom="20dp"
+        android:textAllCaps="false"
+        android:enabled="false"
+        android:visibility="invisible"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

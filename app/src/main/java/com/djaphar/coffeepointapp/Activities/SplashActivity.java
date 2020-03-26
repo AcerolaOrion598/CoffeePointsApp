@@ -1,6 +1,5 @@
 package com.djaphar.coffeepointapp.Activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 

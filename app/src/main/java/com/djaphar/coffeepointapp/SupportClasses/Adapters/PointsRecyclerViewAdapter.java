@@ -62,7 +62,7 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
         statusTrueText = context.getString(R.string.point_status_true);
         statusFalseText = context.getString(R.string.point_status_false);
 
-        viewHolder.parentLayout.setOnClickListener(view1 -> {
+        viewHolder.parentLayout.setOnClickListener(lView -> {
             Point point = points.get(viewHolder.getAdapterPosition());
             pointNameFormEd.setText(point.getName());
             pointAboutFormEd.setText(point.getAbout());
@@ -73,7 +73,7 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
             }
             mainActivity.setActionBarTitle(context.getString(R.string.title_point_edit));
             pointEditLayout.setTranslationX(resources.getDimension(R.dimen.point_edit_layout_translation_x));
-            animation = ViewDriver.showView(pointEditLayout, R.anim.full_screen_show_animation, context);
+            animation = ViewDriver.showView(pointEditLayout, R.anim.show_right_animation, context);
             if (animation == null) {
                 return;
             }

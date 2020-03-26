@@ -6,8 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import com.djaphar.coffeepointapp.Activities.MainActivity;
 import com.djaphar.coffeepointapp.R;
@@ -24,21 +22,14 @@ public class ProfileFragment extends MyFragment {
 
     private ProfileViewModel profileViewModel;
     private MainActivity mainActivity;
-    private TextView userNameTv, userAboutTv;
-    private EditText userNameEd, userAboutEd;
     private Button editProfileBtn, saveProfileBtn, cancelProfileBtn;
     private ConstraintLayout editProfileContainer, profileContainer;
     private Context context;
-    private String userName, userAbout;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
-        userNameTv = root.findViewById(R.id.user_name_tv);
-        userAboutTv = root.findViewById(R.id.user_about_tv);
-        userNameEd = root.findViewById(R.id.user_name_ed);
-        userAboutEd = root.findViewById(R.id.user_about_ed);
         editProfileBtn = root.findViewById(R.id.edit_profile_btn);
         saveProfileBtn = root.findViewById(R.id.save_profile_btn);
         cancelProfileBtn = root.findViewById(R.id.cancel_profile_btn);
@@ -57,19 +48,13 @@ public class ProfileFragment extends MyFragment {
         super.onViewCreated(view, savedInstanceState);
 
         profileViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
-            if (user == null) {
-                return;
-            }
-            userName = user.getName();
-            userAbout = user.getAbout();
-            userNameTv.setText(userName);
-            userAboutTv.setText(userAbout);
+//            if (user == null) {
+//                return;
+//            }
         });
 
         editProfileBtn.setOnClickListener(lView -> {
             mainActivity.setActionBarTitle(getString(R.string.title_profile_edit));
-            userNameEd.setText(userName);
-            userAboutEd.setText(userAbout);
             ViewDriver.hideView(profileContainer, R.anim.top_view_hide_animation, context);
             ViewDriver.hideView(editProfileBtn, R.anim.bottom_view_hide_animation, context);
             ViewDriver.showView(editProfileContainer, R.anim.top_view_show_animation, context);

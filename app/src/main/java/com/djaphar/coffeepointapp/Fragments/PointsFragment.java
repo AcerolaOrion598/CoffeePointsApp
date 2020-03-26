@@ -20,12 +20,9 @@ import android.widget.TextView;
 import com.djaphar.coffeepointapp.Activities.MainActivity;
 import com.djaphar.coffeepointapp.R;
 import com.djaphar.coffeepointapp.SupportClasses.Adapters.PointsRecyclerViewAdapter;
-import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Point;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.MyFragment;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.ViewDriver;
 import com.djaphar.coffeepointapp.ViewModels.MainViewModel;
-
-import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -47,8 +44,8 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
     private TextView pointActiveSwitchFormTv;
     private SwitchCompat pointActiveSwitchForm;
     private String statusTrueText, statusFalseText;
-    private Button pointEditSaveButton, pointEditBackButton, pointEditDeleteButton;
-    private ArrayList<Point> points;
+    private Button pointEditSaveButton, pointEditBackButton;
+//    private ArrayList<Point> points;
     private int statusTrueColor, statusFalseColor;
     private float pointEditLayoutCorrectionX, pointEditLayoutEndMotionX, pointEditLayoutStartLimit;
 
@@ -64,7 +61,6 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
         pointActiveSwitchForm = root.findViewById(R.id.point_active_switch_form);
         pointEditSaveButton = root.findViewById(R.id.point_edit_save_btn);
         pointEditBackButton = root.findViewById(R.id.point_edit_back_btn);
-        pointEditDeleteButton = root.findViewById(R.id.point_edit_delete_btn);
         mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
             mainActivity.setActionBarTitle(getString(R.string.title_points));
@@ -85,8 +81,8 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
         pointEditLayoutStartLimit = pointEditLayout.getX();
 
         mainViewModel.getPoints().observe(getViewLifecycleOwner(), mPoints -> {
-            points = mPoints;
-            PointsRecyclerViewAdapter adapter = new PointsRecyclerViewAdapter(points, pointListLayout, pointEditLayout,
+//            points = mPoints;
+            PointsRecyclerViewAdapter adapter = new PointsRecyclerViewAdapter(mPoints, pointListLayout, pointEditLayout,
                                         mainActivity, pointNameFormEd, pointAboutFormEd, pointActiveSwitchFormTv, pointActiveSwitchForm);
             recyclerView.setAdapter(adapter);
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
@@ -118,7 +114,6 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
         });
 
         pointEditSaveButton.setOnClickListener(lView -> {});
-        pointEditDeleteButton.setOnClickListener(lView -> {});
         pointEditBackButton.setOnClickListener(lView -> backWasPressed());
         pointEditLayout.setOnTouchListener(this);
     }
@@ -127,7 +122,7 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
         pointEditLayout.setClickable(false);
         mainActivity.setActionBarTitle(getString(R.string.title_points));
         pointListLayout.setVisibility(View.VISIBLE);
-        ViewDriver.hideView(pointEditLayout, R.anim.full_screen_hide_animation, context);
+        ViewDriver.hideView(pointEditLayout, R.anim.hide_right_animation, context);
     }
 
     public ConstraintLayout getPointEditLayout() {
@@ -157,7 +152,7 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
                     view.setClickable(false);
                     mainActivity.setActionBarTitle(getString(R.string.title_points));
                     view.setX(pointEditLayoutEndMotionX + pointEditLayoutCorrectionX);
-                    ViewDriver.hideView(view, R.anim.full_screen_hide_animation, context);
+                    ViewDriver.hideView(view, R.anim.hide_right_animation, context);
                     break;
                 }
                 ViewPropertyAnimator animator = view.animate().x(pointEditLayoutStartLimit).setDuration(200);
