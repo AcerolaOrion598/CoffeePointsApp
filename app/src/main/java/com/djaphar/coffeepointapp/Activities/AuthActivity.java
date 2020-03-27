@@ -35,7 +35,7 @@ public class AuthActivity extends AppCompatActivity {
     private Button requestNumberBtn, loginBtn;
     private TextView authInstructionTv, authInstructionPhoneNumberTv;
     private String token;
-    private SecondaryCredentials secondaryCredentials;
+    private SecondaryCredentials secondaryCredentials = new SecondaryCredentials(null, null);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,7 +59,11 @@ public class AuthActivity extends AppCompatActivity {
             if (credentials == null) {
                 return;
             }
-            secondaryCredentials = credentials;
+            secondaryCredentials.setCodeId(credentials.getCodeId());
+            if (secondaryCredentials.getCode() == null) {
+                return;
+            }
+            loginBtn.performClick();
         });
 
         authViewModel.getUser().observe(this, testUser -> {
@@ -124,10 +128,6 @@ public class AuthActivity extends AppCompatActivity {
         }));
 
         loginBtn.setOnClickListener(lView -> {
-            if (secondaryCredentials == null) {
-                Toast.makeText(this, R.string.first_credentials_error_text, Toast.LENGTH_SHORT).show();
-                return;
-            }
             secondaryCredentials.setCode(smsCodeEd.getText().toString());
             authViewModel.login(secondaryCredentials);
         });
@@ -179,7 +179,11 @@ public class AuthActivity extends AppCompatActivity {
             Bundle extras = intent.getExtras();
             if (extras != null) {
                 smsCodeEd.setText(extras.getString("code"));
+                secondaryCredentials.setCode(extras.getString("code"));
                 loginBtn.setEnabled(true);
+                if (secondaryCredentials.getCodeId() == null) {
+                    return;
+                }
                 loginBtn.performClick();
             }
         }
