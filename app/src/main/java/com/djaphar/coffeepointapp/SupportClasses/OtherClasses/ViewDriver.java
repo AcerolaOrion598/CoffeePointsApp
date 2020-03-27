@@ -6,8 +6,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
-import androidx.appcompat.widget.SwitchCompat;
-
 public class ViewDriver {
 
     public static Animation showView(View view, int animationResource, Context context) {
@@ -41,10 +39,5 @@ public class ViewDriver {
     public static void setStatusTvOptions(TextView tv, String text, int color) {
         tv.setTextColor(color);
         tv.setText(text);
-    }
-
-    public static void setSwitchAndLabel(SwitchCompat switchCompat, TextView textView, String text, int color, boolean state) {
-        setStatusTvOptions(textView, text, color);
-        switchCompat.setChecked(state);
     }
 }

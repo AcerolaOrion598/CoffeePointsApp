@@ -3,7 +3,6 @@ package com.djaphar.coffeepointapp.Fragments;
 import android.animation.Animator;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,8 +13,8 @@ import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.djaphar.coffeepointapp.Activities.MainActivity;
 import com.djaphar.coffeepointapp.R;
@@ -26,7 +25,6 @@ import com.djaphar.coffeepointapp.ViewModels.MainViewModel;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -39,15 +37,12 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
     private Context context;
     private RecyclerView recyclerView;
     private RelativeLayout pointListLayout;
-    private ConstraintLayout pointEditLayout;
+    private ConstraintLayout pointEditLayout, addPointWindow;
     private EditText pointNameFormEd, pointAboutFormEd;
-    private TextView pointActiveSwitchFormTv;
-    private SwitchCompat pointActiveSwitchForm;
-    private String statusTrueText, statusFalseText;
-    private Button pointEditSaveButton, pointEditBackButton;
-//    private ArrayList<Point> points;
-    private int statusTrueColor, statusFalseColor;
-    private float pointEditLayoutCorrectionX, pointEditLayoutEndMotionX, pointEditLayoutStartLimit;
+    private Button pointEditSaveButton, pointEditBackButton, addPointCancelBtn;
+    private ImageButton addPointBtn;
+    private float pointEditLayoutCorrectionX, pointEditLayoutEndMotionX, pointEditLayoutStartLimit, addWindowEndMotionY,
+            addPointTopLimit, addPointBottomLimit, addWindowCorrectionY;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
@@ -55,12 +50,13 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
         recyclerView = root.findViewById(R.id.points_recycler_view);
         pointListLayout = root.findViewById(R.id.points_list_layout);
         pointEditLayout = root.findViewById(R.id.point_edit_layout);
+        addPointWindow = root.findViewById(R.id.add_point_window);
         pointNameFormEd = root.findViewById(R.id.point_name_form_ed);
         pointAboutFormEd = root.findViewById(R.id.point_about_form_ed);
-        pointActiveSwitchFormTv = root.findViewById(R.id.point_active_switch_form_tv);
-        pointActiveSwitchForm = root.findViewById(R.id.point_active_switch_form);
         pointEditSaveButton = root.findViewById(R.id.point_edit_save_btn);
         pointEditBackButton = root.findViewById(R.id.point_edit_back_btn);
+        addPointCancelBtn = root.findViewById(R.id.add_point_cancel_btn);
+        addPointBtn = root.findViewById(R.id.add_point_btn);
         mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
             mainActivity.setActionBarTitle(getString(R.string.title_points));
@@ -73,27 +69,13 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         context = getContext();
-        Resources resources = getResources();
-        statusTrueColor = resources.getColor(R.color.colorGreen60);
-        statusFalseColor = resources.getColor(R.color.colorRed60);
-        statusTrueText = getString(R.string.point_status_true);
-        statusFalseText = getString(R.string.point_status_false);
         pointEditLayoutStartLimit = pointEditLayout.getX();
 
         mainViewModel.getPoints().observe(getViewLifecycleOwner(), mPoints -> {
-//            points = mPoints;
             PointsRecyclerViewAdapter adapter = new PointsRecyclerViewAdapter(mPoints, pointListLayout, pointEditLayout,
-                                        mainActivity, pointNameFormEd, pointAboutFormEd, pointActiveSwitchFormTv, pointActiveSwitchForm);
+                    mainActivity, pointNameFormEd, pointAboutFormEd);
             recyclerView.setAdapter(adapter);
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        });
-
-        pointActiveSwitchForm.setOnCheckedChangeListener((compoundButton, isChecked) -> {
-            if (isChecked) {
-                ViewDriver.setStatusTvOptions(pointActiveSwitchFormTv, statusTrueText, statusTrueColor);
-            } else {
-                ViewDriver.setStatusTvOptions(pointActiveSwitchFormTv, statusFalseText, statusFalseColor);
-            }
         });
 
         pointNameFormEd.addTextChangedListener(new TextWatcher() {
@@ -113,26 +95,62 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
             }
         });
 
+        addPointWindow.setTranslationY(getResources().getDimension(R.dimen.add_point_window_translation_y));
+        addPointTopLimit = addPointWindow.getY();
+        addPointWindow.setTranslationY(getResources().getDimension(R.dimen.add_point_window_expanded_translation_y));
+        addPointBottomLimit = addPointWindow.getY();
+
         pointEditSaveButton.setOnClickListener(lView -> {});
         pointEditBackButton.setOnClickListener(lView -> backWasPressed());
+        addPointBtn.setOnClickListener(lView -> {
+            addPointWindow.setTranslationY(getResources().getDimension(R.dimen.add_point_window_translation_y));
+            ViewDriver.hideView(addPointBtn, R.anim.bottom_view_hide_animation, context);
+            ViewDriver.showView(addPointWindow, R.anim.top_view_show_animation, context);
+        });
+        addPointCancelBtn.setOnClickListener(lView -> {
+            ViewDriver.hideView(addPointWindow, R.anim.top_view_hide_animation, context);
+            ViewDriver.showView(addPointBtn, R.anim.bottom_view_show_animation, context);
+        });
         pointEditLayout.setOnTouchListener(this);
+        addPointWindow.setOnTouchListener(this);
     }
 
     public void backWasPressed() {
-        pointEditLayout.setClickable(false);
-        mainActivity.setActionBarTitle(getString(R.string.title_points));
-        pointListLayout.setVisibility(View.VISIBLE);
-        ViewDriver.hideView(pointEditLayout, R.anim.hide_right_animation, context);
+        if (pointEditLayout.getVisibility() == View.VISIBLE) {
+            pointEditLayout.setClickable(false);
+            mainActivity.setActionBarTitle(getString(R.string.title_points));
+            pointListLayout.setVisibility(View.VISIBLE);
+            ViewDriver.hideView(pointEditLayout, R.anim.hide_right_animation, context);
+        } else if (addPointWindow.getVisibility() == View.VISIBLE) {
+            ViewDriver.hideView(addPointWindow, R.anim.top_view_hide_animation, context);
+            ViewDriver.showView(addPointBtn, R.anim.bottom_view_show_animation, context);
+        }
     }
 
     public ConstraintLayout getPointEditLayout() {
         return pointEditLayout;
     }
 
+    public ConstraintLayout getAddPointWindow() {
+        return addPointWindow;
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
 
+        if (view == pointEditLayout) {
+            return handlePointEditLayoutMotion(view, motionEvent);
+        }
+
+        if (view == addPointWindow) {
+            return handleAddPointWindowMotion(view, motionEvent);
+        }
+
+        return false;
+    }
+
+    private boolean handlePointEditLayoutMotion(View view, MotionEvent motionEvent) {
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 float pointEditLayoutStartMotionX = motionEvent.getRawX();
@@ -171,6 +189,36 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
                     @Override
                     public void onAnimationRepeat(Animator animator) { }
                 });
+                break;
+        }
+        return false;
+    }
+
+    private boolean handleAddPointWindowMotion(View view, MotionEvent motionEvent) {
+        switch (motionEvent.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                float addWindowStartMotionY = motionEvent.getRawY();
+                addWindowCorrectionY = view.getY() - addWindowStartMotionY;
+                break;
+            case MotionEvent.ACTION_MOVE:
+                addWindowEndMotionY = motionEvent.getRawY();
+                if (addWindowEndMotionY + addWindowCorrectionY < addPointTopLimit || addWindowEndMotionY + addWindowCorrectionY > addPointBottomLimit) {
+                    break;
+                }
+                view.setY(addWindowEndMotionY + addWindowCorrectionY);
+                break;
+            case MotionEvent.ACTION_UP:
+                float bottomDiff = addWindowEndMotionY + addWindowCorrectionY - addPointBottomLimit;
+                if (bottomDiff > -200) {
+                    view.animate().y(addPointBottomLimit).setDuration(200);
+                    break;
+                }
+
+                float topDiff = addWindowEndMotionY + addWindowCorrectionY - addPointTopLimit;
+                if (topDiff < 200) {
+                    view.animate().y(addPointTopLimit).setDuration(200);
+                    break;
+                }
                 break;
         }
         return false;

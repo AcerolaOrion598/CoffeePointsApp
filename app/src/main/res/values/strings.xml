@@ -7,14 +7,12 @@
     <string name="title_point_edit">Редактировать Точку</string>
     <string name="title_profile_edit">Редактировать профиль</string>
     <string name="title_log_in">Вход</string>
-    <string name="title_register">Регистрация</string>
     <string name="point_status_true">Открыта</string>
     <string name="point_status_false">Закрыта</string>
     <string name="maps_key">YOUR_API_KEY</string>
-    <string name="new_point_btn">Новая точка</string>
+    <string name="new_point_tv_text">Новая точка</string>
     <string name="point_name_hint">Название точки</string>
     <string name="point_about_hint">Краткое описание точки</string>
-    <string name="point_hint_hint">Хинт</string>
     <string name="auth_instruction_tv_num_text">Введите Ваш номер телефона, на который мы отправим код подтверждения</string>
     <string name="auth_instruction_tv_code_text">Введите код, который мы отправили на номер:</string>
     <string name="sms_code_ed_text">Код из смс</string>

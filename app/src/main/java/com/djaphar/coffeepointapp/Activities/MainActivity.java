@@ -65,7 +65,8 @@ public class MainActivity extends AppCompatActivity {
             case PointsFragment:
                 PointsFragment pointsFragment = ((PointsFragment) currentFragment);
                 ConstraintLayout editLayout = pointsFragment.getPointEditLayout();
-                if (!(editLayout.getVisibility() == View.VISIBLE)) {
+                ConstraintLayout addPointWindow = pointsFragment.getAddPointWindow();
+                if (!(editLayout.getVisibility() == View.VISIBLE) && !(addPointWindow.getVisibility() == View.VISIBLE)) {
                     super.onBackPressed();
                     return;
                 }

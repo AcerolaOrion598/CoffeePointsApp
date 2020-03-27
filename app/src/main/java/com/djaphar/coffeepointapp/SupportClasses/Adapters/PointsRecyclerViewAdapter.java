@@ -29,8 +29,6 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
     private ArrayList<Point> points;
     private MainActivity mainActivity;
     private EditText pointNameFormEd, pointAboutFormEd;
-    private TextView pointActiveSwitchFormTv;
-    private SwitchCompat pointActiveSwitchForm;
     private String statusTrueText, statusFalseText;
     private int statusTrueColor, statusFalseColor;
     private Resources resources;
@@ -38,15 +36,13 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
 
     public PointsRecyclerViewAdapter(ArrayList<Point> points, RelativeLayout pointListLayout,
                                      ConstraintLayout pointEditLayout, MainActivity mainActivity, EditText pointNameFormEd,
-                                     EditText pointAboutFormEd, TextView pointActiveSwitchFormTv, SwitchCompat pointActiveSwitchForm) {
+                                     EditText pointAboutFormEd) {
         this.pointListLayout = pointListLayout;
         this.pointEditLayout = pointEditLayout;
         this.points = points;
         this.mainActivity = mainActivity;
         this.pointNameFormEd = pointNameFormEd;
         this.pointAboutFormEd = pointAboutFormEd;
-        this.pointActiveSwitchFormTv = pointActiveSwitchFormTv;
-        this.pointActiveSwitchForm = pointActiveSwitchForm;
     }
 
     @NonNull
@@ -66,11 +62,6 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
             Point point = points.get(viewHolder.getAdapterPosition());
             pointNameFormEd.setText(point.getName());
             pointAboutFormEd.setText(point.getAbout());
-            if (point.isActive()) {
-                ViewDriver.setSwitchAndLabel(pointActiveSwitchForm, pointActiveSwitchFormTv, statusTrueText, statusTrueColor, true);
-            } else {
-                ViewDriver.setSwitchAndLabel(pointActiveSwitchForm, pointActiveSwitchFormTv, statusFalseText, statusFalseColor, false);
-            }
             mainActivity.setActionBarTitle(context.getString(R.string.title_point_edit));
             pointEditLayout.setTranslationX(resources.getDimension(R.dimen.point_edit_layout_translation_x));
             animation = ViewDriver.showView(pointEditLayout, R.anim.show_right_animation, context);

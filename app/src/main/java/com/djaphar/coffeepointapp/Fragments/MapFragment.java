@@ -42,7 +42,6 @@ import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.ViewModelProvider;
@@ -56,17 +55,16 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
     private Resources resources;
     private ConstraintLayout pointInfoWindow, pointEditWindow;
     private ConstraintLayout.LayoutParams pointInfoWindowParams;
-    private TextView pointName, pointAbout, pointOwner, pointActive, pointActiveSwitchTv;
-    private EditText pointNameEd, pointHintEd, pointAboutEd;
+    private TextView pointName, pointAbout, pointOwner, pointActive;
+    private EditText pointNameEd, pointAboutEd;
     private Button pointEditCancelBtn, pointEditSaveBtn, pointEditBtn;
-    private SwitchCompat pointActiveSwitch, pointActiveInfoWindowSwitch;
     private SupportMapFragment supportMapFragment;
     private GoogleMap gMap;
     private ArrayList<Marker> markers = new ArrayList<>(), tempMarkers = new ArrayList<>();
     private Point focusedMarkerInfo = null;
     private String statusTrueText, statusFalseText;
     private String[] perms = new String[2];
-    private float infoWindowCorrectionY, infoWindowStartMotionY, infoWindowEndMotionY, addWindowCorrectionY, addWindowEndMotionY, pointAddTopLimit, pointAddBottomLimit;
+    private float infoWindowCorrectionY, infoWindowStartMotionY, infoWindowEndMotionY, editWindowCorrectionY, editWindowEndMotionY, pointEditTopLimit, pointEditBottomLimit;
     private int whoMoved, statusTrueColor, statusFalseColor, topViewShow, topViewHide, bottomViewShow, bottomViewHide,
     myMarkerSize, markerSize;
     private boolean alreadyOpened = false, editWindowHidden = false;
@@ -81,15 +79,11 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         pointAbout = root.findViewById(R.id.point_about);
         pointOwner = root.findViewById(R.id.point_owner);
         pointActive = root.findViewById(R.id.point_active);
-        pointActiveSwitchTv = root.findViewById(R.id.point_active_switch_tv);
         pointNameEd = root.findViewById(R.id.point_name_ed);
-        pointHintEd = root.findViewById(R.id.point_hint_ed);
         pointAboutEd = root.findViewById(R.id.point_about_ed);
         pointEditCancelBtn = root.findViewById(R.id.point_edit_cancel_btn);
         pointEditSaveBtn = root.findViewById(R.id.point_edit_save_btn);
         pointEditBtn = root.findViewById(R.id.point_edit_btn);
-        pointActiveSwitch = root.findViewById(R.id.point_active_switch);
-        pointActiveInfoWindowSwitch = root.findViewById(R.id.point_active_info_window_switch);
         mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
             mainActivity.setActionBarTitle(getString(R.string.title_map));
@@ -119,10 +113,10 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         pointInfoWindowParams = (ConstraintLayout.LayoutParams) pointInfoWindow.getLayoutParams();
         pointInfoWindowParams.setMargins((int) resources.getDimension(R.dimen.point_info_window_horizontal_margin), 0,
             (int) resources.getDimension(R.dimen.point_info_window_horizontal_margin), (int) resources.getDimension(R.dimen.point_info_window_bottom_margin));
-        pointEditWindow.setTranslationY(resources.getDimension(R.dimen.point_add_translation_y));
-        pointAddTopLimit = pointEditWindow.getY();
-        pointEditWindow.setTranslationY(resources.getDimension(R.dimen.point_add_expanded_translation_y));
-        pointAddBottomLimit = pointEditWindow.getY();
+        pointEditWindow.setTranslationY(resources.getDimension(R.dimen.point_edit_translation_y));
+        pointEditTopLimit = pointEditWindow.getY();
+        pointEditWindow.setTranslationY(resources.getDimension(R.dimen.point_edit_expanded_translation_y));
+        pointEditBottomLimit = pointEditWindow.getY();
         equalizeMarkers(0.87f);
 
         pointEditCancelBtn.setOnClickListener(lView -> editPointModeEnd(false));
@@ -136,28 +130,10 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         pointEditBtn.setOnClickListener(lView -> {
             if (focusedMarkerInfo != null) {
                 if (focusedMarkerInfo.isActive()) {
-                    editPointModeStart(focusedMarkerInfo.isActive(), focusedMarkerInfo.getName(), focusedMarkerInfo.getHint(),
-                            focusedMarkerInfo.getAbout());
+                    editPointModeStart(focusedMarkerInfo.getName(), focusedMarkerInfo.getAbout());
                 } else {
-                    editPointModeStart(focusedMarkerInfo.isActive(), focusedMarkerInfo.getName(), focusedMarkerInfo.getHint(),
-                            focusedMarkerInfo.getAbout());
+                    editPointModeStart(focusedMarkerInfo.getName(), focusedMarkerInfo.getAbout());
                 }
-            }
-        });
-
-        pointActiveSwitch.setOnCheckedChangeListener((lView, isChecked) -> {
-            if (isChecked) {
-                ViewDriver.setStatusTvOptions(pointActiveSwitchTv, statusTrueText, statusTrueColor);
-            } else {
-                ViewDriver.setStatusTvOptions(pointActiveSwitchTv, statusFalseText, statusFalseColor);
-            }
-        });
-
-        pointActiveInfoWindowSwitch.setOnCheckedChangeListener((lView, isChecked) -> {
-            if (isChecked) { //Отправляем isChecked шоб апдейтить бд
-                ViewDriver.setStatusTvOptions(pointActive, statusTrueText, statusTrueColor);
-            } else {
-                ViewDriver.setStatusTvOptions(pointActive, statusFalseText, statusFalseColor);
             }
         });
 
@@ -286,7 +262,6 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
 
     private void infoWindowEditElementsToggle(int visibility, int constraintBottom) {
         pointEditBtn.setVisibility(visibility);
-        pointActiveInfoWindowSwitch.setVisibility(visibility);
         ConstraintLayout.LayoutParams paramsTv = (ConstraintLayout.LayoutParams) pointActive.getLayoutParams();
         paramsTv.bottomToBottom = constraintBottom;
         pointActive.setLayoutParams(paramsTv);
@@ -296,10 +271,8 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         Point point = (Point) marker.getTag();
         if (point != null) {
             if (point.isActive()) {
-                pointActiveInfoWindowSwitch.setChecked(true);
                 ViewDriver.setStatusTvOptions(pointActive, statusTrueText, statusTrueColor);
             } else {
-                pointActiveInfoWindowSwitch.setChecked(false);
                 ViewDriver.setStatusTvOptions(pointActive, statusFalseText, statusFalseColor);
             }
 
@@ -322,18 +295,11 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         }
     }
 
-    private void editPointModeStart(boolean isActive, String pointName, String pointHint, String pointAbout) {
-        if (isActive) {
-            ViewDriver.setStatusTvOptions(pointActiveSwitchTv, statusTrueText, statusTrueColor);
-        } else {
-            ViewDriver.setStatusTvOptions(pointActiveSwitchTv, statusFalseText, statusFalseColor);
-        }
-        pointActiveSwitch.setChecked(isActive);
+    private void editPointModeStart(String pointName, String pointAbout) {
         pointNameEd.setText(pointName);
-        pointHintEd.setText(pointHint);
         pointAboutEd.setText(pointAbout);
         ViewDriver.hideView(pointInfoWindow, bottomViewHide, context);
-        pointEditWindow.setTranslationY(resources.getDimension(R.dimen.point_add_translation_y));
+        pointEditWindow.setTranslationY(resources.getDimension(R.dimen.point_edit_translation_y));
         ViewDriver.showView(pointEditWindow, topViewShow, context);
     }
 
@@ -444,19 +410,17 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
     public boolean onTouch(View view, MotionEvent motionEvent) {
 
         if (view == pointInfoWindow) {
-            handleInfoWindowMotion(view, motionEvent);
-            return false;
+            return handleInfoWindowMotion(view, motionEvent);
         }
 
         if (view == pointEditWindow) {
-            handleEditWindowMotion(view, motionEvent);
-            return false;
+            return handleEditWindowMotion(view, motionEvent);
         }
 
         return false;
     }
 
-    private void handleInfoWindowMotion(View view, MotionEvent motionEvent) {
+    private boolean handleInfoWindowMotion(View view, MotionEvent motionEvent) {
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 infoWindowStartMotionY = motionEvent.getRawY();
@@ -479,35 +443,37 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
                     break;
                 }
         }
+        return false;
     }
 
-    private void handleEditWindowMotion(View view, MotionEvent motionEvent) {
+    private boolean handleEditWindowMotion(View view, MotionEvent motionEvent) {
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                float addWindowStartMotionY = motionEvent.getRawY();
-                addWindowCorrectionY = view.getY() - addWindowStartMotionY;
+                float editWindowStartMotionY = motionEvent.getRawY();
+                editWindowCorrectionY = view.getY() - editWindowStartMotionY;
                 break;
             case MotionEvent.ACTION_MOVE:
-                addWindowEndMotionY = motionEvent.getRawY();
-                if (addWindowEndMotionY + addWindowCorrectionY < pointAddTopLimit || addWindowEndMotionY + addWindowCorrectionY > pointAddBottomLimit) {
+                editWindowEndMotionY = motionEvent.getRawY();
+                if (editWindowEndMotionY + editWindowCorrectionY < pointEditTopLimit || editWindowEndMotionY + editWindowCorrectionY > pointEditBottomLimit) {
                     break;
                 }
-                view.setY(addWindowEndMotionY + addWindowCorrectionY);
+                view.setY(editWindowEndMotionY + editWindowCorrectionY);
                 break;
             case MotionEvent.ACTION_UP:
-                float bottomDiff = addWindowEndMotionY + addWindowCorrectionY - pointAddBottomLimit;
+                float bottomDiff = editWindowEndMotionY + editWindowCorrectionY - pointEditBottomLimit;
                 if (bottomDiff > -200) {
-                    view.animate().y(pointAddBottomLimit).setDuration(200);
+                    view.animate().y(pointEditBottomLimit).setDuration(200);
                     break;
                 }
 
-                float topDiff = addWindowEndMotionY + addWindowCorrectionY - pointAddTopLimit;
+                float topDiff = editWindowEndMotionY + editWindowCorrectionY - pointEditTopLimit;
                 if (topDiff < 200) {
-                    view.animate().y(pointAddTopLimit).setDuration(200);
+                    view.animate().y(pointEditTopLimit).setDuration(200);
                     break;
                 }
                 break;
         }
+        return false;
     }
 
     private void setAnimationForSwipedViewHide(View view, int animationResource, float start, float tempY) {
