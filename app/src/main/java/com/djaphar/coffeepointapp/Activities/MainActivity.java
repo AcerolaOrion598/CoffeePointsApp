@@ -2,6 +2,7 @@ package com.djaphar.coffeepointapp.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
 
@@ -10,7 +11,10 @@ import com.djaphar.coffeepointapp.Fragments.OtherFragment;
 import com.djaphar.coffeepointapp.Fragments.PointsFragment;
 import com.djaphar.coffeepointapp.Fragments.ProfileFragment;
 import com.djaphar.coffeepointapp.R;
+import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
+import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.UserChangeChecker;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.MyFragment;
+import com.djaphar.coffeepointapp.ViewModels.MainViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.Objects;
@@ -18,6 +22,7 @@ import java.util.Objects;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
@@ -27,6 +32,10 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView actionBarTitle;
     private MyFragment currentFragment;
+    private UserChangeChecker userChangeChecker;
+    private MainViewModel mainViewModel;
+    private User user;
+    Integer userHash;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +49,16 @@ public class MainActivity extends AppCompatActivity {
         actionBarTitle = findViewById(R.id.action_bar_title);
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(navView, navController);
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        mainViewModel.getUser().observe(this, user -> {
+            if (user == null) {
+                return;
+            }
+            this.user = user;
+            userHash = user.getUserHash();
+        });
+        userChangeChecker = new UserChangeChecker(new Handler(), this);
+        userChangeChecker.startUserChangeCheck();
     }
 
     @Override
@@ -91,6 +110,25 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         currentFragment.backWasPressed();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        userChangeChecker.startUserChangeCheck();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        userChangeChecker.stopUserChangeCheck();
+    }
+
+    public void requestUser() {
+        if (user == null) {
+            return;
+        }
+        mainViewModel.requestUser(user.get_id(), userHash);
     }
 
     public void setActionBarTitle(String title) {

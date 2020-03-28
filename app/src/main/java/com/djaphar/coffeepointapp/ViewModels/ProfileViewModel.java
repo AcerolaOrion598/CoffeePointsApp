@@ -12,17 +12,17 @@ import androidx.lifecycle.LiveData;
 
 public class ProfileViewModel extends AndroidViewModel {
 
-    private LiveData<User> user;
+    private LiveData<User> userLiveData;
     private UserDao userDao;
 
     public ProfileViewModel(@NonNull Application application) {
         super(application);
         UserRoom userRoom = UserRoom.getDatabase(application);
         userDao = userRoom.userDao();
-        user = userDao.getUser();
+        userLiveData = userDao.getUserLiveData();
     }
 
     public LiveData<User> getUser() {
-        return user;
+        return userLiveData;
     }
 }

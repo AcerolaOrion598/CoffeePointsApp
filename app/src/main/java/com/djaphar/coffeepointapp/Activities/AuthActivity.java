@@ -66,8 +66,8 @@ public class AuthActivity extends AppCompatActivity {
             loginBtn.performClick();
         });
 
-        authViewModel.getUser().observe(this, testUser -> {
-            if (testUser == null) {
+        authViewModel.getUser().observe(this, user -> {
+            if (user == null) {
                 return;
             }
             startMainActivity();

@@ -2,7 +2,8 @@ package com.djaphar.coffeepointapp.SupportClasses.ApiClasses;
 
 public class SecondaryCredentials {
 
-    private String codeId, code;
+    private String codeId;
+    private String code;
 
     public SecondaryCredentials(String codeId, String code) {
         this.codeId = codeId;

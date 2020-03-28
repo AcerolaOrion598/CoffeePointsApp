@@ -3,6 +3,7 @@ package com.djaphar.coffeepointapp.Fragments;
 import android.animation.Animator;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -41,6 +42,7 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
     private EditText pointNameFormEd, pointAboutFormEd;
     private Button pointEditSaveButton, pointEditBackButton, addPointCancelBtn;
     private ImageButton addPointBtn;
+    private Resources resources;
     private float pointEditLayoutCorrectionX, pointEditLayoutEndMotionX, pointEditLayoutStartLimit, addWindowEndMotionY,
             addPointTopLimit, addPointBottomLimit, addWindowCorrectionY;
 
@@ -69,6 +71,7 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         context = getContext();
+        resources = getResources();
         pointEditLayoutStartLimit = pointEditLayout.getX();
 
         mainViewModel.getPoints().observe(getViewLifecycleOwner(), mPoints -> {
@@ -95,15 +98,15 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
             }
         });
 
-        addPointWindow.setTranslationY(getResources().getDimension(R.dimen.add_point_window_translation_y));
+        addPointWindow.setTranslationY(resources.getDimension(R.dimen.add_point_window_translation_y));
         addPointTopLimit = addPointWindow.getY();
-        addPointWindow.setTranslationY(getResources().getDimension(R.dimen.add_point_window_expanded_translation_y));
+        addPointWindow.setTranslationY(resources.getDimension(R.dimen.add_point_window_expanded_translation_y));
         addPointBottomLimit = addPointWindow.getY();
 
         pointEditSaveButton.setOnClickListener(lView -> {});
         pointEditBackButton.setOnClickListener(lView -> backWasPressed());
         addPointBtn.setOnClickListener(lView -> {
-            addPointWindow.setTranslationY(getResources().getDimension(R.dimen.add_point_window_translation_y));
+            addPointWindow.setTranslationY(resources.getDimension(R.dimen.add_point_window_translation_y));
             ViewDriver.hideView(addPointBtn, R.anim.bottom_view_hide_animation, context);
             ViewDriver.showView(addPointWindow, R.anim.top_view_show_animation, context);
         });

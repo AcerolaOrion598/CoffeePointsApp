@@ -65,8 +65,7 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
     private String statusTrueText, statusFalseText;
     private String[] perms = new String[2];
     private float infoWindowCorrectionY, infoWindowStartMotionY, infoWindowEndMotionY, editWindowCorrectionY, editWindowEndMotionY, pointEditTopLimit, pointEditBottomLimit;
-    private int whoMoved, statusTrueColor, statusFalseColor, topViewShow, topViewHide, bottomViewShow, bottomViewHide,
-    myMarkerSize, markerSize;
+    private int whoMoved, statusTrueColor, statusFalseColor, myMarkerSize, markerSize;
     private boolean alreadyOpened = false, editWindowHidden = false;
     private static final int ownerId = 3;
 
@@ -104,10 +103,6 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         statusFalseColor = resources.getColor(R.color.colorRed60);
         statusTrueText = getString(R.string.point_status_true);
         statusFalseText = getString(R.string.point_status_false);
-        topViewShow = R.anim.top_view_show_animation;
-        topViewHide = R.anim.top_view_hide_animation;
-        bottomViewShow = R.anim.bottom_view_show_animation;
-        bottomViewHide = R.anim.bottom_view_hide_animation;
         myMarkerSize = (int) resources.getDimension(R.dimen.my_marker_size);
         markerSize = (int) resources.getDimension(R.dimen.marker_size);
         pointInfoWindowParams = (ConstraintLayout.LayoutParams) pointInfoWindow.getLayoutParams();
@@ -119,12 +114,12 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         pointEditBottomLimit = pointEditWindow.getY();
         equalizeMarkers(0.87f);
 
-        pointEditCancelBtn.setOnClickListener(lView -> editPointModeEnd(false));
+        pointEditCancelBtn.setOnClickListener(lView -> editPointModeEnd());
 
         pointEditSaveBtn.setOnClickListener(lView -> {
             editPoint();
             Toast.makeText(context, R.string.shinobu_chan, Toast.LENGTH_SHORT).show();
-            editPointModeEnd(true);
+            editPointModeEnd();
         });
 
         pointEditBtn.setOnClickListener(lView -> {
@@ -188,7 +183,7 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
                 removeFocusFromMarker();
             }
 
-            ViewDriver.hideView(pointInfoWindow, bottomViewHide, context);
+            ViewDriver.hideView(pointInfoWindow, R.anim.bottom_view_hide_animation, context);
         }
     }
 
@@ -286,9 +281,9 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
             pointAbout.setText(point.getAbout());
             pointOwner.setText(point.getOwner());
 
-            editPointModeEnd(false);
+            editPointModeEnd();
             pointInfoWindow.setLayoutParams(pointInfoWindowParams);
-            ViewDriver.showView(pointInfoWindow, bottomViewShow, context);
+            ViewDriver.showView(pointInfoWindow, R.anim.bottom_view_show_animation, context);
 
             equalizeMarkers(0.4f);
             marker.setAlpha(1.0f);
@@ -298,17 +293,14 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
     private void editPointModeStart(String pointName, String pointAbout) {
         pointNameEd.setText(pointName);
         pointAboutEd.setText(pointAbout);
-        ViewDriver.hideView(pointInfoWindow, bottomViewHide, context);
+        ViewDriver.hideView(pointInfoWindow, R.anim.bottom_view_hide_animation, context);
         pointEditWindow.setTranslationY(resources.getDimension(R.dimen.point_edit_translation_y));
-        ViewDriver.showView(pointEditWindow, topViewShow, context);
+        ViewDriver.showView(pointEditWindow, R.anim.top_view_show_animation, context);
     }
 
-    private void editPointModeEnd(boolean saveCalled) {
-        ViewDriver.hideView(pointEditWindow, topViewHide, context);
+    private void editPointModeEnd() {
+        ViewDriver.hideView(pointEditWindow, R.anim.top_view_hide_animation, context);
         removeFocusFromMarker();
-        if (saveCalled) {
-            editPoint();
-        }
     }
 
     private void drawMarkers(ArrayList<Point> points) {
@@ -390,9 +382,9 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
 
     public void backWasPressed() {
         if (pointEditWindow.getVisibility() == View.VISIBLE) {
-            editPointModeEnd(false);
+            editPointModeEnd();
         } else if (pointInfoWindow.getVisibility() == View.VISIBLE) {
-            ViewDriver.hideView(pointInfoWindow, bottomViewHide, context);
+            ViewDriver.hideView(pointInfoWindow, R.anim.bottom_view_hide_animation, context);
             removeFocusFromMarker();
         }
     }
@@ -435,7 +427,7 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
                 break;
             case MotionEvent.ACTION_UP:
                 if (infoWindowEndMotionY != 0 && infoWindowEndMotionY - infoWindowStartMotionY > 200) {
-                    setAnimationForSwipedViewHide(view, bottomViewHide, infoWindowStartMotionY, infoWindowCorrectionY);
+                    setAnimationForSwipedViewHide(view, infoWindowStartMotionY, infoWindowCorrectionY);
                     removeFocusFromMarker();
                     break;
                 } else {
@@ -476,8 +468,8 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         return false;
     }
 
-    private void setAnimationForSwipedViewHide(View view, int animationResource, float start, float tempY) {
-        Animation animation = ViewDriver.hideView(view, animationResource, context);
+    private void setAnimationForSwipedViewHide(View view, float start, float tempY) {
+        Animation animation = ViewDriver.hideView(view, R.anim.bottom_view_hide_animation, context);
         if (animation == null) {
             return;
         }

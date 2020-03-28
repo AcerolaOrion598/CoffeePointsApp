@@ -1,8 +1,14 @@
 package com.djaphar.coffeepointapp.ViewModels;
 
 import android.app.Application;
+import android.widget.Toast;
 
+import com.djaphar.coffeepointapp.R;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Point;
+import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointsApi;
+import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
+import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.UserDao;
+import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.UserRoom;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
@@ -10,12 +16,21 @@ import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainViewModel extends AndroidViewModel {
 
     private MutableLiveData<ArrayList<Point>> points = new MutableLiveData<>();
+    private LiveData<User> userLiveData;
+    private UserDao userDao;
     private ArrayList<Point> pointList = new ArrayList<>();
+    private final static String baseUrl = "http://212.109.219.69:3007/";
 
     public MainViewModel(@NonNull Application application) {
         super(application);
@@ -64,10 +79,17 @@ public class MainViewModel extends AndroidViewModel {
 
 //        points = new MutableLiveData<>();
         points.setValue(pointList);
+        UserRoom userRoom = UserRoom.getDatabase(application);
+        userDao = userRoom.userDao();
+        userLiveData = userDao.getUserLiveData();
     }
 
     public MutableLiveData<ArrayList<Point>> getPoints() {
         return points;
+    }
+
+    public LiveData<User> getUser() {
+        return userLiveData;
     }
 
     //Пробная часть
@@ -91,5 +113,40 @@ public class MainViewModel extends AndroidViewModel {
 
     public void editPoint() {
         //Тут лезем апдейтить бд
+    }
+
+    public void requestUser(String id, Integer oldHash) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        PointsApi pointsApi = retrofit.create(PointsApi.class);
+        Call<User> call = pointsApi.requestUser(id);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getApplication(), response.message(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (response.body() == null) {
+                    return;
+                }
+
+                User user = response.body();
+                Integer newHash = user.determineHash();
+                if (oldHash.equals(newHash)) {
+                    return;
+                }
+                user.setUserHash(newHash);
+                UserRoom.databaseWriteExecutor.execute(() -> userDao.updateUser(user));
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
+                Toast.makeText(getApplication(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

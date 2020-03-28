@@ -13,13 +13,13 @@ import androidx.lifecycle.LiveData;
 public class OtherViewModel extends AndroidViewModel {
 
     private UserDao userDao;
-    private LiveData<User> testUser;
+    private LiveData<User> userLiveData;
 
     public OtherViewModel(@NonNull Application application) {
         super(application);
         UserRoom userRoom = UserRoom.getDatabase(application);
         userDao = userRoom.userDao();
-        testUser = userDao.getUser();
+        userLiveData = userDao.getUserLiveData();
     }
 
     public void logout() {
@@ -27,6 +27,6 @@ public class OtherViewModel extends AndroidViewModel {
     }
 
     public LiveData<User> getUser() {
-        return testUser;
+        return userLiveData;
     }
 }

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.djaphar.coffeepointapp.Activities.MainActivity;
 import com.djaphar.coffeepointapp.R;
@@ -25,6 +26,7 @@ public class ProfileFragment extends MyFragment {
     private Button editProfileBtn, saveProfileBtn, cancelProfileBtn;
     private ConstraintLayout editProfileContainer, profileContainer;
     private Context context;
+    private TextView userNameTv;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -35,6 +37,7 @@ public class ProfileFragment extends MyFragment {
         cancelProfileBtn = root.findViewById(R.id.cancel_profile_btn);
         editProfileContainer = root.findViewById(R.id.edit_profile_container);
         profileContainer = root.findViewById(R.id.profile_container);
+        userNameTv = root.findViewById(R.id.user_name_tv);
         context = getContext();
         mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
@@ -48,9 +51,7 @@ public class ProfileFragment extends MyFragment {
         super.onViewCreated(view, savedInstanceState);
 
         profileViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
-//            if (user == null) {
-//                return;
-//            }
+            userNameTv.setText(user.getName());
         });
 
         editProfileBtn.setOnClickListener(lView -> {

@@ -3,9 +3,9 @@ package com.djaphar.coffeepointapp.ViewModels;
 import android.app.Application;
 import android.widget.Toast;
 
+import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.FirstCredentials;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointsApi;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.SecondaryCredentials;
-import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.FirstCredentials;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.UserDao;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.UserRoom;
@@ -22,7 +22,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AuthViewModel extends AndroidViewModel {
 
-    private LiveData<User> testUser;
+    private LiveData<User> userLiveData;
     private MutableLiveData<SecondaryCredentials> secondaryCredentials = new MutableLiveData<>();
     private UserDao userDao;
     private final static String baseUrl = "http://212.109.219.69:3007/";
@@ -31,25 +31,24 @@ public class AuthViewModel extends AndroidViewModel {
         super(application);
         UserRoom userRoom = UserRoom.getDatabase(application);
         userDao = userRoom.userDao();
-        testUser = userDao.getUser();
+        userLiveData = userDao.getUserLiveData();
     }
 
     public LiveData<User> getUser() {
-        return testUser;
+        return userLiveData;
     }
 
     public LiveData<SecondaryCredentials> getSecondaryCredentials() {
         return secondaryCredentials;
     }
 
-    public void requestCode(FirstCredentials testCredentials) {
+    public void requestCode(FirstCredentials credentials) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-
         PointsApi pointsApi = retrofit.create(PointsApi.class);
-        Call<SecondaryCredentials> call = pointsApi.testGetCode(testCredentials);
+        Call<SecondaryCredentials> call = pointsApi.testGetCode(credentials);
         call.enqueue(new Callback<SecondaryCredentials>() {
             @Override
             public void onResponse(@NonNull Call<SecondaryCredentials> call, @NonNull Response<SecondaryCredentials> response) {
@@ -71,9 +70,8 @@ public class AuthViewModel extends AndroidViewModel {
                 .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-
         PointsApi pointsApi = retrofit.create(PointsApi.class);
-        Call<User> call = pointsApi.testLogIn(credentials);
+        Call<User> call = pointsApi.login(credentials);
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
@@ -81,7 +79,14 @@ public class AuthViewModel extends AndroidViewModel {
                     Toast.makeText(getApplication(), response.message(), Toast.LENGTH_SHORT).show();
                     return;
                 }
-                UserRoom.databaseWriteExecutor.execute(() -> userDao.setUser(response.body()));
+
+                if (response.body() == null) {
+                    return;
+                }
+                User user = response.body();
+                Integer userHash = user.determineHash();
+                user.setUserHash(userHash);
+                UserRoom.databaseWriteExecutor.execute(() -> userDao.setUser(user));
             }
 
             @Override

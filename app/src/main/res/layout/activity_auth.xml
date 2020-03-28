@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusable="true"
@@ -38,7 +37,7 @@
         android:id="@+id/phone_number_ed"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/auth_instruction_phone_number_tv"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:hint="@string/phone_number_ed_text"
@@ -46,17 +45,17 @@
         android:textSize="22sp"
         android:fontFamily="@font/roboto"
         android:paddingStart="15dp"
+        android:paddingEnd="15dp"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
-        android:layout_marginTop="10dp"
-        android:inputType="phone"
-        tools:ignore="RtlSymmetry" />
+        android:layout_marginTop="120dp"
+        android:inputType="phone" />
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/sms_code_ed"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/auth_instruction_phone_number_tv"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:hint="@string/sms_code_ed_text"
@@ -64,11 +63,11 @@
         android:textSize="22sp"
         android:fontFamily="@font/roboto"
         android:paddingStart="15dp"
+        android:paddingEnd="15dp"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="120dp"
         android:inputType="phone"
-        tools:ignore="RtlSymmetry"
         android:visibility="invisible"/>
 
     <androidx.appcompat.widget.AppCompatButton
