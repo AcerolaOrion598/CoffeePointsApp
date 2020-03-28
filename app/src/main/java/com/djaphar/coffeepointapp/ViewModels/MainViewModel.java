@@ -3,7 +3,6 @@ package com.djaphar.coffeepointapp.ViewModels;
 import android.app.Application;
 import android.widget.Toast;
 
-import com.djaphar.coffeepointapp.R;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Point;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointsApi;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;

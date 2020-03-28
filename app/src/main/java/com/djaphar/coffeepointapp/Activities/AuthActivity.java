@@ -14,7 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.djaphar.coffeepointapp.R;
-import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.SecondaryCredentials;
+import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.SecondCredentials;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.FirstCredentials;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.ViewDriver;
 import com.djaphar.coffeepointapp.ViewModels.AuthViewModel;
@@ -35,7 +35,7 @@ public class AuthActivity extends AppCompatActivity {
     private Button requestNumberBtn, loginBtn;
     private TextView authInstructionTv, authInstructionPhoneNumberTv;
     private String token;
-    private SecondaryCredentials secondaryCredentials = new SecondaryCredentials(null, null);
+    private SecondCredentials secondaryCredentials = new SecondCredentials(null, null);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

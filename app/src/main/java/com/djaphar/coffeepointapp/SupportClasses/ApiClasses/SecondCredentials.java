@@ -1,11 +1,11 @@
 package com.djaphar.coffeepointapp.SupportClasses.ApiClasses;
 
-public class SecondaryCredentials {
+public class SecondCredentials {
 
     private String codeId;
     private String code;
 
-    public SecondaryCredentials(String codeId, String code) {
+    public SecondCredentials(String codeId, String code) {
         this.codeId = codeId;
         this.code = code;
     }

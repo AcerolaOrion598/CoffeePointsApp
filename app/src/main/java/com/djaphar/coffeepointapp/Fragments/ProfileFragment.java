@@ -6,10 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.djaphar.coffeepointapp.Activities.MainActivity;
 import com.djaphar.coffeepointapp.R;
+import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.MyFragment;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.ViewDriver;
 import com.djaphar.coffeepointapp.ViewModels.ProfileViewModel;
@@ -27,6 +29,8 @@ public class ProfileFragment extends MyFragment {
     private ConstraintLayout editProfileContainer, profileContainer;
     private Context context;
     private TextView userNameTv;
+    private EditText userNameEd;
+    private User user;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -38,6 +42,7 @@ public class ProfileFragment extends MyFragment {
         editProfileContainer = root.findViewById(R.id.edit_profile_container);
         profileContainer = root.findViewById(R.id.profile_container);
         userNameTv = root.findViewById(R.id.user_name_tv);
+        userNameEd = root.findViewById(R.id.user_name_ed);
         context = getContext();
         mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
@@ -51,10 +56,12 @@ public class ProfileFragment extends MyFragment {
         super.onViewCreated(view, savedInstanceState);
 
         profileViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
+            this.user = user;
             userNameTv.setText(user.getName());
         });
 
         editProfileBtn.setOnClickListener(lView -> {
+            userNameEd.setText(userNameTv.getText());
             mainActivity.setActionBarTitle(getString(R.string.title_profile_edit));
             ViewDriver.hideView(profileContainer, R.anim.top_view_hide_animation, context);
             ViewDriver.hideView(editProfileBtn, R.anim.bottom_view_hide_animation, context);
@@ -63,7 +70,11 @@ public class ProfileFragment extends MyFragment {
             ViewDriver.showView(cancelProfileBtn, R.anim.bottom_view_show_animation, context);
         });
 
-        saveProfileBtn.setOnClickListener(lView -> { });
+        saveProfileBtn.setOnClickListener(lView -> {
+            user.setName(userNameEd.getText().toString());
+            profileViewModel.requestUpdateUser(user);
+            backWasPressed();
+        });
 
         cancelProfileBtn.setOnClickListener(lView -> backWasPressed());
     }

@@ -24,6 +24,6 @@ public class UserChangeChecker {
 
     private Runnable asyncUserChangeChecker = () -> {
         mainActivity.requestUser();
-        handler.postDelayed(this::startUserChangeCheck, 5000);
+        handler.postDelayed(this::startUserChangeCheck, 30000);
     };
 }
