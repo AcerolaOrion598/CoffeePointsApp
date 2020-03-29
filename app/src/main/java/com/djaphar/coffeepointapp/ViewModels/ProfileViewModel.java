@@ -8,12 +8,14 @@ import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.UserDao;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.UserRoom;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -22,6 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ProfileViewModel extends AndroidViewModel {
 
+    private MutableLiveData<ArrayList<String>> products = new MutableLiveData<>();
     private LiveData<User> userLiveData;
     private UserDao userDao;
     private final static String baseUrl = "http://212.109.219.69:3007/";
@@ -31,10 +34,44 @@ public class ProfileViewModel extends AndroidViewModel {
         UserRoom userRoom = UserRoom.getDatabase(application);
         userDao = userRoom.userDao();
         userLiveData = userDao.getUserLiveData();
+
+        ArrayList<String> productList = new ArrayList<>();
+        productList.clear();
+        String product1 ="Кофеёк 1";
+        String product2 ="Кофеёк 2";
+        String product3 ="Мороженное";
+        String product4 ="Кофеёк 3";
+        String product5 ="Блинчики";
+        String product6 ="Мороженка 2";
+        String product7 ="Блинчики 2";
+        String product8 ="Блинчики 3";
+        String product9 ="Блинчики 4";
+        String product10 ="Блинчики 5";
+        String product11 ="Блинчики 6";
+        String product12 ="Блинчики 7";
+
+        productList.add(product1);
+        productList.add(product2);
+        productList.add(product3);
+        productList.add(product4);
+        productList.add(product5);
+        productList.add(product6);
+        productList.add(product7);
+        productList.add(product8);
+        productList.add(product9);
+        productList.add(product10);
+        productList.add(product11);
+        productList.add(product12);
+
+        products.setValue(productList);
     }
 
     public LiveData<User> getUser() {
         return userLiveData;
+    }
+
+    public MutableLiveData<ArrayList<String>> getProducts() {
+        return products;
     }
 
     public void requestUpdateUser(User user) {

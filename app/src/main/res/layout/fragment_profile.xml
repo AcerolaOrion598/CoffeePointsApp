@@ -1,142 +1,322 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingStart="30dp"
-    android:paddingEnd="30dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/profile_container"
+        android:id="@+id/edit_user_name_window"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:paddingStart="13dp"
-        android:paddingEnd="13dp"
-        android:layout_marginBottom="60dp">
-
-        <TextView
-            android:id="@+id/user_name_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="32dp"
-            android:textSize="24sp"
-            android:fontFamily="@font/roboto_medium"
-            android:textColor="@color/colorBlack87" />
-
-        <TextView
-            android:id="@+id/user_about_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/user_name_tv"
-            android:layout_marginTop="29dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:textSize="14sp"
-            android:fontFamily="@font/roboto"
-            android:textColor="@color/colorBlack60" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/edit_profile_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="78dp"
-        android:background="@drawable/save_button"
-        android:text="@string/edit_btn"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:background="@drawable/rounded_corners_shape_not_transparent"
+        android:paddingTop="36dp"
+        android:paddingBottom="8dp"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
-        android:textColor="@color/colorWhite87"
-        android:textSize="12sp" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/edit_profile_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="60dp"
-        android:background="@color/colorWhite"
+        android:clickable="true"
+        android:elevation="10dp"
+        android:translationY="@dimen/add_point_window_translation_y"
         android:visibility="gone">
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/user_name_ed"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/edit_user_name_tv"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="25dp"
-            android:hint="@string/user_name_hint"
-            android:background="@drawable/edit_text_w_stroke"
-            android:textCursorDrawable="@drawable/cursor_color"
-            android:paddingStart="15dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:fontFamily="@font/roboto"
-            android:textSize="12sp"
-            tools:ignore="RtlSymmetry" />
+            android:text="@string/new_user_name_text"
+            android:fontFamily="@font/roboto_medium"
+            android:textSize="18sp"
+            android:textColor="@color/colorBlack87"/>
 
         <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/user_about_ed"
+            android:id="@+id/edit_user_name_ed"
             android:layout_width="match_parent"
-            android:layout_height="113dp"
-            app:layout_constraintTop_toBottomOf="@+id/user_name_ed"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/edit_user_name_tv"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="16dp"
             android:paddingStart="15dp"
+            android:paddingEnd="15dp"
             android:paddingTop="10dp"
-            android:hint="@string/user_about_hint"
+            android:paddingBottom="10dp"
             android:background="@drawable/edit_text_w_stroke"
-            android:textCursorDrawable="@drawable/cursor_color"
-            android:gravity="top"
+            android:hint="@string/user_name_ed_text"
+            android:fontFamily="@font/roboto_medium"
+            android:textSize="12sp"
+            android:textCursorDrawable="@drawable/cursor_color"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/edit_user_name_save_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            app:layout_constraintTop_toBottomOf="@+id/edit_user_name_ed"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:textSize="12sp"
+            android:textColor="@color/colorWhite87"
+            android:fontFamily="@font/roboto"
+            android:background="@drawable/save_button"
+            android:text="@string/save_btn"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/edit_user_name_cancel_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            app:layout_constraintTop_toBottomOf="@+id/edit_user_name_ed"
+            app:layout_constraintEnd_toStartOf="@+id/edit_user_name_save_btn"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="4dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:textColor="@color/colorPrimary"
             android:fontFamily="@font/roboto"
             android:textSize="12sp"
-            tools:ignore="RtlSymmetry" />
+            android:background="@drawable/cancel_button"
+            android:text="@string/cancel_btn"/>
+
+        <View
+            android:id="@+id/move_edit_user_name_window_view"
+            android:layout_width="50dp"
+            android:layout_height="5dp"
+            app:layout_constraintTop_toBottomOf="@+id/edit_user_name_cancel_btn"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/move_view_view"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/save_profile_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/add_product_window"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="78dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:background="@drawable/rounded_corners_shape_not_transparent"
+        android:paddingTop="36dp"
+        android:paddingBottom="8dp"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
-        android:text="@string/save_btn"
-        android:background="@drawable/save_button"
-        android:textColor="@color/colorWhite87"
-        android:textSize="12sp"
-        android:visibility="invisible"/>
+        android:clickable="true"
+        android:elevation="10dp"
+        android:translationY="@dimen/add_point_window_translation_y"
+        android:visibility="gone">
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/cancel_profile_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/save_profile_btn"
-        android:layout_marginBottom="78dp"
-        android:layout_marginEnd="8dp"
-        android:paddingStart="15dp"
-        android:paddingEnd="15dp"
-        android:text="@string/cancel_btn"
-        android:background="@drawable/cancel_button"
-        android:textColor="@color/colorPrimary"
-        android:textSize="12sp"
-        android:visibility="invisible"/>
+        <TextView
+            android:id="@+id/add_product_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:text="@string/add_product_text"
+            android:fontFamily="@font/roboto_medium"
+            android:textSize="18sp"
+            android:textColor="@color/colorBlack87"/>
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/add_product_ed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/add_product_tv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:background="@drawable/edit_text_w_stroke"
+            android:hint="@string/add_product_ed_text"
+            android:fontFamily="@font/roboto_medium"
+            android:textSize="12sp"
+            android:textCursorDrawable="@drawable/cursor_color"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/add_product_save_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            app:layout_constraintTop_toBottomOf="@+id/add_product_ed"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:textSize="12sp"
+            android:textColor="@color/colorWhite87"
+            android:fontFamily="@font/roboto"
+            android:background="@drawable/save_button"
+            android:text="@string/save_btn"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/add_product_cancel_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            app:layout_constraintTop_toBottomOf="@+id/add_product_ed"
+            app:layout_constraintEnd_toStartOf="@+id/add_product_save_btn"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="4dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:textColor="@color/colorPrimary"
+            android:fontFamily="@font/roboto"
+            android:textSize="12sp"
+            android:background="@drawable/cancel_button"
+            android:text="@string/cancel_btn"/>
+
+        <View
+            android:id="@+id/move_add_product_window_view"
+            android:layout_width="50dp"
+            android:layout_height="5dp"
+            app:layout_constraintTop_toBottomOf="@+id/add_product_cancel_btn"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/move_view_view"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/profile_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="20dp"
+                android:paddingBottom="20dp"
+                android:paddingStart="30dp"
+                android:paddingEnd="30dp">
+
+                <TextView
+                    android:id="@+id/profile_name_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:fontFamily="@font/roboto_medium"
+                    android:textSize="24sp"
+                    android:textColor="@color/colorBlack87"
+                    android:text="@string/user_name_text"/>
+
+                <TextView
+                    android:id="@+id/user_name_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@+id/profile_name_tv"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginTop="20dp"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/roboto_medium"
+                    android:textColor="@color/colorBlack60" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/edit_user_name_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    app:layout_constraintTop_toBottomOf="@+id/profile_name_tv"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginTop="20dp"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:text="@string/edit_btn"
+                    android:background="@drawable/save_button"
+                    android:textColor="@color/colorWhite87"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/roboto"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/products_list_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/profile_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:background="@drawable/top_border"
+                android:paddingTop="27dp"
+                android:paddingBottom="60dp"
+                android:paddingStart="30dp"
+                android:paddingEnd="30dp">
+
+                <TextView
+                    android:id="@+id/products_list_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:text="@string/product_list_tv_text"
+                    android:fontFamily="@font/roboto_medium"
+                    android:textSize="24sp"
+                    android:textColor="@color/colorBlack87"/>
+
+                <RelativeLayout
+                    android:id="@+id/products_list_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/products_list_tv"
+                    android:layout_marginTop="10dp">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/products_recycler_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                </RelativeLayout>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/add_product_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    app:layout_constraintTop_toBottomOf="@+id/products_list_layout"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:background="@drawable/save_button"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:text="@string/add_product_btn"
+                    android:textColor="@color/colorWhite87"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/roboto"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

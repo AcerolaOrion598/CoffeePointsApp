@@ -1,16 +1,21 @@
 package com.djaphar.coffeepointapp.Fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.djaphar.coffeepointapp.Activities.MainActivity;
 import com.djaphar.coffeepointapp.R;
+import com.djaphar.coffeepointapp.SupportClasses.Adapters.ProductsRecyclerViewAdapter;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.MyFragment;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.ViewDriver;
@@ -20,75 +25,208 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-public class ProfileFragment extends MyFragment {
+public class ProfileFragment extends MyFragment implements View.OnTouchListener {
 
     private ProfileViewModel profileViewModel;
-    private MainActivity mainActivity;
-    private Button editProfileBtn, saveProfileBtn, cancelProfileBtn;
-    private ConstraintLayout editProfileContainer, profileContainer;
+    private Button editUserNameBtn, editUserNameCancelBtn, editUserNameSaveBtn, addProductBtn, addProductCancelBtn, addProductSaveBtn;
+    private ConstraintLayout editUserNameWindow, addProductWindow;
     private Context context;
+    private Resources resources;
     private TextView userNameTv;
-    private EditText userNameEd;
+    private EditText editUserNameEd;
+    private RecyclerView productsRecyclerView;
     private User user;
+    private float editUserNameTopLimit, editUserNameBottomLimit, editUserNameWindowCorrectionY, editUserNameWindowEndMotionY,
+            addProductTopLimit, addProductBottomLimit, addProductWindowCorrectionY, addProductWindowEndMotionY;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
-        editProfileBtn = root.findViewById(R.id.edit_profile_btn);
-        saveProfileBtn = root.findViewById(R.id.save_profile_btn);
-        cancelProfileBtn = root.findViewById(R.id.cancel_profile_btn);
-        editProfileContainer = root.findViewById(R.id.edit_profile_container);
-        profileContainer = root.findViewById(R.id.profile_container);
+        editUserNameBtn = root.findViewById(R.id.edit_user_name_btn);
+        editUserNameCancelBtn = root.findViewById(R.id.edit_user_name_cancel_btn);
+        editUserNameSaveBtn = root.findViewById(R.id.edit_user_name_save_btn);
+        addProductBtn = root.findViewById(R.id.add_product_btn);
+        addProductCancelBtn = root.findViewById(R.id.add_product_cancel_btn);
+        addProductSaveBtn = root.findViewById(R.id.add_product_save_btn);
+        editUserNameWindow = root.findViewById(R.id.edit_user_name_window);
+        addProductWindow = root.findViewById(R.id.add_product_window);
         userNameTv = root.findViewById(R.id.user_name_tv);
-        userNameEd = root.findViewById(R.id.user_name_ed);
+        editUserNameEd = root.findViewById(R.id.edit_user_name_ed);
+        productsRecyclerView = root.findViewById(R.id.products_recycler_view);
         context = getContext();
-        mainActivity = (MainActivity) getActivity();
+        resources = getResources();
+        MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
             mainActivity.setActionBarTitle(getString(R.string.title_profile));
         }
         return root;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         profileViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
             this.user = user;
+            if (user.getName() == null) {
+                userNameTv.setText("Вы не указали имя пользователя");
+                return;
+            }
             userNameTv.setText(user.getName());
         });
 
-        editProfileBtn.setOnClickListener(lView -> {
-            userNameEd.setText(userNameTv.getText());
-            mainActivity.setActionBarTitle(getString(R.string.title_profile_edit));
-            ViewDriver.hideView(profileContainer, R.anim.top_view_hide_animation, context);
-            ViewDriver.hideView(editProfileBtn, R.anim.bottom_view_hide_animation, context);
-            ViewDriver.showView(editProfileContainer, R.anim.top_view_show_animation, context);
-            ViewDriver.showView(saveProfileBtn, R.anim.bottom_view_show_animation, context);
-            ViewDriver.showView(cancelProfileBtn, R.anim.bottom_view_show_animation, context);
+        profileViewModel.getProducts().observe(getViewLifecycleOwner(), products -> {
+            productsRecyclerView.setAdapter(new ProductsRecyclerViewAdapter(products));
+            productsRecyclerView.setNestedScrollingEnabled(false);
+            productsRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         });
 
-        saveProfileBtn.setOnClickListener(lView -> {
-            user.setName(userNameEd.getText().toString());
+        editUserNameWindow.setTranslationY(resources.getDimension(R.dimen.add_point_window_translation_y));
+        editUserNameTopLimit = editUserNameWindow.getY();
+        editUserNameWindow.setTranslationY(resources.getDimension(R.dimen.add_point_window_expanded_translation_y));
+        editUserNameBottomLimit = editUserNameWindow.getY();
+
+        addProductWindow.setTranslationY(resources.getDimension(R.dimen.add_point_window_translation_y));
+        addProductTopLimit = addProductWindow.getY();
+        addProductWindow.setTranslationY(resources.getDimension(R.dimen.add_point_window_expanded_translation_y));
+        addProductBottomLimit = addProductWindow.getY();
+
+        editUserNameBtn.setOnClickListener(lView -> {
+            editUserNameEd.setText(user.getName());
+            editUserNameWindow.setTranslationY(resources.getDimension(R.dimen.add_point_window_translation_y));
+            toggleTopWindow(addProductWindow, addProductBtn, true);
+            toggleTopWindow(editUserNameWindow, editUserNameBtn, false);
+        });
+
+        addProductBtn.setOnClickListener(lView -> {
+            addProductWindow.setTranslationY(resources.getDimension(R.dimen.add_point_window_translation_y));
+            toggleTopWindow(editUserNameWindow, editUserNameBtn, true);
+            toggleTopWindow(addProductWindow, addProductBtn, false);
+        });
+
+        editUserNameSaveBtn.setOnClickListener(lView -> {
+            user.setName(editUserNameEd.getText().toString());
             profileViewModel.requestUpdateUser(user);
-            backWasPressed();
+            toggleTopWindow(editUserNameWindow, editUserNameBtn, true);
         });
 
-        cancelProfileBtn.setOnClickListener(lView -> backWasPressed());
+        addProductSaveBtn.setOnClickListener(lView -> {
+            Toast.makeText(context, R.string.ononoki_chan, Toast.LENGTH_SHORT).show();
+            toggleTopWindow(addProductWindow, addProductBtn, true);
+        });
+
+        editUserNameCancelBtn.setOnClickListener(lView -> toggleTopWindow(editUserNameWindow, editUserNameBtn, true));
+        addProductCancelBtn.setOnClickListener(lView -> toggleTopWindow(addProductWindow, addProductBtn, true));
+        editUserNameWindow.setOnTouchListener(this);
+        addProductWindow.setOnTouchListener(this);
     }
 
     public void backWasPressed() {
-        mainActivity.setActionBarTitle(getString(R.string.title_profile));
-        ViewDriver.hideView(editProfileContainer, R.anim.top_view_hide_animation, context);
-        ViewDriver.hideView(saveProfileBtn, R.anim.bottom_view_hide_animation, context);
-        ViewDriver.hideView(cancelProfileBtn, R.anim.bottom_view_hide_animation, context);
-        ViewDriver.showView(profileContainer, R.anim.top_view_show_animation, context);
-        ViewDriver.showView(editProfileBtn, R.anim.bottom_view_show_animation, context);
+        if (editUserNameWindow.getVisibility() == View.VISIBLE) {
+            toggleTopWindow(editUserNameWindow, editUserNameBtn, true);
+            return;
+        }
+
+        if (addProductWindow.getVisibility() == View.VISIBLE) {
+            toggleTopWindow(addProductWindow, addProductBtn, true);
+        }
     }
 
-    public ConstraintLayout getEditProfileContainer() {
-        return editProfileContainer;
+    private void toggleTopWindow(ConstraintLayout window, Button button, boolean enabled) {
+        if (enabled) {
+            ViewDriver.hideView(window, R.anim.top_view_hide_animation, context);
+        } else {
+            ViewDriver.showView(window, R.anim.top_view_show_animation, context);
+        }
+        button.setEnabled(enabled);
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        if (view == editUserNameWindow) {
+            return handleEditUserNameWindowMotion(view, motionEvent);
+        }
+
+        if (view == addProductWindow) {
+            return handleAddProductWindowMotion(view, motionEvent);
+        }
+
+        return false;
+    }
+
+    private boolean handleEditUserNameWindowMotion(View view, MotionEvent motionEvent) {
+        switch (motionEvent.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                float editUserNameWindowStartMotionY = motionEvent.getRawY();
+                editUserNameWindowCorrectionY = view.getY() - editUserNameWindowStartMotionY;
+                break;
+            case MotionEvent.ACTION_MOVE:
+                editUserNameWindowEndMotionY = motionEvent.getRawY();
+                if (editUserNameWindowEndMotionY + editUserNameWindowCorrectionY < editUserNameTopLimit ||
+                        editUserNameWindowEndMotionY + editUserNameWindowCorrectionY > editUserNameBottomLimit) {
+                    break;
+                }
+                view.setY(editUserNameWindowEndMotionY + editUserNameWindowCorrectionY);
+                break;
+            case MotionEvent.ACTION_UP:
+                float bottomDiff = editUserNameWindowEndMotionY + editUserNameWindowCorrectionY - editUserNameBottomLimit;
+                if (bottomDiff > -200) {
+                    view.animate().y(editUserNameBottomLimit).setDuration(200);
+                    break;
+                }
+
+                float topDiff = editUserNameWindowEndMotionY + editUserNameWindowCorrectionY - editUserNameTopLimit;
+                if (topDiff < 200) {
+                    view.animate().y(editUserNameTopLimit).setDuration(200);
+                    break;
+                }
+                break;
+        }
+        return false;
+    }
+
+    private boolean handleAddProductWindowMotion(View view, MotionEvent motionEvent) {
+        switch (motionEvent.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                float addProductWindowStartMotionY = motionEvent.getRawY();
+                addProductWindowCorrectionY = view.getY() - addProductWindowStartMotionY;
+                break;
+            case MotionEvent.ACTION_MOVE:
+                addProductWindowEndMotionY = motionEvent.getRawY();
+                if (addProductWindowEndMotionY + addProductWindowCorrectionY < addProductTopLimit ||
+                        addProductWindowEndMotionY + addProductWindowCorrectionY > addProductBottomLimit) {
+                    break;
+                }
+                view.setY(addProductWindowEndMotionY + addProductWindowCorrectionY);
+                break;
+            case MotionEvent.ACTION_UP:
+                float bottomDiff = addProductWindowEndMotionY + addProductWindowCorrectionY - addProductBottomLimit;
+                if (bottomDiff > -200) {
+                    view.animate().y(addProductBottomLimit).setDuration(200);
+                    break;
+                }
+
+                float topDiff = addProductWindowEndMotionY + addProductWindowCorrectionY - addProductTopLimit;
+                if (topDiff < 200) {
+                    view.animate().y(addProductTopLimit).setDuration(200);
+                    break;
+                }
+                break;
+        }
+        return false;
+    }
+
+    public ConstraintLayout getEditUserNameWindow() {
+        return editUserNameWindow;
+    }
+
+    public ConstraintLayout getAddProductWindow() {
+        return addProductWindow;
     }
 }

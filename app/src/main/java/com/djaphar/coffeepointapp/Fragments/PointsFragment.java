@@ -74,8 +74,8 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
         resources = getResources();
         pointEditLayoutStartLimit = pointEditLayout.getX();
 
-        mainViewModel.getPoints().observe(getViewLifecycleOwner(), mPoints -> {
-            PointsRecyclerViewAdapter adapter = new PointsRecyclerViewAdapter(mPoints, pointListLayout, pointEditLayout,
+        mainViewModel.getPoints().observe(getViewLifecycleOwner(), points -> {
+            PointsRecyclerViewAdapter adapter = new PointsRecyclerViewAdapter(points, pointListLayout, pointEditLayout,
                     mainActivity, pointNameFormEd, pointAboutFormEd);
             recyclerView.setAdapter(adapter);
             recyclerView.setLayoutManager(new LinearLayoutManager(context));

@@ -93,8 +93,9 @@ public class MainActivity extends AppCompatActivity {
 
             case ProfileFragment:
                 ProfileFragment profileFragment = ((ProfileFragment) currentFragment);
-                ConstraintLayout editProfileContainer = profileFragment.getEditProfileContainer();
-                if (!(editProfileContainer.getVisibility() == View.VISIBLE)) {
+                ConstraintLayout editUserNameWindow = profileFragment.getEditUserNameWindow();
+                ConstraintLayout addProductWindow = profileFragment.getAddProductWindow();
+                if (!(editUserNameWindow.getVisibility() == View.VISIBLE) && !(addProductWindow.getVisibility() == View.VISIBLE)) {
                     super.onBackPressed();
                     return;
                 }
