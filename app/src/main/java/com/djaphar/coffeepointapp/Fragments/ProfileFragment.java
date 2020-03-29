@@ -39,8 +39,8 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
     private EditText editUserNameEd;
     private RecyclerView productsRecyclerView;
     private User user;
-    private float editUserNameTopLimit, editUserNameBottomLimit, editUserNameWindowCorrectionY, editUserNameWindowEndMotionY,
-            addProductTopLimit, addProductBottomLimit, addProductWindowCorrectionY, addProductWindowEndMotionY;
+    private float editUserNameWindowCorrectionY, editUserNameWindowEndMotionY, editUserNameWindowStartMotionY,
+            addProductWindowCorrectionY, addProductWindowEndMotionY, addProductWindowStartMotionY;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -86,25 +86,15 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
             productsRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         });
 
-        editUserNameWindow.setTranslationY(resources.getDimension(R.dimen.add_point_window_translation_y));
-        editUserNameTopLimit = editUserNameWindow.getY();
-        editUserNameWindow.setTranslationY(resources.getDimension(R.dimen.add_point_window_expanded_translation_y));
-        editUserNameBottomLimit = editUserNameWindow.getY();
-
-        addProductWindow.setTranslationY(resources.getDimension(R.dimen.add_point_window_translation_y));
-        addProductTopLimit = addProductWindow.getY();
-        addProductWindow.setTranslationY(resources.getDimension(R.dimen.add_point_window_expanded_translation_y));
-        addProductBottomLimit = addProductWindow.getY();
-
         editUserNameBtn.setOnClickListener(lView -> {
             editUserNameEd.setText(user.getName());
-            editUserNameWindow.setTranslationY(resources.getDimension(R.dimen.add_point_window_translation_y));
+            editUserNameWindow.setTranslationY(resources.getDimension(R.dimen.add_point_window_expanded_translation_y));
             toggleTopWindow(addProductWindow, addProductBtn, true);
             toggleTopWindow(editUserNameWindow, editUserNameBtn, false);
         });
 
         addProductBtn.setOnClickListener(lView -> {
-            addProductWindow.setTranslationY(resources.getDimension(R.dimen.add_point_window_translation_y));
+            addProductWindow.setTranslationY(resources.getDimension(R.dimen.add_point_window_expanded_translation_y));
             toggleTopWindow(editUserNameWindow, editUserNameBtn, true);
             toggleTopWindow(addProductWindow, addProductBtn, false);
         });
@@ -163,30 +153,25 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
     private boolean handleEditUserNameWindowMotion(View view, MotionEvent motionEvent) {
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                float editUserNameWindowStartMotionY = motionEvent.getRawY();
+                editUserNameWindowStartMotionY = motionEvent.getRawY();
                 editUserNameWindowCorrectionY = view.getY() - editUserNameWindowStartMotionY;
                 break;
             case MotionEvent.ACTION_MOVE:
                 editUserNameWindowEndMotionY = motionEvent.getRawY();
-                if (editUserNameWindowEndMotionY + editUserNameWindowCorrectionY < editUserNameTopLimit ||
-                        editUserNameWindowEndMotionY + editUserNameWindowCorrectionY > editUserNameBottomLimit) {
+                if (editUserNameWindowStartMotionY < editUserNameWindowEndMotionY) {
                     break;
                 }
                 view.setY(editUserNameWindowEndMotionY + editUserNameWindowCorrectionY);
                 break;
             case MotionEvent.ACTION_UP:
-                float bottomDiff = editUserNameWindowEndMotionY + editUserNameWindowCorrectionY - editUserNameBottomLimit;
-                if (bottomDiff > -200) {
-                    view.animate().y(editUserNameBottomLimit).setDuration(200);
+                if (editUserNameWindowEndMotionY != 0 && editUserNameWindowStartMotionY - editUserNameWindowEndMotionY > 200) {
+                    ViewDriver.hideView(view, R.anim.top_view_hide_animation, context);
+                    editUserNameBtn.setEnabled(true);
+                    break;
+                } else {
+                    view.animate().y(editUserNameWindowCorrectionY + editUserNameWindowStartMotionY).setDuration(200);
                     break;
                 }
-
-                float topDiff = editUserNameWindowEndMotionY + editUserNameWindowCorrectionY - editUserNameTopLimit;
-                if (topDiff < 200) {
-                    view.animate().y(editUserNameTopLimit).setDuration(200);
-                    break;
-                }
-                break;
         }
         return false;
     }
@@ -194,30 +179,25 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
     private boolean handleAddProductWindowMotion(View view, MotionEvent motionEvent) {
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                float addProductWindowStartMotionY = motionEvent.getRawY();
+                addProductWindowStartMotionY = motionEvent.getRawY();
                 addProductWindowCorrectionY = view.getY() - addProductWindowStartMotionY;
                 break;
             case MotionEvent.ACTION_MOVE:
                 addProductWindowEndMotionY = motionEvent.getRawY();
-                if (addProductWindowEndMotionY + addProductWindowCorrectionY < addProductTopLimit ||
-                        addProductWindowEndMotionY + addProductWindowCorrectionY > addProductBottomLimit) {
+                if (addProductWindowStartMotionY < addProductWindowEndMotionY) {
                     break;
                 }
                 view.setY(addProductWindowEndMotionY + addProductWindowCorrectionY);
                 break;
             case MotionEvent.ACTION_UP:
-                float bottomDiff = addProductWindowEndMotionY + addProductWindowCorrectionY - addProductBottomLimit;
-                if (bottomDiff > -200) {
-                    view.animate().y(addProductBottomLimit).setDuration(200);
+                if (addProductWindowEndMotionY != 0 && addProductWindowStartMotionY - addProductWindowEndMotionY > 200) {
+                    ViewDriver.hideView(view, R.anim.top_view_hide_animation, context);
+                    addProductBtn.setEnabled(true);
+                    break;
+                } else {
+                    view.animate().y(addProductWindowCorrectionY + addProductWindowStartMotionY).setDuration(200);
                     break;
                 }
-
-                float topDiff = addProductWindowEndMotionY + addProductWindowCorrectionY - addProductTopLimit;
-                if (topDiff < 200) {
-                    view.animate().y(addProductTopLimit).setDuration(200);
-                    break;
-                }
-                break;
         }
         return false;
     }

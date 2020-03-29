@@ -30,14 +30,14 @@ public class ViewDriver {
         return animation;
     }
 
+    public static void setStatusTvOptions(TextView tv, String text, int color) {
+        tv.setTextColor(color);
+        tv.setText(text);
+    }
+
     private static Animation animateView(View view, int animationResource, Context context) {
         Animation animation = AnimationUtils.loadAnimation(context, animationResource);
         view.startAnimation(animation);
         return animation;
-    }
-
-    public static void setStatusTvOptions(TextView tv, String text, int color) {
-        tv.setTextColor(color);
-        tv.setText(text);
     }
 }

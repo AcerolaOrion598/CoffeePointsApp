@@ -43,8 +43,8 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
     private Button pointEditSaveButton, pointEditBackButton, addPointCancelBtn;
     private ImageButton addPointBtn;
     private Resources resources;
-    private float pointEditLayoutCorrectionX, pointEditLayoutEndMotionX, pointEditLayoutStartLimit, addWindowEndMotionY,
-            addPointTopLimit, addPointBottomLimit, addWindowCorrectionY;
+    private float pointEditLayoutCorrectionX, pointEditLayoutEndMotionX, pointEditLayoutStartLimit,
+            addWindowEndMotionY, addWindowCorrectionY, addWindowStartMotionY;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
@@ -98,15 +98,10 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
             }
         });
 
-        addPointWindow.setTranslationY(resources.getDimension(R.dimen.add_point_window_translation_y));
-        addPointTopLimit = addPointWindow.getY();
-        addPointWindow.setTranslationY(resources.getDimension(R.dimen.add_point_window_expanded_translation_y));
-        addPointBottomLimit = addPointWindow.getY();
-
         pointEditSaveButton.setOnClickListener(lView -> {});
         pointEditBackButton.setOnClickListener(lView -> backWasPressed());
         addPointBtn.setOnClickListener(lView -> {
-            addPointWindow.setTranslationY(resources.getDimension(R.dimen.add_point_window_translation_y));
+            addPointWindow.setTranslationY(resources.getDimension(R.dimen.add_point_window_expanded_translation_y));
             ViewDriver.hideView(addPointBtn, R.anim.bottom_view_hide_animation, context);
             ViewDriver.showView(addPointWindow, R.anim.top_view_show_animation, context);
         });
@@ -172,7 +167,6 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
                 if (startDiff > 300) {
                     view.setClickable(false);
                     mainActivity.setActionBarTitle(getString(R.string.title_points));
-                    view.setX(pointEditLayoutEndMotionX + pointEditLayoutCorrectionX);
                     ViewDriver.hideView(view, R.anim.hide_right_animation, context);
                     break;
                 }
@@ -200,29 +194,25 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
     private boolean handleAddPointWindowMotion(View view, MotionEvent motionEvent) {
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                float addWindowStartMotionY = motionEvent.getRawY();
+                addWindowStartMotionY = motionEvent.getRawY();
                 addWindowCorrectionY = view.getY() - addWindowStartMotionY;
                 break;
             case MotionEvent.ACTION_MOVE:
                 addWindowEndMotionY = motionEvent.getRawY();
-                if (addWindowEndMotionY + addWindowCorrectionY < addPointTopLimit || addWindowEndMotionY + addWindowCorrectionY > addPointBottomLimit) {
+                if (addWindowStartMotionY < addWindowEndMotionY) {
                     break;
                 }
                 view.setY(addWindowEndMotionY + addWindowCorrectionY);
                 break;
             case MotionEvent.ACTION_UP:
-                float bottomDiff = addWindowEndMotionY + addWindowCorrectionY - addPointBottomLimit;
-                if (bottomDiff > -200) {
-                    view.animate().y(addPointBottomLimit).setDuration(200);
+                if (addWindowEndMotionY != 0 && addWindowStartMotionY - addWindowEndMotionY > 200) {
+                    ViewDriver.hideView(view, R.anim.top_view_hide_animation, context);
+                    ViewDriver.showView(addPointBtn, R.anim.bottom_view_show_animation, context);
+                    break;
+                } else {
+                    view.animate().y(addWindowStartMotionY + addWindowCorrectionY).setDuration(200);
                     break;
                 }
-
-                float topDiff = addWindowEndMotionY + addWindowCorrectionY - addPointTopLimit;
-                if (topDiff < 200) {
-                    view.animate().y(addPointTopLimit).setDuration(200);
-                    break;
-                }
-                break;
         }
         return false;
     }

@@ -125,8 +125,7 @@
         android:paddingEnd="15dp"
         android:clickable="true"
         android:elevation="10dp"
-        android:translationY="@dimen/add_point_window_translation_y"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <TextView
             android:id="@+id/new_point_tv"
