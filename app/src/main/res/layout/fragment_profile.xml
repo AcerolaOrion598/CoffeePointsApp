@@ -22,7 +22,6 @@
         android:paddingEnd="15dp"
         android:clickable="true"
         android:elevation="10dp"
-        android:translationY="@dimen/add_point_window_translation_y"
         android:visibility="gone">
 
         <TextView
@@ -117,7 +116,6 @@
         android:paddingEnd="15dp"
         android:clickable="true"
         android:elevation="10dp"
-        android:translationY="@dimen/add_point_window_translation_y"
         android:visibility="gone">
 
         <TextView

@@ -25,7 +25,7 @@ public class Product {
     @ColumnInfo(name = "supervisor")
     private String supervisor;
 
-    Product(@NonNull String _id, @NonNull String type, @NonNull String name, @NonNull String supervisor) {
+    public Product(@NonNull String _id, @NonNull String type, @NonNull String name, @NonNull String supervisor) {
         this._id = _id;
         this.type = type;
         this.name = name;

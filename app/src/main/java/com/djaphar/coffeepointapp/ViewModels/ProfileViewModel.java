@@ -76,4 +76,30 @@ public class ProfileViewModel extends AndroidViewModel {
             }
         });
     }
+
+    public void requestAddProduct(Product product, User user) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        PointsApi pointsApi = retrofit.create(PointsApi.class);
+        Map<String, String> headersMap = new HashMap<>();
+        headersMap.put("Authorization", user.getToken());
+        Call<Product> call = pointsApi.requestAddProduct(headersMap, product);
+        call.enqueue(new Callback<Product>() {
+            @Override
+            public void onResponse(@NonNull Call<Product> call, @NonNull Response<Product> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getApplication(), response.message(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                UserRoom.databaseWriteExecutor.execute(() -> userDao.setUserProduct(response.body()));
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Product> call, @NonNull Throwable t) {
+                Toast.makeText(getApplication(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 }

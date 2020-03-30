@@ -27,6 +27,9 @@ public interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void setUserProducts(List<Product> products);
 
+    @Insert
+    void setUserProduct(Product product);
+
     @Query("SELECT * FROM product_table")
     LiveData<List<Product>> getUserProductsLiveData();
 

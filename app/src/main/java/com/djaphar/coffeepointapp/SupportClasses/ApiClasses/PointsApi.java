@@ -30,4 +30,7 @@ public interface PointsApi {
 
     @GET("api/supervisors/{id}/products")
     Call<List<Product>> requestUserProducts(@Path("id") String id, @HeaderMap Map<String, String> headers);
+
+    @POST("api/products")
+    Call<Product> requestAddProduct(@HeaderMap Map<String, String> headers, @Body Product product);
 }

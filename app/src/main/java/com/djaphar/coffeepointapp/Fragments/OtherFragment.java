@@ -66,22 +66,6 @@ public class OtherFragment extends MyFragment {
             mainActivity.logout();
         });
 
-//        otherViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
-//            if (user != null || products != null) {
-//                this.user = user;
-//                return;
-//            }
-//            mainActivity.logout();
-//        });
-//
-//        otherViewModel.getUserProductsLiveData().observe(getViewLifecycleOwner(), products -> {
-//            if (products != null || user != null) {
-//                this.products = products;
-//                return;
-//            }
-//            mainActivity.logout();
-//        });
-
         aboutAppTv.setOnClickListener(lView -> {
             mainActivity.setActionBarTitle(getString(R.string.about_app));
             ViewDriver.hideView(otherContainer, R.anim.top_view_hide_animation, context);

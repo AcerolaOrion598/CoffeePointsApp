@@ -11,11 +11,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.djaphar.coffeepointapp.Activities.MainActivity;
 import com.djaphar.coffeepointapp.R;
 import com.djaphar.coffeepointapp.SupportClasses.Adapters.ProductsRecyclerViewAdapter;
+import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.Product;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.MyFragment;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.ViewDriver;
@@ -36,7 +36,7 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
     private Context context;
     private Resources resources;
     private TextView userNameTv;
-    private EditText editUserNameEd;
+    private EditText editUserNameEd, addProductEd;
     private RecyclerView productsRecyclerView;
     private User user;
     private float editUserNameWindowCorrectionY, editUserNameWindowEndMotionY, editUserNameWindowStartMotionY,
@@ -56,6 +56,7 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
         addProductWindow = root.findViewById(R.id.add_product_window);
         userNameTv = root.findViewById(R.id.user_name_tv);
         editUserNameEd = root.findViewById(R.id.edit_user_name_ed);
+        addProductEd = root.findViewById(R.id.add_product_ed);
         productsRecyclerView = root.findViewById(R.id.products_recycler_view);
         context = getContext();
         resources = getResources();
@@ -106,7 +107,7 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
         });
 
         addProductSaveBtn.setOnClickListener(lView -> {
-            Toast.makeText(context, R.string.ononoki_chan, Toast.LENGTH_SHORT).show();
+            profileViewModel.requestAddProduct(new Product("0", "Кофе", addProductEd.getText().toString(), "0"), user);
             toggleTopWindow(addProductWindow, addProductBtn, true);
         });
 
