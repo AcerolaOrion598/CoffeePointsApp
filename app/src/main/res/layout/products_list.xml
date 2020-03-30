@@ -1,21 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:id="@+id/parent_layout_products"
+<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parent_layout_products"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="7dp"
-    android:paddingBottom="7dp">
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
 
     <TextView
         android:id="@+id/product_name_tv"
-        android:layout_width="300dp"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_medium"
+        android:textColor="@color/colorBlack87"
+        android:layout_marginBottom="11dp"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/product_type_tv"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/roboto"
-        android:textColor="@color/colorBlack87"
-        android:textSize="18sp"/>
+        android:textColor="@color/colorBlack60"
+        android:textSize="16sp"
+        android:layout_below="@+id/product_name_tv" />
 
-    <CheckBox
+    <TextView
+        android:id="@+id/product_delete_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"/>
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:text="@string/delete_btn"
+        android:fontFamily="@font/roboto"
+        android:textSize="14sp"
+        android:textColor="@color/colorRed60"
+        tools:ignore="RelativeOverlap" />
 </RelativeLayout>

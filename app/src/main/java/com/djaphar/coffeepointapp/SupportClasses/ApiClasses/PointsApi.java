@@ -8,6 +8,7 @@ import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.HeaderMap;
 import retrofit2.http.POST;
@@ -33,4 +34,7 @@ public interface PointsApi {
 
     @POST("api/products")
     Call<Product> requestAddProduct(@HeaderMap Map<String, String> headers, @Body Product product);
+
+    @DELETE("api/products/{id}")
+    Call<Product> requestDeleteProduct(@Path("id") String id, @HeaderMap Map<String, String> headers);
 }

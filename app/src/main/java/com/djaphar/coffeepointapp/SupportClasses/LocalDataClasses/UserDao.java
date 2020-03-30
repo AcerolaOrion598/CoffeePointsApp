@@ -35,4 +35,7 @@ public interface UserDao {
 
     @Query("DELETE FROM product_table")
     void deleteUserProducts();
+
+    @Query("DELETE FROM product_table WHERE _id = (:id)")
+    void deleteUserProduct(String id);
 }

@@ -18,7 +18,6 @@ import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.ViewDriver;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 

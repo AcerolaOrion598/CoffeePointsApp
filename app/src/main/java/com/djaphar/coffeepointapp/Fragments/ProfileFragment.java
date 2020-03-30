@@ -1,6 +1,7 @@
 package com.djaphar.coffeepointapp.Fragments;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -82,7 +83,7 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
         });
 
         profileViewModel.getUserProducts().observe(getViewLifecycleOwner(), products -> {
-            productsRecyclerView.setAdapter(new ProductsRecyclerViewAdapter(products));
+            productsRecyclerView.setAdapter(new ProductsRecyclerViewAdapter(products, this));
             productsRecyclerView.setNestedScrollingEnabled(false);
             productsRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         });
@@ -95,6 +96,7 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
         });
 
         addProductBtn.setOnClickListener(lView -> {
+            addProductEd.setText("");
             addProductWindow.setTranslationY(resources.getDimension(R.dimen.add_point_window_expanded_translation_y));
             toggleTopWindow(editUserNameWindow, editUserNameBtn, true);
             toggleTopWindow(addProductWindow, addProductBtn, false);
@@ -126,6 +128,19 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
         if (addProductWindow.getVisibility() == View.VISIBLE) {
             toggleTopWindow(addProductWindow, addProductBtn, true);
         }
+    }
+
+    public void createDeleteProductDialog(String id) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(R.string.delete_dialog_title)
+                .setMessage(R.string.delete_product_dialog_message)
+                .setNegativeButton(R.string.dialog_negative_btn, (dialogInterface, i) -> dialogInterface.cancel())
+                .setPositiveButton(R.string.dialog_positive_btn, (dialogInterface, i) -> deleteProduct(id))
+                .show();
+    }
+
+    private void deleteProduct(String id) {
+        profileViewModel.requestDeleteProduct(id, user);
     }
 
     private void toggleTopWindow(ConstraintLayout window, Button button, boolean enabled) {

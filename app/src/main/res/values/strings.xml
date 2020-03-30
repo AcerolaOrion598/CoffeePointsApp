@@ -37,7 +37,9 @@
     <string name="about_app">О приложении</string>
     <string name="exit">Выйти</string>
     <string name="exit_dialog_title">Выйти?</string>
+    <string name="delete_dialog_title">Удалить?</string>
     <string name="exit_dialog_message">Вы уверены, что хотите выйти из приложения?</string>
+    <string name="delete_product_dialog_message">Вы уверены, что хотите удалить эту точку?</string>
     <string name="dialog_positive_btn">Да</string>
     <string name="dialog_negative_btn">Нет</string>
     <string name="about_app_content">Разная супер важная информация, которую я ещё не придумал.</string>
