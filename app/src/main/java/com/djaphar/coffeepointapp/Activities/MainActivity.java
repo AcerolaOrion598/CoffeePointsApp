@@ -12,7 +12,7 @@ import com.djaphar.coffeepointapp.Fragments.PointsFragment;
 import com.djaphar.coffeepointapp.Fragments.ProfileFragment;
 import com.djaphar.coffeepointapp.R;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
-import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.UserChangeChecker;
+import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.UserChangeChecker;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.MyFragment;
 import com.djaphar.coffeepointapp.ViewModels.MainViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
             }
             this.user = user;
             userHash = user.getUserHash();
+            mainViewModel.requestUserProducts(user);
         });
         userChangeChecker = new UserChangeChecker(new Handler(), this);
         userChangeChecker.startUserChangeCheck();

@@ -80,7 +80,7 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
             userNameTv.setText(user.getName());
         });
 
-        profileViewModel.getProducts().observe(getViewLifecycleOwner(), products -> {
+        profileViewModel.getUserProducts().observe(getViewLifecycleOwner(), products -> {
             productsRecyclerView.setAdapter(new ProductsRecyclerViewAdapter(products));
             productsRecyclerView.setNestedScrollingEnabled(false);
             productsRecyclerView.setLayoutManager(new LinearLayoutManager(context));

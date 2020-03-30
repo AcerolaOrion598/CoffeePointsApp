@@ -8,17 +8,18 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.djaphar.coffeepointapp.R;
+import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.Product;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class ProductsRecyclerViewAdapter extends RecyclerView.Adapter<ProductsRecyclerViewAdapter.ViewHolder> {
 
-    private ArrayList<String> products;
+    private List<Product> products;
 
-    public ProductsRecyclerViewAdapter(ArrayList<String> products) {
+    public ProductsRecyclerViewAdapter(List<Product> products) {
         this.products = products;
     }
 
@@ -36,7 +37,7 @@ public class ProductsRecyclerViewAdapter extends RecyclerView.Adapter<ProductsRe
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.productNameTv.setText(products.get(position));
+        holder.productNameTv.setText(products.get(position).getName());
     }
 
     @Override

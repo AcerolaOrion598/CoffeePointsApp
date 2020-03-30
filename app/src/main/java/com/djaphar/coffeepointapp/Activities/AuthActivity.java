@@ -14,8 +14,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.djaphar.coffeepointapp.R;
-import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.SecondCredentials;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.FirstCredentials;
+import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.SecondCredentials;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.ViewDriver;
 import com.djaphar.coffeepointapp.ViewModels.AuthViewModel;
 import com.google.firebase.iid.FirebaseInstanceId;

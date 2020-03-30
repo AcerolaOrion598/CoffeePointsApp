@@ -1,7 +1,9 @@
 package com.djaphar.coffeepointapp.SupportClasses.ApiClasses;
 
+import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.Product;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
 
+import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -25,4 +27,7 @@ public interface PointsApi {
 
     @PUT("api/supervisors/{id}")
     Call<User> updateUser(@Path("id") String id, @HeaderMap Map<String, String> headers, @Body User user);
+
+    @GET("api/supervisors/{id}/products")
+    Call<List<Product>> requestUserProducts(@Path("id") String id, @HeaderMap Map<String, String> headers);
 }

@@ -1,4 +1,4 @@
-package com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses;
+package com.djaphar.coffeepointapp.SupportClasses.OtherClasses;
 
 import android.os.Handler;
 
