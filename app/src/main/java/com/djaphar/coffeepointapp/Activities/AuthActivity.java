@@ -35,7 +35,7 @@ public class AuthActivity extends AppCompatActivity {
     private Button requestNumberBtn, loginBtn;
     private TextView authInstructionTv, authInstructionPhoneNumberTv;
     private String token;
-    private SecondCredentials secondaryCredentials = new SecondCredentials(null, null);
+    private SecondCredentials secondCredentials = new SecondCredentials(null, null);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,12 +55,12 @@ public class AuthActivity extends AppCompatActivity {
         authInstructionTv = findViewById(R.id.auth_instruction_tv);
         authInstructionPhoneNumberTv = findViewById(R.id.auth_instruction_phone_number_tv);
         authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
-        authViewModel.getSecondaryCredentials().observe(this, credentials -> {
+        authViewModel.getSecondCredentials().observe(this, credentials -> {
             if (credentials == null) {
                 return;
             }
-            secondaryCredentials.setCodeId(credentials.getCodeId());
-            if (secondaryCredentials.getCode() == null) {
+            secondCredentials.setCodeId(credentials.getCodeId());
+            if (secondCredentials.getCode() == null) {
                 return;
             }
             loginBtn.performClick();
@@ -128,8 +128,8 @@ public class AuthActivity extends AppCompatActivity {
         }));
 
         loginBtn.setOnClickListener(lView -> {
-            secondaryCredentials.setCode(smsCodeEd.getText().toString());
-            authViewModel.login(secondaryCredentials);
+            secondCredentials.setCode(smsCodeEd.getText().toString());
+            authViewModel.login(secondCredentials);
         });
     }
 
@@ -179,9 +179,9 @@ public class AuthActivity extends AppCompatActivity {
             Bundle extras = intent.getExtras();
             if (extras != null) {
                 smsCodeEd.setText(extras.getString("code"));
-                secondaryCredentials.setCode(extras.getString("code"));
+                secondCredentials.setCode(extras.getString("code"));
                 loginBtn.setEnabled(true);
-                if (secondaryCredentials.getCodeId() == null) {
+                if (secondCredentials.getCodeId() == null) {
                     return;
                 }
                 loginBtn.performClick();

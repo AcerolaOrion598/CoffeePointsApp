@@ -10,13 +10,11 @@ import androidx.lifecycle.ViewModelProvider;
 
 public class SplashActivity extends AppCompatActivity {
 
-    AuthViewModel authViewModel;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
+        AuthViewModel authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
         authViewModel.getUser().observe(this, user -> {
             if (user != null) {
                 startNextActivity(new Intent(this, MainActivity.class));

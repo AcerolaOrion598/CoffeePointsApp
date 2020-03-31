@@ -20,6 +20,7 @@
     <string name="first_credentials_error_text">Что-то пошло не так, отправьте код снова</string>
     <string name="user_name_text">Имя Профиля</string>
     <string name="user_name_ed_text">Имя профиля</string>
+    <string name="user_name_tv_null_text">Не указано</string>
     <string name="new_user_name_text">Новое Имя</string>
     <string name="user_about_hint">О себе</string>
     <string name="product_list_tv_text">Ваш Ассортимент</string>

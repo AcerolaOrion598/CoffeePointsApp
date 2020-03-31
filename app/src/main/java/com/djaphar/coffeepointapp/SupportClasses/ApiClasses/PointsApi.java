@@ -37,4 +37,7 @@ public interface PointsApi {
 
     @DELETE("api/products/{id}")
     Call<Product> requestDeleteProduct(@Path("id") String id, @HeaderMap Map<String, String> headers);
+
+    @PUT("api/couriers/{id}")
+    Call<Void> requestBindCourier(@Path("id") String id, @HeaderMap Map<String, String> headers, @Body SupervisorModel supervisorModel);
 }

@@ -119,11 +119,9 @@ public class ProfileViewModel extends AndroidViewModel {
                     Toast.makeText(getApplication(), response.message(), Toast.LENGTH_SHORT).show();
                     return;
                 }
-
                 if (response.body() == null) {
                     return;
                 }
-
                 UserRoom.databaseWriteExecutor.execute(() -> userDao.deleteUserProduct(response.body().get_id()));
             }
 

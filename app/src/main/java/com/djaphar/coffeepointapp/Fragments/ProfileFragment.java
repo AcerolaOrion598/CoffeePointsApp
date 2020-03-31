@@ -76,9 +76,11 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
         profileViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
             this.user = user;
             if (user.getName() == null) {
-                userNameTv.setText("Вы не указали имя пользователя");
+                userNameTv.setTextColor(resources.getColor(R.color.colorBlack30));
+                userNameTv.setText(R.string.user_name_tv_null_text);
                 return;
             }
+            userNameTv.setTextColor(resources.getColor(R.color.colorBlack60));
             userNameTv.setText(user.getName());
         });
 

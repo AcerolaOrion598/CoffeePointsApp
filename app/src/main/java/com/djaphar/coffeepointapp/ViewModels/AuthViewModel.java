@@ -23,7 +23,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class AuthViewModel extends AndroidViewModel {
 
     private LiveData<User> userLiveData;
-    private MutableLiveData<SecondCredentials> secondaryCredentials = new MutableLiveData<>();
+    private MutableLiveData<SecondCredentials> secondCredentialsMutableLiveData = new MutableLiveData<>();
     private UserDao userDao;
     private final static String baseUrl = "http://212.109.219.69:3007/";
 
@@ -38,8 +38,8 @@ public class AuthViewModel extends AndroidViewModel {
         return userLiveData;
     }
 
-    public LiveData<SecondCredentials> getSecondaryCredentials() {
-        return secondaryCredentials;
+    public LiveData<SecondCredentials> getSecondCredentials() {
+        return secondCredentialsMutableLiveData;
     }
 
     public void requestCode(FirstCredentials credentials) {
@@ -54,8 +54,9 @@ public class AuthViewModel extends AndroidViewModel {
             public void onResponse(@NonNull Call<SecondCredentials> call, @NonNull Response<SecondCredentials> response) {
                 if (!response.isSuccessful()) {
                     Toast.makeText(getApplication(), response.message(), Toast.LENGTH_SHORT).show();
+                    return;
                 }
-                secondaryCredentials.setValue(response.body());
+                secondCredentialsMutableLiveData.setValue(response.body());
             }
 
             @Override

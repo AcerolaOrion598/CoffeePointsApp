@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private UserChangeChecker userChangeChecker;
     private MainViewModel mainViewModel;
     private User user;
-    Integer userHash;
+//    Integer userHash;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
             this.user = user;
-            userHash = user.getUserHash();
+//            userHash = user.getUserHash();
             mainViewModel.requestUserProducts(user);
         });
         userChangeChecker = new UserChangeChecker(new Handler(), this);
@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
         if (user == null) {
             return;
         }
-        mainViewModel.requestUser(user.get_id(), userHash);
+        mainViewModel.requestUser(user.get_id(), user.getUserHash());
     }
 
     public void setActionBarTitle(String title) {

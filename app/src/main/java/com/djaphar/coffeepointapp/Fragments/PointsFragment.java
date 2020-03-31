@@ -20,9 +20,10 @@ import android.widget.RelativeLayout;
 import com.djaphar.coffeepointapp.Activities.MainActivity;
 import com.djaphar.coffeepointapp.R;
 import com.djaphar.coffeepointapp.SupportClasses.Adapters.PointsRecyclerViewAdapter;
+import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.MyFragment;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.ViewDriver;
-import com.djaphar.coffeepointapp.ViewModels.MainViewModel;
+import com.djaphar.coffeepointapp.ViewModels.PointsViewModel;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,21 +34,22 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class PointsFragment extends MyFragment implements View.OnTouchListener {
 
-    private MainViewModel mainViewModel;
+    private PointsViewModel pointsViewModel;
     private MainActivity mainActivity;
     private Context context;
     private RecyclerView recyclerView;
     private RelativeLayout pointListLayout;
     private ConstraintLayout pointEditLayout, addPointWindow;
     private EditText pointNameFormEd, pointAboutFormEd;
-    private Button pointEditSaveButton, pointEditBackButton, addPointCancelBtn;
+    private Button pointEditSaveButton, pointEditBackButton, addPointCancelBtn, addPointSaveBtn;
     private ImageButton addPointBtn;
     private Resources resources;
+    private User user;
     private float pointEditLayoutCorrectionX, pointEditLayoutEndMotionX, pointEditLayoutStartLimit,
             addWindowEndMotionY, addWindowCorrectionY, addWindowStartMotionY;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        pointsViewModel = new ViewModelProvider(this).get(PointsViewModel.class);
         View root = inflater.inflate(R.layout.fragment_points, container, false);
         recyclerView = root.findViewById(R.id.points_recycler_view);
         pointListLayout = root.findViewById(R.id.points_list_layout);
@@ -58,6 +60,7 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
         pointEditSaveButton = root.findViewById(R.id.point_edit_save_btn);
         pointEditBackButton = root.findViewById(R.id.point_edit_back_btn);
         addPointCancelBtn = root.findViewById(R.id.add_point_cancel_btn);
+        addPointSaveBtn = root.findViewById(R.id.add_point_save_btn);
         addPointBtn = root.findViewById(R.id.add_point_btn);
         mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
@@ -74,11 +77,18 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
         resources = getResources();
         pointEditLayoutStartLimit = pointEditLayout.getX();
 
-        mainViewModel.getPoints().observe(getViewLifecycleOwner(), points -> {
+        pointsViewModel.getPoints().observe(getViewLifecycleOwner(), points -> {
             PointsRecyclerViewAdapter adapter = new PointsRecyclerViewAdapter(points, pointListLayout, pointEditLayout,
                     mainActivity, pointNameFormEd, pointAboutFormEd);
             recyclerView.setAdapter(adapter);
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        });
+
+        pointsViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
+            if (user == null) {
+                return;
+            }
+            this.user = user;
         });
 
         pointNameFormEd.addTextChangedListener(new TextWatcher() {
@@ -109,6 +119,7 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
             ViewDriver.hideView(addPointWindow, R.anim.top_view_hide_animation, context);
             ViewDriver.showView(addPointBtn, R.anim.bottom_view_show_animation, context);
         });
+        addPointSaveBtn.setOnClickListener(lView -> pointsViewModel.requestBindCourier(user));
         pointEditLayout.setOnTouchListener(this);
         addPointWindow.setOnTouchListener(this);
     }
