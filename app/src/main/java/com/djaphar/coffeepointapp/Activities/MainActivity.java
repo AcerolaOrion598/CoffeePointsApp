@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
     private UserChangeChecker userChangeChecker;
     private MainViewModel mainViewModel;
     private User user;
-//    Integer userHash;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,11 +54,9 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
             this.user = user;
-//            userHash = user.getUserHash();
             mainViewModel.requestUserProducts(user);
         });
         userChangeChecker = new UserChangeChecker(new Handler(), this);
-        userChangeChecker.startUserChangeCheck();
     }
 
     @Override
