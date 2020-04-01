@@ -6,7 +6,7 @@ import android.widget.Toast;
 import com.djaphar.coffeepointapp.R;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Point;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointsApi;
-import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.SupervisorModel;
+import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.BindCourierModel;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.UserDao;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.UserRoom;
@@ -93,17 +93,16 @@ public class PointsViewModel extends AndroidViewModel {
         return userLiveData;
     }
 
-    public void requestBindCourier(User user) {
+    public void requestBindCourier(User user, String phoneNumber) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         PointsApi pointsApi = retrofit.create(PointsApi.class);
-        //TODO: Вынести всё во фрагмент (в других местах тоже)
         Map<String, String> headersMap = new HashMap<>();
         headersMap.put("Authorization", user.getToken());
-        SupervisorModel supervisorModel = new SupervisorModel(user.get_id());
-        Call<Void> call = pointsApi.requestBindCourier("5e83ca1e6950c2040a68ecf0", headersMap, supervisorModel);
+        BindCourierModel bindCourierModel = new BindCourierModel(user.get_id(), phoneNumber);
+        Call<Void> call = pointsApi.requestBindCourier(headersMap, bindCourierModel);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {

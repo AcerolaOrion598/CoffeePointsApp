@@ -40,7 +40,7 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
     private RecyclerView recyclerView;
     private RelativeLayout pointListLayout;
     private ConstraintLayout pointEditLayout, addPointWindow;
-    private EditText pointNameFormEd, pointAboutFormEd;
+    private EditText pointNameFormEd, pointAboutFormEd, newPointPhoneNumberEd;
     private Button pointEditSaveButton, pointEditBackButton, addPointCancelBtn, addPointSaveBtn;
     private ImageButton addPointBtn;
     private Resources resources;
@@ -61,6 +61,7 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
         pointEditBackButton = root.findViewById(R.id.point_edit_back_btn);
         addPointCancelBtn = root.findViewById(R.id.add_point_cancel_btn);
         addPointSaveBtn = root.findViewById(R.id.add_point_save_btn);
+        newPointPhoneNumberEd = root.findViewById(R.id.new_point_phone_number_ed);
         addPointBtn = root.findViewById(R.id.add_point_btn);
         mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
@@ -108,6 +109,23 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
             }
         });
 
+        newPointPhoneNumberEd.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.toString().equals("")) {
+                    addPointSaveBtn.setEnabled(false);
+                } else {
+                    addPointSaveBtn.setEnabled(true);
+                }
+            }
+        });
+
         pointEditSaveButton.setOnClickListener(lView -> {});
         pointEditBackButton.setOnClickListener(lView -> backWasPressed());
         addPointBtn.setOnClickListener(lView -> {
@@ -119,7 +137,7 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
             ViewDriver.hideView(addPointWindow, R.anim.top_view_hide_animation, context);
             ViewDriver.showView(addPointBtn, R.anim.bottom_view_show_animation, context);
         });
-        addPointSaveBtn.setOnClickListener(lView -> pointsViewModel.requestBindCourier(user));
+        addPointSaveBtn.setOnClickListener(lView -> pointsViewModel.requestBindCourier(user, newPointPhoneNumberEd.getText().toString()));
         pointEditLayout.setOnTouchListener(this);
         addPointWindow.setOnTouchListener(this);
     }
