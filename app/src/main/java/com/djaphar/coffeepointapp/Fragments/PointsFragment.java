@@ -1,6 +1,5 @@
 package com.djaphar.coffeepointapp.Fragments;
 
-import android.animation.Animator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
@@ -11,16 +10,16 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewPropertyAnimator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 
 import com.djaphar.coffeepointapp.Activities.MainActivity;
 import com.djaphar.coffeepointapp.R;
+import com.djaphar.coffeepointapp.SupportClasses.Adapters.PointProductsRecyclerViewAdapter;
 import com.djaphar.coffeepointapp.SupportClasses.Adapters.PointsRecyclerViewAdapter;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Point;
+import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.Product;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.MyFragment;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.ViewDriver;
@@ -40,31 +39,28 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
     private PointsViewModel pointsViewModel;
     private MainActivity mainActivity;
     private Context context;
-    private RecyclerView visiblePointsRecyclerView, invisiblePointsRecyclerView;
-    private RelativeLayout visiblePointListLayout, invisiblePointListLayout;
-    private ConstraintLayout pointEditLayout, addPointWindow;
-    private EditText pointNameFormEd, pointAboutFormEd, newPointPhoneNumberEd;
-    private Button pointEditSaveButton, pointEditBackButton, addPointCancelBtn, addPointSaveBtn;
+    private RecyclerView visiblePointsRecyclerView, invisiblePointsRecyclerView, pointProductsRecyclerView;
+    private ConstraintLayout singlePointInfoContainer, addPointWindow;
+    private EditText pointEditNameFormEd, pointEditAboutFormEd, newPointPhoneNumberEd;
+    private Button pointEditSaveButton, singlePointInfoCancelBtn, addPointCancelBtn, addPointSaveBtn;
     private ImageButton addPointBtn;
     private Resources resources;
     private User user;
     private ArrayList<Point> visiblePoints = new ArrayList<>(), invisiblePoints = new ArrayList<>();
-    private float pointEditLayoutCorrectionX, pointEditLayoutEndMotionX, pointEditLayoutStartLimit,
-            addWindowEndMotionY, addWindowCorrectionY, addWindowStartMotionY;
+    private float addWindowEndMotionY, addWindowCorrectionY, addWindowStartMotionY;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         pointsViewModel = new ViewModelProvider(this).get(PointsViewModel.class);
         View root = inflater.inflate(R.layout.fragment_points, container, false);
         visiblePointsRecyclerView = root.findViewById(R.id.visible_points_recycler_view);
         invisiblePointsRecyclerView = root.findViewById(R.id.invisible_points_recycler_view);
-        visiblePointListLayout = root.findViewById(R.id.visible_points_list_layout);
-        invisiblePointListLayout = root.findViewById(R.id.invisible_points_list_layout);
-        pointEditLayout = root.findViewById(R.id.point_edit_layout);
+        pointProductsRecyclerView = root.findViewById(R.id.point_products_recycler_view);
+        singlePointInfoContainer = root.findViewById(R.id.single_point_info_container);
         addPointWindow = root.findViewById(R.id.add_point_window);
-        pointNameFormEd = root.findViewById(R.id.point_name_form_ed);
-        pointAboutFormEd = root.findViewById(R.id.point_about_form_ed);
+        pointEditNameFormEd = root.findViewById(R.id.point_edit_name_form_ed);
+        pointEditAboutFormEd = root.findViewById(R.id.point_edit_about_form_ed);
         pointEditSaveButton = root.findViewById(R.id.point_edit_save_btn);
-        pointEditBackButton = root.findViewById(R.id.point_edit_back_btn);
+        singlePointInfoCancelBtn = root.findViewById(R.id.single_point_info_cancel_btn);
         addPointCancelBtn = root.findViewById(R.id.add_point_cancel_btn);
         addPointSaveBtn = root.findViewById(R.id.add_point_save_btn);
         newPointPhoneNumberEd = root.findViewById(R.id.new_point_phone_number_ed);
@@ -82,7 +78,14 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
         super.onViewCreated(view, savedInstanceState);
         context = getContext();
         resources = getResources();
-        pointEditLayoutStartLimit = pointEditLayout.getX();
+
+        pointsViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
+            if (user == null) {
+                return;
+            }
+            this.user = user;
+            pointsViewModel.requestMyPoints(user.getToken());
+        });
 
         pointsViewModel.getPoints().observe(getViewLifecycleOwner(), points -> {
             visiblePoints.clear();
@@ -96,10 +99,10 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
                 }
             }
 
-            PointsRecyclerViewAdapter visibleAdapter = new PointsRecyclerViewAdapter(visiblePoints, visiblePointListLayout, pointEditLayout,
-                    mainActivity, pointNameFormEd, pointAboutFormEd);
-            PointsRecyclerViewAdapter invisibleAdapter = new PointsRecyclerViewAdapter(invisiblePoints, visiblePointListLayout, pointEditLayout,
-                    mainActivity, pointNameFormEd, pointAboutFormEd);
+            PointsRecyclerViewAdapter visibleAdapter = new PointsRecyclerViewAdapter(visiblePoints, singlePointInfoContainer,
+                    mainActivity, this, pointEditNameFormEd, pointEditAboutFormEd);
+            PointsRecyclerViewAdapter invisibleAdapter = new PointsRecyclerViewAdapter(invisiblePoints, singlePointInfoContainer,
+                    mainActivity,this, pointEditNameFormEd, pointEditAboutFormEd);
             visiblePointsRecyclerView.setAdapter(visibleAdapter);
             invisiblePointsRecyclerView.setAdapter(invisibleAdapter);
             visiblePointsRecyclerView.setNestedScrollingEnabled(false);
@@ -108,15 +111,7 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
             invisiblePointsRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         });
 
-        pointsViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
-            if (user == null) {
-                return;
-            }
-            this.user = user;
-            pointsViewModel.requestMyPoints(user.getToken());
-        });
-
-        pointNameFormEd.addTextChangedListener(new TextWatcher() {
+        pointEditNameFormEd.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
 
@@ -151,7 +146,7 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
         });
 
         pointEditSaveButton.setOnClickListener(lView -> {});
-        pointEditBackButton.setOnClickListener(lView -> backWasPressed());
+        singlePointInfoCancelBtn.setOnClickListener(lView -> backWasPressed());
         addPointBtn.setOnClickListener(lView -> {
             addPointWindow.setTranslationY(resources.getDimension(R.dimen.add_point_window_expanded_translation_y));
             ViewDriver.hideView(addPointBtn, R.anim.bottom_view_hide_animation, context);
@@ -162,24 +157,30 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
             ViewDriver.showView(addPointBtn, R.anim.bottom_view_show_animation, context);
         });
         addPointSaveBtn.setOnClickListener(lView -> pointsViewModel.requestBindCourier(user, newPointPhoneNumberEd.getText().toString()));
-        pointEditLayout.setOnTouchListener(this);
+        singlePointInfoContainer.setOnTouchListener(this);
         addPointWindow.setOnTouchListener(this);
     }
 
+    public void setPointProductRecyclerView(ArrayList<Product> products) {
+        PointProductsRecyclerViewAdapter adapter = new PointProductsRecyclerViewAdapter(products, getString(R.string.point_product_null));
+        pointProductsRecyclerView.setAdapter(adapter);
+        pointProductsRecyclerView.setNestedScrollingEnabled(false);
+        pointProductsRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+    }
+
     public void backWasPressed() {
-        if (pointEditLayout.getVisibility() == View.VISIBLE) {
-            pointEditLayout.setClickable(false);
+        if (singlePointInfoContainer.getVisibility() == View.VISIBLE) {
+            singlePointInfoContainer.setClickable(false);
             mainActivity.setActionBarTitle(getString(R.string.title_points));
-            visiblePointListLayout.setVisibility(View.VISIBLE);
-            ViewDriver.hideView(pointEditLayout, R.anim.hide_right_animation, context);
+            ViewDriver.hideView(singlePointInfoContainer, R.anim.hide_right_animation, context);
         } else if (addPointWindow.getVisibility() == View.VISIBLE) {
             ViewDriver.hideView(addPointWindow, R.anim.top_view_hide_animation, context);
             ViewDriver.showView(addPointBtn, R.anim.bottom_view_show_animation, context);
         }
     }
 
-    public ConstraintLayout getPointEditLayout() {
-        return pointEditLayout;
+    public ConstraintLayout getSinglePointInfoContainer() {
+        return singlePointInfoContainer;
     }
 
     public ConstraintLayout getAddPointWindow() {
@@ -190,57 +191,10 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
 
-        if (view == pointEditLayout) {
-            return handlePointEditLayoutMotion(view, motionEvent);
-        }
-
         if (view == addPointWindow) {
             return handleAddPointWindowMotion(view, motionEvent);
         }
 
-        return false;
-    }
-
-    private boolean handlePointEditLayoutMotion(View view, MotionEvent motionEvent) {
-        switch (motionEvent.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                float pointEditLayoutStartMotionX = motionEvent.getRawX();
-                pointEditLayoutCorrectionX = view.getX() - pointEditLayoutStartMotionX;
-                break;
-            case MotionEvent.ACTION_MOVE:
-                pointEditLayoutEndMotionX = motionEvent.getRawX();
-                visiblePointListLayout.setVisibility(View.VISIBLE);
-                if (pointEditLayoutEndMotionX + pointEditLayoutCorrectionX < pointEditLayoutStartLimit) {
-                    break;
-                }
-                view.setX(pointEditLayoutEndMotionX + pointEditLayoutCorrectionX);
-                break;
-            case MotionEvent.ACTION_UP:
-                float startDiff = pointEditLayoutEndMotionX + pointEditLayoutCorrectionX - pointEditLayoutStartLimit;
-                if (startDiff > 300) {
-                    view.setClickable(false);
-                    mainActivity.setActionBarTitle(getString(R.string.title_points));
-                    ViewDriver.hideView(view, R.anim.hide_right_animation, context);
-                    break;
-                }
-                ViewPropertyAnimator animator = view.animate().x(pointEditLayoutStartLimit).setDuration(200);
-                animator.setListener(new Animator.AnimatorListener() {
-                    @Override
-                    public void onAnimationEnd(Animator animator) {
-                        visiblePointListLayout.setVisibility(View.GONE);
-                    }
-
-                    @Override
-                    public void onAnimationStart(Animator animator) { }
-
-                    @Override
-                    public void onAnimationCancel(Animator animator) { }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animator) { }
-                });
-                break;
-        }
         return false;
     }
 

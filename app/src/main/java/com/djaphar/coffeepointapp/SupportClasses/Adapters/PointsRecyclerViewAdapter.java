@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.djaphar.coffeepointapp.Activities.MainActivity;
+import com.djaphar.coffeepointapp.Fragments.PointsFragment;
 import com.djaphar.coffeepointapp.R;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Point;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.ViewDriver;
@@ -23,25 +24,24 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecyclerViewAdapter.ViewHolder> {
 
-    private RelativeLayout pointListLayout;
-    private ConstraintLayout pointEditLayout;
+    private ConstraintLayout singlePointInfoContainer;
     private ArrayList<Point> points;
     private MainActivity mainActivity;
-    private EditText pointNameFormEd, pointAboutFormEd;
+    private PointsFragment pointsFragment;
+    private EditText pointEditNameFormEd, pointEditAboutFormEd;
     private String statusTrueText, statusFalseText;
     private int statusTrueColor, statusFalseColor;
     private Resources resources;
     private Animation animation;
 
-    public PointsRecyclerViewAdapter(ArrayList<Point> points, RelativeLayout pointListLayout,
-                                     ConstraintLayout pointEditLayout, MainActivity mainActivity, EditText pointNameFormEd,
-                                     EditText pointAboutFormEd) {
-        this.pointListLayout = pointListLayout;
-        this.pointEditLayout = pointEditLayout;
+    public PointsRecyclerViewAdapter(ArrayList<Point> points, ConstraintLayout singlePointInfoContainer,
+                                     MainActivity mainActivity, PointsFragment pointsFragment, EditText pointNameFormEd, EditText pointAboutFormEd) {
+        this.singlePointInfoContainer = singlePointInfoContainer;
         this.points = points;
         this.mainActivity = mainActivity;
-        this.pointNameFormEd = pointNameFormEd;
-        this.pointAboutFormEd = pointAboutFormEd;
+        this.pointsFragment = pointsFragment;
+        this.pointEditNameFormEd = pointNameFormEd;
+        this.pointEditAboutFormEd = pointAboutFormEd;
     }
 
     @NonNull
@@ -59,15 +59,16 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
 
         viewHolder.parentLayout.setOnClickListener(lView -> {
             Point point = points.get(viewHolder.getAdapterPosition());
+            pointsFragment.setPointProductRecyclerView(point.getProductList());
             String name = point.getName();
             if (name == null) {
                 name = "";
             }
-            pointNameFormEd.setText(name);
-//            pointAboutFormEd.setText(point.getAbout());
+            pointEditNameFormEd.setText(name);
+//            pointEditAboutFormEd.setText(point.getAbout());
             mainActivity.setActionBarTitle(context.getString(R.string.title_point_edit));
-            pointEditLayout.setTranslationX(resources.getDimension(R.dimen.point_edit_layout_translation_x));
-            animation = ViewDriver.showView(pointEditLayout, R.anim.show_right_animation, context);
+            singlePointInfoContainer.setTranslationX(resources.getDimension(R.dimen.point_edit_layout_translation_x));
+            animation = ViewDriver.showView(singlePointInfoContainer, R.anim.show_right_animation, context);
             if (animation == null) {
                 return;
             }
@@ -75,8 +76,7 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    pointListLayout.setVisibility(View.INVISIBLE);
-                    pointEditLayout.setClickable(true);
+                    singlePointInfoContainer.setClickable(true);
                 }
 
                 @Override
@@ -97,7 +97,7 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
             return;
         }
         String name = point.getName();
-        if (name == null) {
+        if (name == null || name.equals("")) {
             name = point.getPhoneNumber();
         }
         ViewDriver.setStatusTvOptions(holder.listPointName, name, resources.getColor(R.color.colorBlack87));
