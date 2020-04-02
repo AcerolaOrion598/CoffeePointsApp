@@ -1,86 +1,98 @@
 package com.djaphar.coffeepointapp.SupportClasses.ApiClasses;
 
-import com.google.android.gms.maps.model.LatLng;
+import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.Product;
+
+import java.util.ArrayList;
 
 public class Point {
 
-    private LatLng coordinates;
-    private String name, about, hint, owner;
-    private boolean active;
-    private int ownerId, id;
+    private String _id, token, phoneNumber, supervisor, name;
+    private Boolean isActive, isCurrentlyNotHere;
+    private ArrayList<Product> productList;
+    private Coordinates coordinates;
 
-    public Point(LatLng coordinates, String name, String about, String hint, String owner, boolean active, int ownerId, int id) {
-        this.coordinates = coordinates;
+    public Point(String _id, String token, String phoneNumber, String supervisor, String name, Boolean isActive,
+                 Boolean isCurrentlyNotHere, ArrayList<Product> productList, Coordinates coordinates) {
+        this._id = _id;
+        this.token = token;
+        this.phoneNumber = phoneNumber;
+        this.supervisor = supervisor;
         this.name = name;
-        this.about = about;
-        this.hint = hint;
-        this.owner = owner;
-        this.active = active;
-        this.ownerId = ownerId;
-        this.id = id;
-    }
-
-    public void setCoordinates(LatLng coordinates) {
+        this.isActive = isActive;
+        this.isCurrentlyNotHere = isCurrentlyNotHere;
+        this.productList = productList;
         this.coordinates = coordinates;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String get_id() {
+        return _id;
     }
 
-    public void setAbout(String about) {
-        this.about = about;
+    public String getToken() {
+        return token;
     }
 
-    public void setHint(String hint) {
-        this.hint = hint;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public void setOwnerId(int ownerId) {
-        this.ownerId = ownerId;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public LatLng getCoordinates() {
-        return coordinates;
+    public String getSupervisor() {
+        return supervisor;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getAbout() {
-        return about;
+    public Boolean getActive() {
+        return isActive;
     }
 
-    public String getHint() {
-        return hint;
+    public Boolean getCurrentlyNotHere() {
+        return isCurrentlyNotHere;
     }
 
-    public String getOwner() {
-        return owner;
+    public ArrayList<Product> getProductList() {
+        return productList;
     }
 
-    public boolean isActive() {
-        return active;
+    public Coordinates getCoordinates() {
+        return coordinates;
     }
 
-    public int getOwnerId() {
-        return ownerId;
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
-    public int getId() {
-        return id;
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setSupervisor(String supervisor) {
+        this.supervisor = supervisor;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
+
+    public void setCurrentlyNotHere(Boolean currentlyNotHere) {
+        isCurrentlyNotHere = currentlyNotHere;
+    }
+
+    public void setProductList(ArrayList<Product> productList) {
+        this.productList = productList;
+    }
+
+    public void setCoordinates(Coordinates coordinates) {
+        this.coordinates = coordinates;
     }
 }

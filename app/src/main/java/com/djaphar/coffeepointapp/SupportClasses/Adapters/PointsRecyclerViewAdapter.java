@@ -59,8 +59,12 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
 
         viewHolder.parentLayout.setOnClickListener(lView -> {
             Point point = points.get(viewHolder.getAdapterPosition());
-            pointNameFormEd.setText(point.getName());
-            pointAboutFormEd.setText(point.getAbout());
+            String name = point.getName();
+            if (name == null) {
+                name = "";
+            }
+            pointNameFormEd.setText(name);
+//            pointAboutFormEd.setText(point.getAbout());
             mainActivity.setActionBarTitle(context.getString(R.string.title_point_edit));
             pointEditLayout.setTranslationX(resources.getDimension(R.dimen.point_edit_layout_translation_x));
             animation = ViewDriver.showView(pointEditLayout, R.anim.show_right_animation, context);
@@ -89,8 +93,15 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Point point = points.get(position);
-        ViewDriver.setStatusTvOptions(holder.listPointName, point.getName(), resources.getColor(R.color.colorBlack87));
-        if (point.isActive()) {
+        if (point == null) {
+            return;
+        }
+        String name = point.getName();
+        if (name == null) {
+            name = point.getPhoneNumber();
+        }
+        ViewDriver.setStatusTvOptions(holder.listPointName, name, resources.getColor(R.color.colorBlack87));
+        if (point.getCurrentlyNotHere()) {
             ViewDriver.setStatusTvOptions(holder.listPointStatus, statusTrueText, statusTrueColor);
         } else {
             ViewDriver.setStatusTvOptions(holder.listPointStatus, statusFalseText, statusFalseColor);

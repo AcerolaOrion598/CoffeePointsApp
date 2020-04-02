@@ -13,6 +13,8 @@
     <string name="new_point_tv_text">Новая точка</string>
     <string name="point_name_hint">Название точки</string>
     <string name="point_about_hint">Краткое описание точки</string>
+    <string name="visible_point_tv_text">На Смене</string>
+    <string name="invisible_point_tv_text">Не на Смене</string>
     <string name="auth_instruction_tv_num_text">Введите Ваш номер телефона, на который мы отправим код подтверждения</string>
     <string name="auth_instruction_tv_code_text">Введите код, который мы отправили на номер:</string>
     <string name="sms_code_ed_text">Код из смс</string>

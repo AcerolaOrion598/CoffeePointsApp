@@ -23,7 +23,7 @@ import android.widget.Toast;
 
 import com.djaphar.coffeepointapp.Activities.MainActivity;
 import com.djaphar.coffeepointapp.R;
-import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Point;
+import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.OldPoint;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.MyFragment;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.PermissionDriver;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.ViewDriver;
@@ -61,7 +61,7 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
     private SupportMapFragment supportMapFragment;
     private GoogleMap gMap;
     private ArrayList<Marker> markers = new ArrayList<>(), tempMarkers = new ArrayList<>();
-    private Point focusedMarkerInfo = null;
+    private OldPoint focusedMarkerInfo = null;
     private String statusTrueText, statusFalseText;
     private String[] perms = new String[2];
     private float infoWindowCorrectionY, infoWindowStartMotionY, infoWindowEndMotionY, editWindowCorrectionY, editWindowEndMotionY, pointEditTopLimit, pointEditBottomLimit;
@@ -166,7 +166,7 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
 
             gMap.setOnMarkerClickListener(marker -> {
                 showPointInfo(marker);
-                focusedMarkerInfo = (Point) marker.getTag();
+                focusedMarkerInfo = (OldPoint) marker.getTag();
                 return false;
             });
         });
@@ -197,10 +197,10 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
             }
 //            mainViewModel.sendScreenBounds(getScreenBounds());
             //Пробная часть
-            Point testPoint = new Point(new LatLng(55.861457, 37.793277), "Я тестовая точка",
+            OldPoint testOldPoint = new OldPoint(new LatLng(55.861457, 37.793277), "Я тестовая точка",
                     "Короткое описание, которое заставит меня выбрать именно эту точку сто проц просто",
                     "", "Владелец: Aye", false, 3,11);
-            mainViewModel.testOnChange(testPoint);
+            mainViewModel.testOnChange(testOldPoint);
             //Пробная часть
         }
     }
@@ -263,23 +263,23 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
     }
 
     private void showPointInfo(Marker marker) {
-        Point point = (Point) marker.getTag();
-        if (point != null) {
-            if (point.isActive()) {
+        OldPoint oldPoint = (OldPoint) marker.getTag();
+        if (oldPoint != null) {
+            if (oldPoint.isActive()) {
                 ViewDriver.setStatusTvOptions(pointActive, statusTrueText, statusTrueColor);
             } else {
                 ViewDriver.setStatusTvOptions(pointActive, statusFalseText, statusFalseColor);
             }
 
-            if (point.getOwnerId() == ownerId) {
+            if (oldPoint.getOwnerId() == ownerId) {
                 infoWindowEditElementsToggle(View.VISIBLE, ConstraintLayout.LayoutParams.UNSET);
             } else {
                 infoWindowEditElementsToggle(View.GONE, R.id.point_info_window);
             }
 
-            pointName.setText(point.getName());
-            pointAbout.setText(point.getAbout());
-            pointOwner.setText(point.getOwner());
+            pointName.setText(oldPoint.getName());
+            pointAbout.setText(oldPoint.getAbout());
+            pointOwner.setText(oldPoint.getOwner());
 
             editPointModeEnd();
             pointInfoWindow.setLayoutParams(pointInfoWindowParams);
@@ -303,10 +303,10 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         removeFocusFromMarker();
     }
 
-    private void drawMarkers(ArrayList<Point> points) {
-        for (Point point : points) {
-            Marker marker = gMap.addMarker(setMarkerOptions(point));
-            marker.setTag(point);
+    private void drawMarkers(ArrayList<OldPoint> oldPoints) {
+        for (OldPoint oldPoint : oldPoints) {
+            Marker marker = gMap.addMarker(setMarkerOptions(oldPoint));
+            marker.setTag(oldPoint);
             tempMarkers.add(marker);
         }
     }
@@ -322,25 +322,25 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         equalizeMarkers(0.87f);
     }
 
-    private boolean focusedMarker(Point point) {
+    private boolean focusedMarker(OldPoint oldPoint) {
         if (focusedMarkerInfo == null) {
             return false;
         }
         LatLng focusedLatLng = focusedMarkerInfo.getCoordinates();
-        LatLng currentLatLng = point.getCoordinates();
+        LatLng currentLatLng = oldPoint.getCoordinates();
         return focusedLatLng.latitude == currentLatLng.latitude && focusedLatLng.longitude == currentLatLng.longitude;
     }
 
-    private MarkerOptions setMarkerOptions(Point point) {
+    private MarkerOptions setMarkerOptions(OldPoint oldPoint) {
         Bitmap customIcon;
-        if (point.isActive()) {
+        if (oldPoint.isActive()) {
             customIcon = BitmapFactory.decodeResource(resources, R.drawable.green_marker);
         } else {
             customIcon = BitmapFactory.decodeResource(resources, R.drawable.red_marker);
         }
 
         Bitmap scaledCustomIcon;
-        if (point.getOwnerId() == ownerId) {
+        if (oldPoint.getOwnerId() == ownerId) {
             scaledCustomIcon = Bitmap.createScaledBitmap(customIcon, myMarkerSize, myMarkerSize, false);
         } else {
             scaledCustomIcon = Bitmap.createScaledBitmap(customIcon, markerSize, markerSize, false);
@@ -350,15 +350,15 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         if (focusedMarkerInfo == null) {
             alphaValue = 0.87f;
         } else {
-            if (focusedMarker(point)) {
+            if (focusedMarker(oldPoint)) {
                 alphaValue = 1.0f;
             } else {
                 alphaValue = 0.4f;
             }
         }
         MarkerOptions options = new MarkerOptions();
-        options.position(point.getCoordinates())
-                .title(point.getHint())
+        options.position(oldPoint.getCoordinates())
+                .title(oldPoint.getHint())
                 .alpha(alphaValue)
                 .icon(BitmapDescriptorFactory.fromBitmap(scaledCustomIcon));
         return options;

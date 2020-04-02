@@ -17,7 +17,8 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".Activities.AuthActivity"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="adjustResize">
+        </activity>
         <activity
             android:name=".Activities.SplashActivity"
             android:theme="@style/AppTheme.Launcher">
@@ -30,7 +31,8 @@
         <activity
             android:name=".Activities.MainActivity"
             android:label="@string/app_name"
-            android:windowSoftInputMode="adjustPan"></activity>
+            android:windowSoftInputMode="adjustPan">
+        </activity>
 
         <meta-data
             android:name="com.google.android.gms.version"

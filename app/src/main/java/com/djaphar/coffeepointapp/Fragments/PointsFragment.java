@@ -20,10 +20,13 @@ import android.widget.RelativeLayout;
 import com.djaphar.coffeepointapp.Activities.MainActivity;
 import com.djaphar.coffeepointapp.R;
 import com.djaphar.coffeepointapp.SupportClasses.Adapters.PointsRecyclerViewAdapter;
+import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Point;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.MyFragment;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.ViewDriver;
 import com.djaphar.coffeepointapp.ViewModels.PointsViewModel;
+
+import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,22 +40,25 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
     private PointsViewModel pointsViewModel;
     private MainActivity mainActivity;
     private Context context;
-    private RecyclerView recyclerView;
-    private RelativeLayout pointListLayout;
+    private RecyclerView visiblePointsRecyclerView, invisiblePointsRecyclerView;
+    private RelativeLayout visiblePointListLayout, invisiblePointListLayout;
     private ConstraintLayout pointEditLayout, addPointWindow;
     private EditText pointNameFormEd, pointAboutFormEd, newPointPhoneNumberEd;
     private Button pointEditSaveButton, pointEditBackButton, addPointCancelBtn, addPointSaveBtn;
     private ImageButton addPointBtn;
     private Resources resources;
     private User user;
+    private ArrayList<Point> visiblePoints = new ArrayList<>(), invisiblePoints = new ArrayList<>();
     private float pointEditLayoutCorrectionX, pointEditLayoutEndMotionX, pointEditLayoutStartLimit,
             addWindowEndMotionY, addWindowCorrectionY, addWindowStartMotionY;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         pointsViewModel = new ViewModelProvider(this).get(PointsViewModel.class);
         View root = inflater.inflate(R.layout.fragment_points, container, false);
-        recyclerView = root.findViewById(R.id.points_recycler_view);
-        pointListLayout = root.findViewById(R.id.points_list_layout);
+        visiblePointsRecyclerView = root.findViewById(R.id.visible_points_recycler_view);
+        invisiblePointsRecyclerView = root.findViewById(R.id.invisible_points_recycler_view);
+        visiblePointListLayout = root.findViewById(R.id.visible_points_list_layout);
+        invisiblePointListLayout = root.findViewById(R.id.invisible_points_list_layout);
         pointEditLayout = root.findViewById(R.id.point_edit_layout);
         addPointWindow = root.findViewById(R.id.add_point_window);
         pointNameFormEd = root.findViewById(R.id.point_name_form_ed);
@@ -79,10 +85,27 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
         pointEditLayoutStartLimit = pointEditLayout.getX();
 
         pointsViewModel.getPoints().observe(getViewLifecycleOwner(), points -> {
-            PointsRecyclerViewAdapter adapter = new PointsRecyclerViewAdapter(points, pointListLayout, pointEditLayout,
+            visiblePoints.clear();
+            invisiblePoints.clear();
+
+            for (Point point : points) {
+                if (point.getActive()) {
+                    visiblePoints.add(point);
+                } else {
+                    invisiblePoints.add(point);
+                }
+            }
+
+            PointsRecyclerViewAdapter visibleAdapter = new PointsRecyclerViewAdapter(visiblePoints, visiblePointListLayout, pointEditLayout,
                     mainActivity, pointNameFormEd, pointAboutFormEd);
-            recyclerView.setAdapter(adapter);
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            PointsRecyclerViewAdapter invisibleAdapter = new PointsRecyclerViewAdapter(invisiblePoints, visiblePointListLayout, pointEditLayout,
+                    mainActivity, pointNameFormEd, pointAboutFormEd);
+            visiblePointsRecyclerView.setAdapter(visibleAdapter);
+            invisiblePointsRecyclerView.setAdapter(invisibleAdapter);
+            visiblePointsRecyclerView.setNestedScrollingEnabled(false);
+            invisiblePointsRecyclerView.setNestedScrollingEnabled(false);
+            visiblePointsRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+            invisiblePointsRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         });
 
         pointsViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
@@ -90,6 +113,7 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
                 return;
             }
             this.user = user;
+            pointsViewModel.requestMyPoints(user.getToken());
         });
 
         pointNameFormEd.addTextChangedListener(new TextWatcher() {
@@ -146,7 +170,7 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
         if (pointEditLayout.getVisibility() == View.VISIBLE) {
             pointEditLayout.setClickable(false);
             mainActivity.setActionBarTitle(getString(R.string.title_points));
-            pointListLayout.setVisibility(View.VISIBLE);
+            visiblePointListLayout.setVisibility(View.VISIBLE);
             ViewDriver.hideView(pointEditLayout, R.anim.hide_right_animation, context);
         } else if (addPointWindow.getVisibility() == View.VISIBLE) {
             ViewDriver.hideView(addPointWindow, R.anim.top_view_hide_animation, context);
@@ -185,7 +209,7 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
                 break;
             case MotionEvent.ACTION_MOVE:
                 pointEditLayoutEndMotionX = motionEvent.getRawX();
-                pointListLayout.setVisibility(View.VISIBLE);
+                visiblePointListLayout.setVisibility(View.VISIBLE);
                 if (pointEditLayoutEndMotionX + pointEditLayoutCorrectionX < pointEditLayoutStartLimit) {
                     break;
                 }
@@ -203,7 +227,7 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
                 animator.setListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationEnd(Animator animator) {
-                        pointListLayout.setVisibility(View.GONE);
+                        visiblePointListLayout.setVisibility(View.GONE);
                     }
 
                     @Override

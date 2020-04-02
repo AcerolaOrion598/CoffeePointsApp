@@ -3,6 +3,7 @@ package com.djaphar.coffeepointapp.SupportClasses.ApiClasses;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.Product;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -40,4 +41,7 @@ public interface PointsApi {
 
     @POST("api/couriers/addsupervisor")
     Call<Void> requestBindCourier(@HeaderMap Map<String, String> headers, @Body BindCourierModel bindCourierModel);
+
+    @GET("api/couriers/my")
+    Call<ArrayList<Point>> requestMyPoints(@HeaderMap Map<String, String> headers);
 }

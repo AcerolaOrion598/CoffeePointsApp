@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/parent_layout_products"
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/parent_layout_products"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingTop="10dp"
@@ -34,6 +34,5 @@
         android:text="@string/delete_btn"
         android:fontFamily="@font/roboto"
         android:textSize="14sp"
-        android:textColor="@color/colorRed60"
-        tools:ignore="RelativeOverlap" />
+        android:textColor="@color/colorRed60" />
 </RelativeLayout>
