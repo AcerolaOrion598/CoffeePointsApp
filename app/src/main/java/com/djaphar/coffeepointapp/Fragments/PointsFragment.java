@@ -1,6 +1,7 @@
 package com.djaphar.coffeepointapp.Fragments;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import com.djaphar.coffeepointapp.SupportClasses.Adapters.PointProductsRecyclerV
 import com.djaphar.coffeepointapp.SupportClasses.Adapters.PointsRecyclerViewAdapter;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.BindCourierModel;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Point;
+import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointUpdateModel;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.Product;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.MyFragment;
@@ -46,11 +48,12 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
     private RecyclerView visiblePointsRecyclerView, invisiblePointsRecyclerView, pointProductsRecyclerView;
     private ConstraintLayout singlePointInfoContainer, addPointWindow;
     private EditText pointEditNameFormEd, pointEditAboutFormEd, newPointPhoneNumberEd;
-    private Button pointEditSaveButton, singlePointInfoCancelBtn, addPointCancelBtn, addPointSaveBtn;
+    private Button pointEditSaveBtn, singlePointInfoCancelBtn, addPointCancelBtn, addPointSaveBtn;
     private ImageButton addPointBtn;
     private Resources resources;
     private User user;
     private ArrayList<Point> visiblePoints = new ArrayList<>(), invisiblePoints = new ArrayList<>();
+    private String checkedPointId;
     private float addWindowEndMotionY, addWindowCorrectionY, addWindowStartMotionY;
 
     @Override
@@ -81,7 +84,7 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
         addPointWindow = root.findViewById(R.id.add_point_window);
         pointEditNameFormEd = root.findViewById(R.id.point_edit_name_form_ed);
         pointEditAboutFormEd = root.findViewById(R.id.point_edit_about_form_ed);
-        pointEditSaveButton = root.findViewById(R.id.point_edit_save_btn);
+        pointEditSaveBtn = root.findViewById(R.id.point_edit_save_btn);
         singlePointInfoCancelBtn = root.findViewById(R.id.single_point_info_cancel_btn);
         addPointCancelBtn = root.findViewById(R.id.add_point_cancel_btn);
         addPointSaveBtn = root.findViewById(R.id.add_point_save_btn);
@@ -144,9 +147,9 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
             @Override
             public void afterTextChanged(Editable editable) {
                 if (editable.toString().equals("")) {
-                    pointEditSaveButton.setEnabled(false);
+                    pointEditSaveBtn.setEnabled(false);
                 } else {
-                    pointEditSaveButton.setEnabled(true);
+                    pointEditSaveBtn.setEnabled(true);
                 }
             }
         });
@@ -168,7 +171,10 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
             }
         });
 
-        pointEditSaveButton.setOnClickListener(lView -> {});
+        pointEditSaveBtn.setOnClickListener(lView -> {
+            PointUpdateModel pointUpdateModel = new PointUpdateModel(pointEditNameFormEd.getText().toString(), user.get_id());
+            pointsViewModel.requestUpdatePoint(pointUpdateModel, user.getToken(), checkedPointId);
+        });
         singlePointInfoCancelBtn.setOnClickListener(lView -> backWasPressed());
         addPointBtn.setOnClickListener(lView -> {
             addPointWindow.setTranslationY(resources.getDimension(R.dimen.add_point_window_expanded_translation_y));
@@ -203,6 +209,16 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
         pointProductsRecyclerView.setLayoutManager(new LinearLayoutManager(context));
     }
 
+    public void createProductDeleteDialog(String pointId) {
+        PointUpdateModel pointUpdateModel = new PointUpdateModel("", null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(R.string.delete_dialog_title)
+                .setMessage(R.string.delete_point_dialog_message)
+                .setNegativeButton(R.string.dialog_negative_btn, (dialogInterface, i) -> dialogInterface.cancel())
+                .setPositiveButton(R.string.dialog_positive_btn, (dialogInterface, i) -> pointsViewModel.requestUpdatePoint(pointUpdateModel, user.getToken(), pointId))
+                .show();
+    }
+
     public void backWasPressed() {
         if (singlePointInfoContainer.getVisibility() == View.VISIBLE) {
             pointsViewModel.requestMyPoints(user.getToken());
@@ -221,6 +237,10 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
 
     public ConstraintLayout getAddPointWindow() {
         return addPointWindow;
+    }
+
+    public void setCheckedPointId(String s) {
+        checkedPointId = s;
     }
 
     @SuppressLint("ClickableViewAccessibility")

@@ -137,12 +137,8 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
         builder.setTitle(R.string.delete_dialog_title)
                 .setMessage(R.string.delete_product_dialog_message)
                 .setNegativeButton(R.string.dialog_negative_btn, (dialogInterface, i) -> dialogInterface.cancel())
-                .setPositiveButton(R.string.dialog_positive_btn, (dialogInterface, i) -> deleteProduct(id))
+                .setPositiveButton(R.string.dialog_positive_btn, (dialogInterface, i) -> profileViewModel.requestDeleteProduct(id, user))
                 .show();
-    }
-
-    private void deleteProduct(String id) {
-        profileViewModel.requestDeleteProduct(id, user);
     }
 
     private void toggleTopWindow(ConstraintLayout window, Button button, boolean enabled) {

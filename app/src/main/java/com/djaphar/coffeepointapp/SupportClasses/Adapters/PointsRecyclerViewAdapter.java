@@ -43,7 +43,7 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
         this.pointEditNameFormEd = pointNameFormEd;
         this.pointEditAboutFormEd = pointAboutFormEd;
         if (points.size() == 0) {
-            points.add(new Point(null, null, null, null, nullPointString,
+            points.add(new Point(null, null, null, nullPointString,
                     null, null, null, null));
         }
     }
@@ -66,6 +66,7 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
             if (point.getCurrentlyNotHere() == null) {
                 return;
             }
+            pointsFragment.setCheckedPointId(point.get_id());
             pointsFragment.setPointProductRecyclerView(point.getProductList());
             String name = point.getName();
             if (name == null) {
@@ -94,6 +95,8 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
             });
         });
 
+        viewHolder.pointDeleteBtn.setOnClickListener(lView -> pointsFragment.createProductDeleteDialog(points.get(viewHolder.getAdapterPosition()).get_id()));
+
         return viewHolder;
     }
 
@@ -111,6 +114,7 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
         Boolean b = point.getCurrentlyNotHere();
         if (b == null) {
             color = R.color.colorBlack60;
+            holder.pointDeleteBtn.setVisibility(View.GONE);
         } else if (b) {
             ViewDriver.setStatusTvOptions(holder.listPointStatus, statusTrueText, statusTrueColor);
         } else {
@@ -126,13 +130,14 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         RelativeLayout parentLayout;
-        TextView listPointName, listPointStatus;
+        TextView listPointName, listPointStatus, pointDeleteBtn;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             parentLayout = itemView.findViewById(R.id.parent_layout_points);
             listPointName = itemView.findViewById(R.id.list_point_name);
             listPointStatus = itemView.findViewById(R.id.list_point_status);
+            pointDeleteBtn = itemView.findViewById(R.id.point_delete_btn);
         }
     }
 }

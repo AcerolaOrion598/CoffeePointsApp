@@ -44,4 +44,7 @@ public interface PointsApi {
 
     @GET("api/couriers/my")
     Call<ArrayList<Point>> requestMyPoints(@HeaderMap Map<String, String> headers);
+
+    @PUT("api/couriers/{id}")
+    Call<Void> requestUpdatePoint(@Path("id") String id, @HeaderMap Map<String, String> headers, @Body PointUpdateModel pointUpdateModel);
 }

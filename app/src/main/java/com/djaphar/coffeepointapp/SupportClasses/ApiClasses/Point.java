@@ -6,15 +6,14 @@ import java.util.ArrayList;
 
 public class Point {
 
-    private String _id, token, phoneNumber, supervisor, name;
+    private String _id, phoneNumber, supervisor, name;
     private Boolean isActive, isCurrentlyNotHere;
     private ArrayList<Product> productList;
     private Coordinates coordinates;
 
-    public Point(String _id, String token, String phoneNumber, String supervisor, String name, Boolean isActive,
+    public Point(String _id, String phoneNumber, String supervisor, String name, Boolean isActive,
                  Boolean isCurrentlyNotHere, ArrayList<Product> productList, Coordinates coordinates) {
         this._id = _id;
-        this.token = token;
         this.phoneNumber = phoneNumber;
         this.supervisor = supervisor;
         this.name = name;
@@ -26,10 +25,6 @@ public class Point {
 
     public String get_id() {
         return _id;
-    }
-
-    public String getToken() {
-        return token;
     }
 
     public String getPhoneNumber() {
@@ -62,10 +57,6 @@ public class Point {
 
     public void set_id(String _id) {
         this._id = _id;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
     }
 
     public void setPhoneNumber(String phoneNumber) {

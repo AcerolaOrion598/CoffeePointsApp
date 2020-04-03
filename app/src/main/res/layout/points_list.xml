@@ -24,4 +24,15 @@
         android:textSize="16sp"
         android:fontFamily="@font/roboto"/>
 
+    <TextView
+        android:id="@+id/point_delete_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:text="@string/delete_btn"
+        android:fontFamily="@font/roboto"
+        android:textSize="14sp"
+        android:textColor="@color/colorRed60" />
+
 </RelativeLayout>
