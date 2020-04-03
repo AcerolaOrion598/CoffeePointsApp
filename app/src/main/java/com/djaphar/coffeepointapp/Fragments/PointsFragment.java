@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -18,10 +19,12 @@ import com.djaphar.coffeepointapp.Activities.MainActivity;
 import com.djaphar.coffeepointapp.R;
 import com.djaphar.coffeepointapp.SupportClasses.Adapters.PointProductsRecyclerViewAdapter;
 import com.djaphar.coffeepointapp.SupportClasses.Adapters.PointsRecyclerViewAdapter;
+import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.BindCourierModel;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Point;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.Product;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.MyFragment;
+import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.PointsChangeChecker;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.ViewDriver;
 import com.djaphar.coffeepointapp.ViewModels.PointsViewModel;
 
@@ -36,6 +39,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class PointsFragment extends MyFragment implements View.OnTouchListener {
 
+    private PointsChangeChecker pointsChangeChecker;
     private PointsViewModel pointsViewModel;
     private MainActivity mainActivity;
     private Context context;
@@ -48,6 +52,24 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
     private User user;
     private ArrayList<Point> visiblePoints = new ArrayList<>(), invisiblePoints = new ArrayList<>();
     private float addWindowEndMotionY, addWindowCorrectionY, addWindowStartMotionY;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        pointsChangeChecker = new PointsChangeChecker(new Handler(), this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        pointsChangeChecker.startPointsChangeCheck();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        pointsChangeChecker.stopPointsChangeCheck();
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         pointsViewModel = new ViewModelProvider(this).get(PointsViewModel.class);
@@ -84,7 +106,7 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
                 return;
             }
             this.user = user;
-            pointsViewModel.requestMyPoints(user.getToken());
+            requestMyPoints();
         });
 
         pointsViewModel.getPoints().observe(getViewLifecycleOwner(), points -> {
@@ -99,9 +121,10 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
                 }
             }
 
-            PointsRecyclerViewAdapter visibleAdapter = new PointsRecyclerViewAdapter(visiblePoints, singlePointInfoContainer,
+            String nullPointString = getString(R.string.point_null);
+            PointsRecyclerViewAdapter visibleAdapter = new PointsRecyclerViewAdapter(visiblePoints, nullPointString, singlePointInfoContainer,
                     mainActivity, this, pointEditNameFormEd, pointEditAboutFormEd);
-            PointsRecyclerViewAdapter invisibleAdapter = new PointsRecyclerViewAdapter(invisiblePoints, singlePointInfoContainer,
+            PointsRecyclerViewAdapter invisibleAdapter = new PointsRecyclerViewAdapter(invisiblePoints, nullPointString, singlePointInfoContainer,
                     mainActivity,this, pointEditNameFormEd, pointEditAboutFormEd);
             visiblePointsRecyclerView.setAdapter(visibleAdapter);
             invisiblePointsRecyclerView.setAdapter(invisibleAdapter);
@@ -149,6 +172,7 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
         singlePointInfoCancelBtn.setOnClickListener(lView -> backWasPressed());
         addPointBtn.setOnClickListener(lView -> {
             addPointWindow.setTranslationY(resources.getDimension(R.dimen.add_point_window_expanded_translation_y));
+//            newPointPhoneNumberEd.setText("");
             ViewDriver.hideView(addPointBtn, R.anim.bottom_view_hide_animation, context);
             ViewDriver.showView(addPointWindow, R.anim.top_view_show_animation, context);
         });
@@ -156,9 +180,20 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
             ViewDriver.hideView(addPointWindow, R.anim.top_view_hide_animation, context);
             ViewDriver.showView(addPointBtn, R.anim.bottom_view_show_animation, context);
         });
-        addPointSaveBtn.setOnClickListener(lView -> pointsViewModel.requestBindCourier(user, newPointPhoneNumberEd.getText().toString()));
+        addPointSaveBtn.setOnClickListener(lView -> {
+            pointsViewModel.requestBindCourier(user.getToken(), new BindCourierModel(user.get_id(), newPointPhoneNumberEd.getText().toString()));
+            ViewDriver.hideView(addPointWindow, R.anim.top_view_hide_animation, context);
+            ViewDriver.showView(addPointBtn, R.anim.bottom_view_show_animation, context);
+        });
         singlePointInfoContainer.setOnTouchListener(this);
         addPointWindow.setOnTouchListener(this);
+    }
+
+    public void requestMyPoints() {
+        if (user == null) {
+            return;
+        }
+        pointsViewModel.requestMyPoints(user.getToken());
     }
 
     public void setPointProductRecyclerView(ArrayList<Product> products) {
@@ -170,6 +205,7 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
 
     public void backWasPressed() {
         if (singlePointInfoContainer.getVisibility() == View.VISIBLE) {
+            pointsViewModel.requestMyPoints(user.getToken());
             singlePointInfoContainer.setClickable(false);
             mainActivity.setActionBarTitle(getString(R.string.title_points));
             ViewDriver.hideView(singlePointInfoContainer, R.anim.hide_right_animation, context);

@@ -34,7 +34,7 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
     private Resources resources;
     private Animation animation;
 
-    public PointsRecyclerViewAdapter(ArrayList<Point> points, ConstraintLayout singlePointInfoContainer,
+    public PointsRecyclerViewAdapter(ArrayList<Point> points, String nullPointString, ConstraintLayout singlePointInfoContainer,
                                      MainActivity mainActivity, PointsFragment pointsFragment, EditText pointNameFormEd, EditText pointAboutFormEd) {
         this.singlePointInfoContainer = singlePointInfoContainer;
         this.points = points;
@@ -42,6 +42,10 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
         this.pointsFragment = pointsFragment;
         this.pointEditNameFormEd = pointNameFormEd;
         this.pointEditAboutFormEd = pointAboutFormEd;
+        if (points.size() == 0) {
+            points.add(new Point(null, null, null, null, nullPointString,
+                    null, null, null, null));
+        }
     }
 
     @NonNull
@@ -59,6 +63,9 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
 
         viewHolder.parentLayout.setOnClickListener(lView -> {
             Point point = points.get(viewHolder.getAdapterPosition());
+            if (point.getCurrentlyNotHere() == null) {
+                return;
+            }
             pointsFragment.setPointProductRecyclerView(point.getProductList());
             String name = point.getName();
             if (name == null) {
@@ -93,19 +100,23 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Point point = points.get(position);
-        if (point == null) {
-            return;
-        }
+
         String name = point.getName();
+        int color = R.color.colorBlack87;
+
         if (name == null || name.equals("")) {
             name = point.getPhoneNumber();
         }
-        ViewDriver.setStatusTvOptions(holder.listPointName, name, resources.getColor(R.color.colorBlack87));
-        if (point.getCurrentlyNotHere()) {
+
+        Boolean b = point.getCurrentlyNotHere();
+        if (b == null) {
+            color = R.color.colorBlack60;
+        } else if (b) {
             ViewDriver.setStatusTvOptions(holder.listPointStatus, statusTrueText, statusTrueColor);
         } else {
             ViewDriver.setStatusTvOptions(holder.listPointStatus, statusFalseText, statusFalseColor);
         }
+        ViewDriver.setStatusTvOptions(holder.listPointName, name, resources.getColor(color));
     }
 
     @Override
