@@ -23,22 +23,23 @@ import android.widget.Toast;
 
 import com.djaphar.coffeepointapp.Activities.MainActivity;
 import com.djaphar.coffeepointapp.R;
-import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.OldPoint;
+import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Point;
+import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.MyFragment;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.PermissionDriver;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.ViewDriver;
-import com.djaphar.coffeepointapp.ViewModels.MainViewModel;
+import com.djaphar.coffeepointapp.ViewModels.MapViewModel;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -49,7 +50,7 @@ import androidx.lifecycle.ViewModelProvider;
 public class MapFragment extends MyFragment implements OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener, GoogleMap.OnCameraIdleListener,
         View.OnTouchListener {
 
-    private MainViewModel mainViewModel;
+    private MapViewModel mapViewModel;
     private MainActivity mainActivity;
     private Context context;
     private Resources resources;
@@ -61,16 +62,17 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
     private SupportMapFragment supportMapFragment;
     private GoogleMap gMap;
     private ArrayList<Marker> markers = new ArrayList<>(), tempMarkers = new ArrayList<>();
-    private OldPoint focusedMarkerInfo = null;
+    private Point focusedMarkerInfo = null;
     private String statusTrueText, statusFalseText;
     private String[] perms = new String[2];
+    private User user;
+    private HashMap<String, String> authHeaderMap = new HashMap<>();
     private float infoWindowCorrectionY, infoWindowStartMotionY, infoWindowEndMotionY, editWindowCorrectionY, editWindowEndMotionY, pointEditTopLimit, pointEditBottomLimit;
     private int whoMoved, statusTrueColor, statusFalseColor, myMarkerSize, markerSize;
     private boolean alreadyOpened = false, editWindowHidden = false;
-    private static final int ownerId = 3;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        mapViewModel = new ViewModelProvider(this).get(MapViewModel.class);
         View root = inflater.inflate(R.layout.fragment_map, container, false);
         pointInfoWindow = root.findViewById(R.id.point_info_window);
         pointEditWindow = root.findViewById(R.id.point_edit_window);
@@ -114,20 +116,28 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         pointEditBottomLimit = pointEditWindow.getY();
         equalizeMarkers(0.87f);
 
+        mapViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
+            if (user == null) {
+                return;
+            }
+            this.user = user;
+            authHeaderMap.put(getString(R.string.authorization_header),user.getToken());
+        });
+
         pointEditCancelBtn.setOnClickListener(lView -> editPointModeEnd());
 
         pointEditSaveBtn.setOnClickListener(lView -> {
-            editPoint();
+//            editPoint();
             Toast.makeText(context, R.string.shinobu_chan, Toast.LENGTH_SHORT).show();
             editPointModeEnd();
         });
 
         pointEditBtn.setOnClickListener(lView -> {
             if (focusedMarkerInfo != null) {
-                if (focusedMarkerInfo.isActive()) {
-                    editPointModeStart(focusedMarkerInfo.getName(), focusedMarkerInfo.getAbout());
+                if (focusedMarkerInfo.getActive()) {
+                    editPointModeStart(focusedMarkerInfo.getName());
                 } else {
-                    editPointModeStart(focusedMarkerInfo.getName(), focusedMarkerInfo.getAbout());
+                    editPointModeStart(focusedMarkerInfo.getName());
                 }
             }
         });
@@ -158,15 +168,13 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         gMap.setOnCameraMoveStartedListener(this);
         gMap.setOnCameraIdleListener(this);
 
-        mainViewModel.sendScreenBounds(getScreenBounds());
-        mainViewModel.getPoints().observe(getViewLifecycleOwner(), points -> {
+        mapViewModel.getPoints().observe(getViewLifecycleOwner(), points -> {
             drawMarkers(points);
             removeMarkers();
             rewriteMarkerList();
-
             gMap.setOnMarkerClickListener(marker -> {
                 showPointInfo(marker);
-                focusedMarkerInfo = (OldPoint) marker.getTag();
+                focusedMarkerInfo = (Point) marker.getTag();
                 return false;
             });
         });
@@ -195,13 +203,8 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
                 editWindowHidden = false;
                 ViewDriver.showView(pointEditWindow, R.anim.fast_fade_in_animation, context);
             }
-//            mainViewModel.sendScreenBounds(getScreenBounds());
-            //Пробная часть
-            OldPoint testOldPoint = new OldPoint(new LatLng(55.861457, 37.793277), "Я тестовая точка",
-                    "Короткое описание, которое заставит меня выбрать именно эту точку сто проц просто",
-                    "", "Владелец: Aye", false, 3,11);
-            mainViewModel.testOnChange(testOldPoint);
-            //Пробная часть
+
+            requestPointsInBox();
         }
     }
 
@@ -227,16 +230,13 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         }
     }
 
-    private LatLngBounds getScreenBounds() {
-        return gMap.getProjection().getVisibleRegion().latLngBounds;
-    }
-
     private LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
             LatLng myPosition = new LatLng(location.getLatitude(), location.getLongitude());
             if (!alreadyOpened) {
                 focusOnMe(myPosition);
+                requestPointsInBox();
             }
         }
 
@@ -255,6 +255,10 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         alreadyOpened = true;
     }
 
+    private void requestPointsInBox() {
+        mapViewModel.requestPointsInBox(gMap.getProjection().getVisibleRegion().latLngBounds);
+    }
+
     private void infoWindowEditElementsToggle(int visibility, int constraintBottom) {
         pointEditBtn.setVisibility(visibility);
         ConstraintLayout.LayoutParams paramsTv = (ConstraintLayout.LayoutParams) pointActive.getLayoutParams();
@@ -263,23 +267,23 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
     }
 
     private void showPointInfo(Marker marker) {
-        OldPoint oldPoint = (OldPoint) marker.getTag();
-        if (oldPoint != null) {
-            if (oldPoint.isActive()) {
+        Point point = (Point) marker.getTag();
+        if (point != null) {
+            if (point.getCurrentlyNotHere()) {
                 ViewDriver.setStatusTvOptions(pointActive, statusTrueText, statusTrueColor);
             } else {
                 ViewDriver.setStatusTvOptions(pointActive, statusFalseText, statusFalseColor);
             }
 
-            if (oldPoint.getOwnerId() == ownerId) {
+            if (point.getSupervisor().equals(user.get_id())) {
                 infoWindowEditElementsToggle(View.VISIBLE, ConstraintLayout.LayoutParams.UNSET);
             } else {
                 infoWindowEditElementsToggle(View.GONE, R.id.point_info_window);
             }
 
-            pointName.setText(oldPoint.getName());
-            pointAbout.setText(oldPoint.getAbout());
-            pointOwner.setText(oldPoint.getOwner());
+            pointName.setText(point.getName());
+            pointAbout.setText("Тут такая заглушка здарова я тип описание, которого не будет, а тут будет ассортимент точки");
+            pointOwner.setText("Имя Тут Будет");
 
             editPointModeEnd();
             pointInfoWindow.setLayoutParams(pointInfoWindowParams);
@@ -290,9 +294,9 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         }
     }
 
-    private void editPointModeStart(String pointName, String pointAbout) {
+    private void editPointModeStart(String pointName) {
         pointNameEd.setText(pointName);
-        pointAboutEd.setText(pointAbout);
+        pointAboutEd.setText("");
         ViewDriver.hideView(pointInfoWindow, R.anim.bottom_view_hide_animation, context);
         pointEditWindow.setTranslationY(resources.getDimension(R.dimen.point_edit_translation_y));
         ViewDriver.showView(pointEditWindow, R.anim.top_view_show_animation, context);
@@ -303,10 +307,10 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         removeFocusFromMarker();
     }
 
-    private void drawMarkers(ArrayList<OldPoint> oldPoints) {
-        for (OldPoint oldPoint : oldPoints) {
-            Marker marker = gMap.addMarker(setMarkerOptions(oldPoint));
-            marker.setTag(oldPoint);
+    private void drawMarkers(ArrayList<Point> points) {
+        for (Point point : points) {
+            Marker marker = gMap.addMarker(setMarkerOptions(point));
+            marker.setTag(point);
             tempMarkers.add(marker);
         }
     }
@@ -322,43 +326,44 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         equalizeMarkers(0.87f);
     }
 
-    private boolean focusedMarker(OldPoint oldPoint) {
+    private boolean focusedMarker(Point point) {
         if (focusedMarkerInfo == null) {
             return false;
         }
-        LatLng focusedLatLng = focusedMarkerInfo.getCoordinates();
-        LatLng currentLatLng = oldPoint.getCoordinates();
+        LatLng focusedLatLng = new LatLng(focusedMarkerInfo.getCoordinates().getLat(), focusedMarkerInfo.getCoordinates().getLng());
+        LatLng currentLatLng = new LatLng(point.getCoordinates().getLat(), point.getCoordinates().getLng());
         return focusedLatLng.latitude == currentLatLng.latitude && focusedLatLng.longitude == currentLatLng.longitude;
     }
 
-    private MarkerOptions setMarkerOptions(OldPoint oldPoint) {
+    private MarkerOptions setMarkerOptions(Point point) {
         Bitmap customIcon;
-        if (oldPoint.isActive()) {
+        if (point.getCurrentlyNotHere()) {
             customIcon = BitmapFactory.decodeResource(resources, R.drawable.green_marker);
         } else {
             customIcon = BitmapFactory.decodeResource(resources, R.drawable.red_marker);
         }
 
         Bitmap scaledCustomIcon;
-        if (oldPoint.getOwnerId() == ownerId) {
+        if (point.getSupervisor().equals(user.get_id())) {
             scaledCustomIcon = Bitmap.createScaledBitmap(customIcon, myMarkerSize, myMarkerSize, false);
         } else {
             scaledCustomIcon = Bitmap.createScaledBitmap(customIcon, markerSize, markerSize, false);
         }
 
         float alphaValue;
+//        alphaValue = 0.87f;
         if (focusedMarkerInfo == null) {
             alphaValue = 0.87f;
         } else {
-            if (focusedMarker(oldPoint)) {
+            if (focusedMarker(point)) {
                 alphaValue = 1.0f;
             } else {
                 alphaValue = 0.4f;
             }
         }
         MarkerOptions options = new MarkerOptions();
-        options.position(oldPoint.getCoordinates())
-                .title(oldPoint.getHint())
+        options.position(new LatLng(point.getCoordinates().getLat(), point.getCoordinates().getLng()))
+//                .title(point.getHint())
                 .alpha(alphaValue)
                 .icon(BitmapDescriptorFactory.fromBitmap(scaledCustomIcon));
         return options;
@@ -376,9 +381,9 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         }
     }
 
-    private void editPoint() {
-        mainViewModel.editPoint();
-    }
+//    private void editPoint() {
+//        mainViewModel.editPoint();
+//    }
 
     public void backWasPressed() {
         if (pointEditWindow.getVisibility() == View.VISIBLE) {

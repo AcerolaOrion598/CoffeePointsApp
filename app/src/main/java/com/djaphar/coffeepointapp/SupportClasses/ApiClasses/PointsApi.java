@@ -15,6 +15,7 @@ import retrofit2.http.HeaderMap;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface PointsApi {
 
@@ -47,4 +48,13 @@ public interface PointsApi {
 
     @PUT("api/couriers/{id}")
     Call<Void> requestUpdatePoint(@Path("id") String id, @HeaderMap Map<String, String> headers, @Body PointUpdateModel pointUpdateModel);
+
+    @POST("api/couriers/removesupervisor")
+    Call<Void> requestDeletePoint(@HeaderMap Map<String, String> headers, @Body PointDeleteModel pointDeleteModel);
+
+    @GET("api/couriers")
+    Call<ArrayList<Point>> requestPointsInBox(@Query("box") String box);
+
+    @GET("api/supervisors/{id}")
+    Call<SupervisorModel> requestSupervisor(@Path("id") String id);
 }

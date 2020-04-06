@@ -49,6 +49,7 @@
     <string name="dialog_positive_btn">Да</string>
     <string name="dialog_negative_btn">Нет</string>
     <string name="about_app_content">Разная супер важная информация, которую я ещё не придумал.</string>
+    <string name="authorization_header">Authorization</string>
     <string name="ononoki_chan">Yay! Peace! Peace!</string>
     <string name="shinobu_chan">Ka Ka Ka!</string>
     <string name="mayoi_chan">Shitsurei! Kamimashita!</string>

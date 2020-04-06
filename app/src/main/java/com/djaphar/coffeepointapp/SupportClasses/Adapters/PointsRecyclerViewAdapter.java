@@ -28,20 +28,19 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
     private ArrayList<Point> points;
     private MainActivity mainActivity;
     private PointsFragment pointsFragment;
-    private EditText pointEditNameFormEd, pointEditAboutFormEd;
+    private EditText pointEditNameFormEd;
     private String statusTrueText, statusFalseText;
     private int statusTrueColor, statusFalseColor;
     private Resources resources;
     private Animation animation;
 
     public PointsRecyclerViewAdapter(ArrayList<Point> points, String nullPointString, ConstraintLayout singlePointInfoContainer,
-                                     MainActivity mainActivity, PointsFragment pointsFragment, EditText pointNameFormEd, EditText pointAboutFormEd) {
+                                     MainActivity mainActivity, PointsFragment pointsFragment, EditText pointNameFormEd) {
         this.singlePointInfoContainer = singlePointInfoContainer;
         this.points = points;
         this.mainActivity = mainActivity;
         this.pointsFragment = pointsFragment;
         this.pointEditNameFormEd = pointNameFormEd;
-        this.pointEditAboutFormEd = pointAboutFormEd;
         if (points.size() == 0) {
             points.add(new Point(null, null, null, nullPointString,
                     null, null, null, null));
@@ -73,7 +72,6 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
                 name = "";
             }
             pointEditNameFormEd.setText(name);
-//            pointEditAboutFormEd.setText(point.getAbout());
             mainActivity.setActionBarTitle(context.getString(R.string.title_point_edit));
             singlePointInfoContainer.setTranslationX(resources.getDimension(R.dimen.point_edit_layout_translation_x));
             animation = ViewDriver.showView(singlePointInfoContainer, R.anim.show_right_animation, context);

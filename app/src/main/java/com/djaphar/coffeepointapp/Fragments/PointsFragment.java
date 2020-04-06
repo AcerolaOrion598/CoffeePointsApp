@@ -22,6 +22,7 @@ import com.djaphar.coffeepointapp.SupportClasses.Adapters.PointProductsRecyclerV
 import com.djaphar.coffeepointapp.SupportClasses.Adapters.PointsRecyclerViewAdapter;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.BindCourierModel;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Point;
+import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointDeleteModel;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointUpdateModel;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.Product;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
@@ -31,6 +32,7 @@ import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.ViewDriver;
 import com.djaphar.coffeepointapp.ViewModels.PointsViewModel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -47,13 +49,14 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
     private Context context;
     private RecyclerView visiblePointsRecyclerView, invisiblePointsRecyclerView, pointProductsRecyclerView;
     private ConstraintLayout singlePointInfoContainer, addPointWindow;
-    private EditText pointEditNameFormEd, pointEditAboutFormEd, newPointPhoneNumberEd;
+    private EditText pointEditNameFormEd, newPointPhoneNumberEd;
     private Button pointEditSaveBtn, singlePointInfoCancelBtn, addPointCancelBtn, addPointSaveBtn;
     private ImageButton addPointBtn;
     private Resources resources;
     private User user;
     private ArrayList<Point> visiblePoints = new ArrayList<>(), invisiblePoints = new ArrayList<>();
     private String checkedPointId;
+    private HashMap<String, String> authHeaderMap = new HashMap<>();
     private float addWindowEndMotionY, addWindowCorrectionY, addWindowStartMotionY;
 
     @Override
@@ -83,7 +86,6 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
         singlePointInfoContainer = root.findViewById(R.id.single_point_info_container);
         addPointWindow = root.findViewById(R.id.add_point_window);
         pointEditNameFormEd = root.findViewById(R.id.point_edit_name_form_ed);
-        pointEditAboutFormEd = root.findViewById(R.id.point_edit_about_form_ed);
         pointEditSaveBtn = root.findViewById(R.id.point_edit_save_btn);
         singlePointInfoCancelBtn = root.findViewById(R.id.single_point_info_cancel_btn);
         addPointCancelBtn = root.findViewById(R.id.add_point_cancel_btn);
@@ -109,6 +111,7 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
                 return;
             }
             this.user = user;
+            authHeaderMap.put(getString(R.string.authorization_header), user.getToken());
             requestMyPoints();
         });
 
@@ -126,9 +129,9 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
 
             String nullPointString = getString(R.string.point_null);
             PointsRecyclerViewAdapter visibleAdapter = new PointsRecyclerViewAdapter(visiblePoints, nullPointString, singlePointInfoContainer,
-                    mainActivity, this, pointEditNameFormEd, pointEditAboutFormEd);
+                    mainActivity, this, pointEditNameFormEd);
             PointsRecyclerViewAdapter invisibleAdapter = new PointsRecyclerViewAdapter(invisiblePoints, nullPointString, singlePointInfoContainer,
-                    mainActivity,this, pointEditNameFormEd, pointEditAboutFormEd);
+                    mainActivity,this, pointEditNameFormEd);
             visiblePointsRecyclerView.setAdapter(visibleAdapter);
             invisiblePointsRecyclerView.setAdapter(invisibleAdapter);
             visiblePointsRecyclerView.setNestedScrollingEnabled(false);
@@ -172,8 +175,8 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
         });
 
         pointEditSaveBtn.setOnClickListener(lView -> {
-            PointUpdateModel pointUpdateModel = new PointUpdateModel(pointEditNameFormEd.getText().toString(), user.get_id());
-            pointsViewModel.requestUpdatePoint(pointUpdateModel, user.getToken(), checkedPointId);
+            PointUpdateModel pointUpdateModel = new PointUpdateModel(pointEditNameFormEd.getText().toString());
+            pointsViewModel.requestUpdatePoint(pointUpdateModel, authHeaderMap, checkedPointId);
         });
         singlePointInfoCancelBtn.setOnClickListener(lView -> backWasPressed());
         addPointBtn.setOnClickListener(lView -> {
@@ -187,19 +190,12 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
             ViewDriver.showView(addPointBtn, R.anim.bottom_view_show_animation, context);
         });
         addPointSaveBtn.setOnClickListener(lView -> {
-            pointsViewModel.requestBindCourier(user.getToken(), new BindCourierModel(user.get_id(), newPointPhoneNumberEd.getText().toString()));
+            pointsViewModel.requestBindCourier(authHeaderMap, new BindCourierModel(user.get_id(), newPointPhoneNumberEd.getText().toString()));
             ViewDriver.hideView(addPointWindow, R.anim.top_view_hide_animation, context);
             ViewDriver.showView(addPointBtn, R.anim.bottom_view_show_animation, context);
         });
         singlePointInfoContainer.setOnTouchListener(this);
         addPointWindow.setOnTouchListener(this);
-    }
-
-    public void requestMyPoints() {
-        if (user == null) {
-            return;
-        }
-        pointsViewModel.requestMyPoints(user.getToken());
     }
 
     public void setPointProductRecyclerView(ArrayList<Product> products) {
@@ -210,18 +206,24 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
     }
 
     public void createProductDeleteDialog(String pointId) {
-        PointUpdateModel pointUpdateModel = new PointUpdateModel("", null);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.delete_dialog_title)
                 .setMessage(R.string.delete_point_dialog_message)
                 .setNegativeButton(R.string.dialog_negative_btn, (dialogInterface, i) -> dialogInterface.cancel())
-                .setPositiveButton(R.string.dialog_positive_btn, (dialogInterface, i) -> pointsViewModel.requestUpdatePoint(pointUpdateModel, user.getToken(), pointId))
+                .setPositiveButton(R.string.dialog_positive_btn, (dialogInterface, i) -> pointsViewModel.requestDeletePoint(authHeaderMap, new PointDeleteModel(pointId)))
                 .show();
+    }
+
+    public void requestMyPoints() {
+        if (user == null) {
+            return;
+        }
+        pointsViewModel.requestMyPoints(authHeaderMap);
     }
 
     public void backWasPressed() {
         if (singlePointInfoContainer.getVisibility() == View.VISIBLE) {
-            pointsViewModel.requestMyPoints(user.getToken());
+            pointsViewModel.requestMyPoints(authHeaderMap);
             singlePointInfoContainer.setClickable(false);
             mainActivity.setActionBarTitle(getString(R.string.title_points));
             ViewDriver.hideView(singlePointInfoContainer, R.anim.hide_right_animation, context);

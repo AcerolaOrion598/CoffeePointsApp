@@ -17,6 +17,7 @@ import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.MyFragment;
 import com.djaphar.coffeepointapp.ViewModels.MainViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.HashMap;
 import java.util.Objects;
 
 import androidx.appcompat.app.ActionBar;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private UserChangeChecker userChangeChecker;
     private MainViewModel mainViewModel;
     private User user;
+    private HashMap<String, String> authHeaderMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +56,8 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
             this.user = user;
-            mainViewModel.requestUserProducts(user);
+            authHeaderMap.put(getString(R.string.authorization_header), user.getToken());
+            mainViewModel.requestUserProducts(user.get_id(), authHeaderMap);
         });
         userChangeChecker = new UserChangeChecker(new Handler(), this);
     }

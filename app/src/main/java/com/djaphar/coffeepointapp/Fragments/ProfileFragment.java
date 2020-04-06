@@ -22,6 +22,8 @@ import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.MyFragment;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.ViewDriver;
 import com.djaphar.coffeepointapp.ViewModels.ProfileViewModel;
 
+import java.util.HashMap;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -40,6 +42,7 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
     private EditText editUserNameEd, addProductEd;
     private RecyclerView productsRecyclerView;
     private User user;
+    private HashMap<String, String> authHeaderMap = new HashMap<>();
     private float editUserNameWindowCorrectionY, editUserNameWindowEndMotionY, editUserNameWindowStartMotionY,
             addProductWindowCorrectionY, addProductWindowEndMotionY, addProductWindowStartMotionY;
 
@@ -75,6 +78,7 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
 
         profileViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
             this.user = user;
+            authHeaderMap.put(getString(R.string.authorization_header), user.getToken());
             if (user.getName() == null) {
                 userNameTv.setTextColor(resources.getColor(R.color.colorBlack30));
                 userNameTv.setText(R.string.user_name_tv_null_text);
@@ -106,12 +110,12 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
 
         editUserNameSaveBtn.setOnClickListener(lView -> {
             user.setName(editUserNameEd.getText().toString());
-            profileViewModel.requestUpdateUser(user);
+            profileViewModel.requestUpdateUser(user, authHeaderMap);
             toggleTopWindow(editUserNameWindow, editUserNameBtn, true);
         });
 
         addProductSaveBtn.setOnClickListener(lView -> {
-            profileViewModel.requestAddProduct(new Product("0", "Кофе", addProductEd.getText().toString(), "0"), user);
+            profileViewModel.requestAddProduct(new Product("0", "Кофе", addProductEd.getText().toString(), "0"), authHeaderMap);
             toggleTopWindow(addProductWindow, addProductBtn, true);
         });
 
@@ -137,7 +141,7 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
         builder.setTitle(R.string.delete_dialog_title)
                 .setMessage(R.string.delete_product_dialog_message)
                 .setNegativeButton(R.string.dialog_negative_btn, (dialogInterface, i) -> dialogInterface.cancel())
-                .setPositiveButton(R.string.dialog_positive_btn, (dialogInterface, i) -> profileViewModel.requestDeleteProduct(id, user))
+                .setPositiveButton(R.string.dialog_positive_btn, (dialogInterface, i) -> profileViewModel.requestDeleteProduct(id, authHeaderMap))
                 .show();
     }
 

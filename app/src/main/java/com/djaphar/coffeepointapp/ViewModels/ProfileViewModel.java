@@ -3,6 +3,7 @@ package com.djaphar.coffeepointapp.ViewModels;
 import android.app.Application;
 import android.widget.Toast;
 
+import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.ApiBuilder;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointsApi;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.Product;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
@@ -11,7 +12,6 @@ import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.UserRoom;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -19,15 +19,13 @@ import androidx.lifecycle.LiveData;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ProfileViewModel extends AndroidViewModel {
 
     private LiveData<User> userLiveData;
     private LiveData<List<Product>> userProductsLiveData;
     private UserDao userDao;
-    private final static String baseUrl = "http://212.109.219.69:3007/";
+    private PointsApi pointsApi;
 
     public ProfileViewModel(@NonNull Application application) {
         super(application);
@@ -35,6 +33,7 @@ public class ProfileViewModel extends AndroidViewModel {
         userDao = userRoom.userDao();
         userLiveData = userDao.getUserLiveData();
         userProductsLiveData = userDao.getUserProductsLiveData();
+        pointsApi = ApiBuilder.getPointsApi();
     }
 
     public LiveData<User> getUser() {
@@ -45,15 +44,8 @@ public class ProfileViewModel extends AndroidViewModel {
         return userProductsLiveData;
     }
 
-    public void requestUpdateUser(User user) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        PointsApi pointsApi = retrofit.create(PointsApi.class);
-        Map<String, String> headerMap = new HashMap<>();
-        headerMap.put("Authorization", user.getToken());
-        Call<User> call = pointsApi.updateUser(user.get_id(), headerMap, user);
+    public void requestUpdateUser(User user, HashMap<String, String> headersMap)  {
+        Call<User> call = pointsApi.updateUser(user.get_id(), headersMap, user);
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
@@ -77,14 +69,7 @@ public class ProfileViewModel extends AndroidViewModel {
         });
     }
 
-    public void requestAddProduct(Product product, User user) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        PointsApi pointsApi = retrofit.create(PointsApi.class);
-        Map<String, String> headersMap = new HashMap<>();
-        headersMap.put("Authorization", user.getToken());
+    public void requestAddProduct(Product product, HashMap<String, String> headersMap) {
         Call<Product> call = pointsApi.requestAddProduct(headersMap, product);
         call.enqueue(new Callback<Product>() {
             @Override
@@ -103,14 +88,7 @@ public class ProfileViewModel extends AndroidViewModel {
         });
     }
 
-    public void requestDeleteProduct(String id, User user) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        PointsApi pointsApi = retrofit.create(PointsApi.class);
-        Map<String, String> headersMap = new HashMap<>();
-        headersMap.put("Authorization", user.getToken());
+    public void requestDeleteProduct(String id, HashMap<String, String> headersMap) {
         Call<Product> call = pointsApi.requestDeleteProduct(id, headersMap);
         call.enqueue(new Callback<Product>() {
             @Override
