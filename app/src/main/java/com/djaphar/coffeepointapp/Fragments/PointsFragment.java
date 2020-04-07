@@ -174,26 +174,29 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
             }
         });
 
-        pointEditSaveBtn.setOnClickListener(lView -> {
-            PointUpdateModel pointUpdateModel = new PointUpdateModel(pointEditNameFormEd.getText().toString());
-            pointsViewModel.requestUpdatePoint(pointUpdateModel, authHeaderMap, checkedPointId);
-        });
+        pointEditSaveBtn.setOnClickListener(lView -> pointsViewModel.requestUpdatePoint(checkedPointId, authHeaderMap,
+                new PointUpdateModel(pointEditNameFormEd.getText().toString())));
+
         singlePointInfoCancelBtn.setOnClickListener(lView -> backWasPressed());
+
         addPointBtn.setOnClickListener(lView -> {
             addPointWindow.setTranslationY(resources.getDimension(R.dimen.add_point_window_expanded_translation_y));
-//            newPointPhoneNumberEd.setText("");
+            newPointPhoneNumberEd.setText("");
             ViewDriver.hideView(addPointBtn, R.anim.bottom_view_hide_animation, context);
             ViewDriver.showView(addPointWindow, R.anim.top_view_show_animation, context);
         });
+
         addPointCancelBtn.setOnClickListener(lView -> {
             ViewDriver.hideView(addPointWindow, R.anim.top_view_hide_animation, context);
             ViewDriver.showView(addPointBtn, R.anim.bottom_view_show_animation, context);
         });
+
         addPointSaveBtn.setOnClickListener(lView -> {
             pointsViewModel.requestBindCourier(authHeaderMap, new BindCourierModel(user.get_id(), newPointPhoneNumberEd.getText().toString()));
             ViewDriver.hideView(addPointWindow, R.anim.top_view_hide_animation, context);
             ViewDriver.showView(addPointBtn, R.anim.bottom_view_show_animation, context);
         });
+
         singlePointInfoContainer.setOnTouchListener(this);
         addPointWindow.setOnTouchListener(this);
     }

@@ -85,7 +85,7 @@ public class PointsViewModel extends AndroidViewModel {
         });
     }
 
-    public void requestUpdatePoint(PointUpdateModel pointUpdateModel, HashMap<String, String> headersMap, String pointId) {
+    public void requestUpdatePoint(String pointId, HashMap<String, String> headersMap, PointUpdateModel pointUpdateModel) {
         Call<Void> call = pointsApi.requestUpdatePoint(pointId, headersMap, pointUpdateModel);
         call.enqueue(new Callback<Void>() {
             @Override

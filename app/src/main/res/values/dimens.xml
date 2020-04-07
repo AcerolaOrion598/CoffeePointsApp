@@ -7,10 +7,10 @@
     <dimen name="nav_bar_height">60dp</dimen>
     <dimen name="point_info_window_horizontal_margin">18dp</dimen>
     <dimen name="point_info_window_bottom_margin">76dp</dimen>
-    <dimen name="point_edit_translation_y">-256dp</dimen>
+    <dimen name="point_edit_translation_y">-159dp</dimen>
     <dimen name="point_edit_expanded_translation_y">-20dp</dimen>
     <dimen name="add_point_window_translation_y">-159dp</dimen>
     <dimen name="add_point_window_expanded_translation_y">-20dp</dimen>
     <dimen name="point_edit_layout_translation_x">0dp</dimen>
-    <dimen name="map_point_products_recycler_view_max_height">140dp</dimen>
+    <dimen name="map_point_products_recycler_view_max_height">175dp</dimen>
 </resources>

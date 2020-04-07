@@ -3,15 +3,19 @@ package com.djaphar.coffeepointapp.ViewModels;
 import android.app.Application;
 import android.widget.Toast;
 
+import com.djaphar.coffeepointapp.R;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.ApiBuilder;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Point;
+import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointUpdateModel;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointsApi;
+import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.SupervisorModel;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.UserDao;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.UserRoom;
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -24,14 +28,14 @@ import retrofit2.Response;
 public class MapViewModel extends AndroidViewModel {
 
     private LiveData<User> userLiveData;
-    private UserDao userDao;
     private MutableLiveData<ArrayList<Point>> pointsMutableLiveData = new MutableLiveData<>();
+    private MutableLiveData<SupervisorModel> supervisorModelMutableLiveData = new MutableLiveData<>();
     private PointsApi pointsApi;
 
     public MapViewModel(@NonNull Application application) {
         super(application);
         UserRoom userRoom = UserRoom.getDatabase(application);
-        userDao = userRoom.userDao();
+        UserDao userDao = userRoom.userDao();
         userLiveData = userDao.getUserLiveData();
         pointsApi = ApiBuilder.getPointsApi();
     }
@@ -42,6 +46,10 @@ public class MapViewModel extends AndroidViewModel {
 
     public LiveData<User> getUser() {
         return userLiveData;
+    }
+
+    public MutableLiveData<SupervisorModel> getSupervisor() {
+        return supervisorModelMutableLiveData;
     }
 
     public void requestPointsInBox(LatLngBounds bounds) {
@@ -64,7 +72,42 @@ public class MapViewModel extends AndroidViewModel {
         });
     }
 
-    public void requestSupervisor(String id) {
+    public void requestSupervisor(String supervisorId) {
+        Call<SupervisorModel> call = pointsApi.requestSupervisor(supervisorId);
+        call.enqueue(new Callback<SupervisorModel>() {
+            @Override
+            public void onResponse(@NonNull Call<SupervisorModel> call, @NonNull Response<SupervisorModel> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getApplication(), response.message(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                supervisorModelMutableLiveData.setValue(response.body());
+            }
 
+            @Override
+            public void onFailure(@NonNull Call<SupervisorModel> call, @NonNull Throwable t) {
+                Toast.makeText(getApplication(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void requestUpdatePoint(String pointId, HashMap<String, String> headersMap, PointUpdateModel pointUpdateModel, LatLngBounds latLngBounds) {
+        Call<Void> call = pointsApi.requestUpdatePoint(pointId, headersMap, pointUpdateModel);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getApplication(), response.message(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                requestPointsInBox(latLngBounds);
+                Toast.makeText(getApplication(), getApplication().getString(R.string.point_update_success), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                Toast.makeText(getApplication(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

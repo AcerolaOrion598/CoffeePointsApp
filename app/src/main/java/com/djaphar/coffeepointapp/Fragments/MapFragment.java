@@ -11,6 +11,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,12 +22,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.djaphar.coffeepointapp.Activities.MainActivity;
 import com.djaphar.coffeepointapp.R;
 import com.djaphar.coffeepointapp.SupportClasses.Adapters.MapPointProductsRecyclerAdapter;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Point;
+import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointUpdateModel;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.MyFragment;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.PermissionDriver;
@@ -61,7 +63,7 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
     private ConstraintLayout pointInfoWindow, pointEditWindow;
     private RecyclerView mapPointProductsRecyclerView;
     private TextView pointName, pointOwner, pointActive;
-    private EditText pointNameEd, pointAboutEd;
+    private EditText pointNameEd;
     private Button pointEditCancelBtn, pointEditSaveBtn, pointEditBtn;
     private SupportMapFragment supportMapFragment;
     private GoogleMap gMap;
@@ -85,7 +87,6 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         pointOwner = root.findViewById(R.id.point_owner);
         pointActive = root.findViewById(R.id.point_active);
         pointNameEd = root.findViewById(R.id.point_name_ed);
-        pointAboutEd = root.findViewById(R.id.point_about_ed);
         pointEditCancelBtn = root.findViewById(R.id.point_edit_cancel_btn);
         pointEditSaveBtn = root.findViewById(R.id.point_edit_save_btn);
         pointEditBtn = root.findViewById(R.id.point_edit_btn);
@@ -122,24 +123,49 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
                 return;
             }
             this.user = user;
-            authHeaderMap.put(getString(R.string.authorization_header),user.getToken());
+            authHeaderMap.put(getString(R.string.authorization_header), user.getToken());
+        });
+
+        mapViewModel.getSupervisor().observe(getViewLifecycleOwner(), supervisor -> {
+            if (supervisor == null) {
+                return;
+            }
+            String name = supervisor.getName();
+            if (name == null || name.equals("")) {
+                pointOwner.setText(R.string.some_string_is_null_text);
+            } else {
+                pointOwner.setText(supervisor.getName());
+            }
+        });
+
+        pointNameEd.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.toString().equals("")) {
+                    pointEditSaveBtn.setEnabled(false);
+                } else {
+                    pointEditSaveBtn.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
         });
 
         pointEditCancelBtn.setOnClickListener(lView -> editPointModeEnd());
 
         pointEditSaveBtn.setOnClickListener(lView -> {
-//            editPoint();
-            Toast.makeText(context, R.string.shinobu_chan, Toast.LENGTH_SHORT).show();
+            mapViewModel.requestUpdatePoint(focusedMarkerInfo.get_id(), authHeaderMap,
+                    new PointUpdateModel(pointNameEd.getText().toString()), gMap.getProjection().getVisibleRegion().latLngBounds);
             editPointModeEnd();
         });
 
         pointEditBtn.setOnClickListener(lView -> {
             if (focusedMarkerInfo != null) {
-                if (focusedMarkerInfo.getActive()) {
-                    editPointModeStart(focusedMarkerInfo.getName());
-                } else {
-                    editPointModeStart(focusedMarkerInfo.getName());
-                }
+                editPointModeStart(focusedMarkerInfo.getName());
             }
         });
 
@@ -270,6 +296,8 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
     private void showPointInfo(Marker marker) {
         Point point = (Point) marker.getTag();
         if (point != null) {
+            pointOwner.setText("");
+            mapViewModel.requestSupervisor(point.getSupervisor());
             if (point.getCurrentlyNotHere()) {
                 ViewDriver.setStatusTvOptions(pointActive, statusTrueText, statusTrueColor);
             } else {
@@ -288,7 +316,7 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
             }
             pointName.setText(name);
 
-            if (point.getProductList().size() > 4) {
+            if (point.getProductList().size() > 5) {
                 mapPointProductsRecyclerView.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                         (int) resources.getDimension(R.dimen.map_point_products_recycler_view_max_height)));
             } else {
@@ -299,7 +327,6 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
             MapPointProductsRecyclerAdapter adapter = new MapPointProductsRecyclerAdapter(point.getProductList(), getString(R.string.point_product_null));
             mapPointProductsRecyclerView.setAdapter(adapter);
             mapPointProductsRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-            pointOwner.setText("Имя Тут Будет");
 
             editPointModeEnd();
             ViewDriver.showView(pointInfoWindow, R.anim.bottom_view_show_animation, context);
@@ -311,7 +338,6 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
 
     private void editPointModeStart(String pointName) {
         pointNameEd.setText(pointName);
-        pointAboutEd.setText("");
         ViewDriver.hideView(pointInfoWindow, R.anim.bottom_view_hide_animation, context);
         pointEditWindow.setTranslationY(resources.getDimension(R.dimen.point_edit_translation_y));
         ViewDriver.showView(pointEditWindow, R.anim.top_view_show_animation, context);

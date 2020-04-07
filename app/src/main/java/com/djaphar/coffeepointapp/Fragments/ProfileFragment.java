@@ -81,7 +81,7 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
             authHeaderMap.put(getString(R.string.authorization_header), user.getToken());
             if (user.getName() == null) {
                 userNameTv.setTextColor(resources.getColor(R.color.colorBlack30));
-                userNameTv.setText(R.string.user_name_tv_null_text);
+                userNameTv.setText(R.string.some_string_is_null_text);
                 return;
             }
             userNameTv.setTextColor(resources.getColor(R.color.colorBlack60));
