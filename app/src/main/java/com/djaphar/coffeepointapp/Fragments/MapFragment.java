@@ -18,11 +18,13 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.djaphar.coffeepointapp.Activities.MainActivity;
 import com.djaphar.coffeepointapp.R;
+import com.djaphar.coffeepointapp.SupportClasses.Adapters.MapPointProductsRecyclerAdapter;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Point;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.MyFragment;
@@ -46,6 +48,8 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class MapFragment extends MyFragment implements OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener, GoogleMap.OnCameraIdleListener,
         View.OnTouchListener {
@@ -55,8 +59,8 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
     private Context context;
     private Resources resources;
     private ConstraintLayout pointInfoWindow, pointEditWindow;
-    private ConstraintLayout.LayoutParams pointInfoWindowParams;
-    private TextView pointName, pointAbout, pointOwner, pointActive;
+    private RecyclerView mapPointProductsRecyclerView;
+    private TextView pointName, pointOwner, pointActive;
     private EditText pointNameEd, pointAboutEd;
     private Button pointEditCancelBtn, pointEditSaveBtn, pointEditBtn;
     private SupportMapFragment supportMapFragment;
@@ -76,8 +80,8 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         View root = inflater.inflate(R.layout.fragment_map, container, false);
         pointInfoWindow = root.findViewById(R.id.point_info_window);
         pointEditWindow = root.findViewById(R.id.point_edit_window);
+        mapPointProductsRecyclerView = root.findViewById(R.id.map_point_products_recycler_view);
         pointName = root.findViewById(R.id.point_name);
-        pointAbout = root.findViewById(R.id.point_about);
         pointOwner = root.findViewById(R.id.point_owner);
         pointActive = root.findViewById(R.id.point_active);
         pointNameEd = root.findViewById(R.id.point_name_ed);
@@ -107,9 +111,6 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         statusFalseText = getString(R.string.point_status_false);
         myMarkerSize = (int) resources.getDimension(R.dimen.my_marker_size);
         markerSize = (int) resources.getDimension(R.dimen.marker_size);
-        pointInfoWindowParams = (ConstraintLayout.LayoutParams) pointInfoWindow.getLayoutParams();
-        pointInfoWindowParams.setMargins((int) resources.getDimension(R.dimen.point_info_window_horizontal_margin), 0,
-            (int) resources.getDimension(R.dimen.point_info_window_horizontal_margin), (int) resources.getDimension(R.dimen.point_info_window_bottom_margin));
         pointEditWindow.setTranslationY(resources.getDimension(R.dimen.point_edit_translation_y));
         pointEditTopLimit = pointEditWindow.getY();
         pointEditWindow.setTranslationY(resources.getDimension(R.dimen.point_edit_expanded_translation_y));
@@ -281,12 +282,26 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
                 infoWindowEditElementsToggle(View.GONE, R.id.point_info_window);
             }
 
-            pointName.setText(point.getName());
-            pointAbout.setText("Тут такая заглушка здарова я тип описание, которого не будет, а тут будет ассортимент точки");
+            String name = point.getName();
+            if (name == null || name.equals("")) {
+                name = getString(R.string.point_name_null);
+            }
+            pointName.setText(name);
+
+            if (point.getProductList().size() > 4) {
+                mapPointProductsRecyclerView.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        (int) resources.getDimension(R.dimen.map_point_products_recycler_view_max_height)));
+            } else {
+                mapPointProductsRecyclerView.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT));
+            }
+
+            MapPointProductsRecyclerAdapter adapter = new MapPointProductsRecyclerAdapter(point.getProductList(), getString(R.string.point_product_null));
+            mapPointProductsRecyclerView.setAdapter(adapter);
+            mapPointProductsRecyclerView.setLayoutManager(new LinearLayoutManager(context));
             pointOwner.setText("Имя Тут Будет");
 
             editPointModeEnd();
-            pointInfoWindow.setLayoutParams(pointInfoWindowParams);
             ViewDriver.showView(pointInfoWindow, R.anim.bottom_view_show_animation, context);
 
             equalizeMarkers(0.4f);
@@ -351,7 +366,6 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         }
 
         float alphaValue;
-//        alphaValue = 0.87f;
         if (focusedMarkerInfo == null) {
             alphaValue = 0.87f;
         } else {
@@ -431,7 +445,7 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
                 view.setY(infoWindowEndMotionY + infoWindowCorrectionY);
                 break;
             case MotionEvent.ACTION_UP:
-                if (infoWindowEndMotionY != 0 && infoWindowEndMotionY - infoWindowStartMotionY > 200) {
+                if (infoWindowEndMotionY != 0 && infoWindowEndMotionY - infoWindowStartMotionY > 300) {
                     setAnimationForSwipedViewHide(view, infoWindowStartMotionY, infoWindowCorrectionY);
                     removeFocusFromMarker();
                     break;

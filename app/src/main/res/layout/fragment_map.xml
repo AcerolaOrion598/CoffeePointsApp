@@ -52,20 +52,36 @@
             android:fontFamily="@font/roboto_medium"
             android:textColor="@color/colorBlack87"
             android:layout_marginTop="10dp"
-            android:textSize="18sp"
+            android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/move_info_window_view" />
 
         <TextView
-            android:id="@+id/point_about"
-            android:layout_width="250dp"
+            android:id="@+id/map_point_products_tv"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="11dp"
-            android:fontFamily="@font/roboto"
-            android:textColor="@color/colorBlack87"
-            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@+id/point_name"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/point_name" />
+            android:layout_marginTop="11dp"
+            android:fontFamily="@font/roboto_medium"
+            android:textColor="@color/colorBlack60"
+            android:textSize="18dp"
+            android:text="@string/map_point_products_tv_text"/>
+
+        <RelativeLayout
+            android:id="@+id/map_point_products_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/map_point_products_tv"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="11dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/map_point_products_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/point_owner"
@@ -76,7 +92,7 @@
             android:textColor="@color/colorBlack60"
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/point_about" />
+            app:layout_constraintTop_toBottomOf="@+id/map_point_products_layout" />
 
         <TextView
             android:id="@+id/point_active"

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/parent_layout_map_point_products"
+    android:layout_width="match_parent"
+    android:layout_height="35dp">
+
+    <TextView
+        android:id="@+id/map_point_product_name_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto"
+        android:textColor="@color/colorBlack60"
+        android:textSize="16sp"
+        android:layout_centerVertical="true"/>
+
+    <TextView
+        android:id="@+id/map_point_product_type_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto"
+        android:textColor="@color/colorBlack30"
+        android:textSize="12sp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"/>
+
+</RelativeLayout>
