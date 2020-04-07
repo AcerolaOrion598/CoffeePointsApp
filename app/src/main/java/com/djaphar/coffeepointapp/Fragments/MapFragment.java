@@ -11,6 +11,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -29,6 +30,7 @@ import com.djaphar.coffeepointapp.SupportClasses.Adapters.MapPointProductsRecycl
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Point;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointUpdateModel;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
+import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.MapPointsChangeChecker;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.MyFragment;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.PermissionDriver;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.ViewDriver;
@@ -56,6 +58,7 @@ import androidx.recyclerview.widget.RecyclerView;
 public class MapFragment extends MyFragment implements OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener, GoogleMap.OnCameraIdleListener,
         View.OnTouchListener {
 
+    private MapPointsChangeChecker mapPointsChangeChecker;
     private MapViewModel mapViewModel;
     private MainActivity mainActivity;
     private Context context;
@@ -76,6 +79,24 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
     private float infoWindowCorrectionY, infoWindowStartMotionY, infoWindowEndMotionY, editWindowCorrectionY, editWindowEndMotionY, pointEditTopLimit, pointEditBottomLimit;
     private int whoMoved, statusTrueColor, statusFalseColor, myMarkerSize, markerSize;
     private boolean alreadyOpened = false, editWindowHidden = false;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mapPointsChangeChecker = new MapPointsChangeChecker(new Handler(), this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mapPointsChangeChecker.startMapPointsChangeCheck();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mapPointsChangeChecker.stopMapPointsChangeCheck();
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mapViewModel = new ViewModelProvider(this).get(MapViewModel.class);
@@ -282,10 +303,6 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         alreadyOpened = true;
     }
 
-    private void requestPointsInBox() {
-        mapViewModel.requestPointsInBox(gMap.getProjection().getVisibleRegion().latLngBounds);
-    }
-
     private void infoWindowEditElementsToggle(int visibility, int constraintBottom) {
         pointEditBtn.setVisibility(visibility);
         ConstraintLayout.LayoutParams paramsTv = (ConstraintLayout.LayoutParams) pointActive.getLayoutParams();
@@ -421,9 +438,12 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         }
     }
 
-//    private void editPoint() {
-//        mainViewModel.editPoint();
-//    }
+    public void requestPointsInBox() {
+        if (gMap == null) {
+            return;
+        }
+        mapViewModel.requestPointsInBox(gMap.getProjection().getVisibleRegion().latLngBounds);
+    }
 
     public void backWasPressed() {
         if (pointEditWindow.getVisibility() == View.VISIBLE) {
