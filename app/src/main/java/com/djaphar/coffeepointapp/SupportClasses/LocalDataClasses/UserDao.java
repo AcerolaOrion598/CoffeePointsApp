@@ -38,4 +38,16 @@ public interface UserDao {
 
     @Query("DELETE FROM product_table WHERE _id = (:id)")
     void deleteUserProduct(String id);
+
+    @Insert
+    void setLastBounds(LastBounds bounds);
+
+    @Query("SELECT * FROM last_bounds_table")
+    LiveData<LastBounds> getLastBoundsLiveData();
+
+    @Query("UPDATE last_bounds_table SET north_lat = (:nla), north_long = (:nlo), south_lat = (:sla), south_long = (:slo)")
+    void updateLastBounds(double nla, double nlo, double sla, double slo);
+
+    @Query("DELETE FROM last_bounds_table")
+    void deleteLastBounds();
 }

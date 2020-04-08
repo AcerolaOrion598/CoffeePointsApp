@@ -9,7 +9,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {User.class, Product.class}, version = 1, exportSchema = false)
+@Database(entities = {User.class, Product.class, LastBounds.class}, version = 1, exportSchema = false)
 public abstract class UserRoom extends RoomDatabase {
     private static final int NUMBER_OF_THREADS = 4;
     public abstract UserDao userDao();

@@ -9,6 +9,7 @@ import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Point;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointUpdateModel;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointsApi;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.SupervisorModel;
+import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.LastBounds;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.UserDao;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.UserRoom;
@@ -27,16 +28,19 @@ import retrofit2.Response;
 
 public class MapViewModel extends AndroidViewModel {
 
+    private LiveData<LastBounds> lastBoundsLiveData;
     private LiveData<User> userLiveData;
     private MutableLiveData<ArrayList<Point>> pointsMutableLiveData = new MutableLiveData<>();
     private MutableLiveData<SupervisorModel> supervisorModelMutableLiveData = new MutableLiveData<>();
+    private UserDao userDao;
     private PointsApi pointsApi;
 
     public MapViewModel(@NonNull Application application) {
         super(application);
         UserRoom userRoom = UserRoom.getDatabase(application);
-        UserDao userDao = userRoom.userDao();
+        userDao = userRoom.userDao();
         userLiveData = userDao.getUserLiveData();
+        lastBoundsLiveData = userDao.getLastBoundsLiveData();
         pointsApi = ApiBuilder.getPointsApi();
     }
 
@@ -48,8 +52,20 @@ public class MapViewModel extends AndroidViewModel {
         return userLiveData;
     }
 
+    public LiveData<LastBounds> getLastBounds() {
+        return lastBoundsLiveData;
+    }
+
     public MutableLiveData<SupervisorModel> getSupervisor() {
         return supervisorModelMutableLiveData;
+    }
+
+    public void setLastScreenBounds(double nla, double nlo, double sla, double slo) {
+        if (lastBoundsLiveData.getValue() == null) {
+            UserRoom.databaseWriteExecutor.execute(() -> userDao.setLastBounds(new LastBounds(nla, nlo, sla, slo)));
+        } else {
+            UserRoom.databaseWriteExecutor.execute(() -> userDao.updateLastBounds(nla, nlo, sla, slo));
+        }
     }
 
     public void requestPointsInBox(LatLngBounds bounds) {

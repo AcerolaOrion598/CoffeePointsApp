@@ -41,6 +41,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -78,7 +79,7 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
     private HashMap<String, String> authHeaderMap = new HashMap<>();
     private float infoWindowCorrectionY, infoWindowStartMotionY, infoWindowEndMotionY, editWindowCorrectionY, editWindowEndMotionY, pointEditTopLimit, pointEditBottomLimit;
     private int whoMoved, statusTrueColor, statusFalseColor, myMarkerSize, markerSize;
-    private boolean alreadyOpened = false, editWindowHidden = false;
+    private boolean alreadyFocused = false, editWindowHidden = false;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -96,6 +97,11 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
     public void onPause() {
         super.onPause();
         mapPointsChangeChecker.stopMapPointsChangeCheck();
+        if (mapViewModel == null || gMap == null) {
+            return;
+        }
+        LatLngBounds bounds = gMap.getProjection().getVisibleRegion().latLngBounds;
+        mapViewModel.setLastScreenBounds(bounds.northeast.latitude, bounds.northeast.longitude, bounds.southwest.latitude, bounds.southwest.longitude);
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -117,6 +123,18 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         }
         perms[0] = Manifest.permission.ACCESS_COARSE_LOCATION;
         perms[1] = Manifest.permission.ACCESS_FINE_LOCATION;
+        mapViewModel.getLastBounds().observe(getViewLifecycleOwner(), lastBounds -> {
+            if (lastBounds == null || gMap == null) {
+                return;
+            }
+            double northLat, northLong, southLat, southLong;
+            northLat = lastBounds.getNorthLat();
+            northLong = lastBounds.getNorthLong();
+            southLat = lastBounds.getSouthLat();
+            southLong = lastBounds.getSouthLong();
+            LatLngBounds bounds = new LatLngBounds(new LatLng(southLat, southLong), new LatLng(northLat, northLong));
+            gMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0));
+        });
         return root;
     }
 
@@ -282,8 +300,9 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         @Override
         public void onLocationChanged(Location location) {
             LatLng myPosition = new LatLng(location.getLatitude(), location.getLongitude());
-            if (!alreadyOpened) {
-                focusOnMe(myPosition);
+            if (!alreadyFocused) {
+                alreadyFocused = true;
+                gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myPosition, (float) 15.0));
                 requestPointsInBox();
             }
         }
@@ -297,11 +316,6 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         @Override
         public void onProviderDisabled(String s) { }
     };
-
-    private void focusOnMe(LatLng latLng) {
-        gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, (float) 15.0));
-        alreadyOpened = true;
-    }
 
     private void infoWindowEditElementsToggle(int visibility, int constraintBottom) {
         pointEditBtn.setVisibility(visibility);

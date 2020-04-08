@@ -23,6 +23,7 @@ public class OtherViewModel extends AndroidViewModel {
     }
 
     public void logout() {
+        UserRoom.databaseWriteExecutor.execute(() -> userDao.deleteLastBounds());
         UserRoom.databaseWriteExecutor.execute(() -> userDao.deleteUserProducts());
         UserRoom.databaseWriteExecutor.execute(() -> userDao.deleteUser());
     }
