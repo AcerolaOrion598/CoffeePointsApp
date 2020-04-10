@@ -7,9 +7,9 @@ import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.ApiBuilder;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.FirstCredentials;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointsApi;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.SecondCredentials;
+import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.LocalDataDao;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
-import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.UserDao;
-import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.UserRoom;
+import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.LocalDataRoom;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -23,14 +23,14 @@ public class AuthViewModel extends AndroidViewModel {
 
     private LiveData<User> userLiveData;
     private MutableLiveData<SecondCredentials> secondCredentialsMutableLiveData = new MutableLiveData<>();
-    private UserDao userDao;
+    private LocalDataDao dao;
     private PointsApi pointsApi;
 
     public AuthViewModel(@NonNull Application application) {
         super(application);
-        UserRoom userRoom = UserRoom.getDatabase(application);
-        userDao = userRoom.userDao();
-        userLiveData = userDao.getUserLiveData();
+        LocalDataRoom room = LocalDataRoom.getDatabase(application);
+        dao = room.localDataDao();
+        userLiveData = dao.getUserLiveData();
         pointsApi = ApiBuilder.getPointsApi();
     }
 
@@ -76,7 +76,7 @@ public class AuthViewModel extends AndroidViewModel {
                 }
                 Integer userHash = user.determineHash();
                 user.setUserHash(userHash);
-                UserRoom.databaseWriteExecutor.execute(() -> userDao.setUser(user));
+                LocalDataRoom.databaseWriteExecutor.execute(() -> dao.setUser(user));
             }
 
             @Override

@@ -10,9 +10,9 @@ import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointUpdateModel;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointsApi;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.SupervisorModel;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.LastBounds;
+import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.LocalDataRoom;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
-import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.UserDao;
-import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.UserRoom;
+import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.LocalDataDao;
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.ArrayList;
@@ -32,15 +32,15 @@ public class MapViewModel extends AndroidViewModel {
     private LiveData<User> userLiveData;
     private MutableLiveData<ArrayList<Point>> pointsMutableLiveData = new MutableLiveData<>();
     private MutableLiveData<SupervisorModel> supervisorModelMutableLiveData = new MutableLiveData<>();
-    private UserDao userDao;
+    private LocalDataDao dao;
     private PointsApi pointsApi;
 
     public MapViewModel(@NonNull Application application) {
         super(application);
-        UserRoom userRoom = UserRoom.getDatabase(application);
-        userDao = userRoom.userDao();
-        userLiveData = userDao.getUserLiveData();
-        lastBoundsLiveData = userDao.getLastBoundsLiveData();
+        LocalDataRoom room = LocalDataRoom.getDatabase(application);
+        dao = room.localDataDao();
+        userLiveData = dao.getUserLiveData();
+        lastBoundsLiveData = dao.getLastBoundsLiveData();
         pointsApi = ApiBuilder.getPointsApi();
     }
 
@@ -60,16 +60,17 @@ public class MapViewModel extends AndroidViewModel {
         return supervisorModelMutableLiveData;
     }
 
-    public void setLastScreenBounds(double nla, double nlo, double sla, double slo) {
+    public void setLastScreenBounds(double northLat, double northLong, double southLat, double southLong) {
         if (lastBoundsLiveData.getValue() == null) {
-            UserRoom.databaseWriteExecutor.execute(() -> userDao.setLastBounds(new LastBounds(nla, nlo, sla, slo)));
+            LocalDataRoom.databaseWriteExecutor.execute(() -> dao.setLastBounds(new LastBounds(northLat, northLong, southLat, southLong)));
         } else {
-            UserRoom.databaseWriteExecutor.execute(() -> userDao.updateLastBounds(nla, nlo, sla, slo));
+            LocalDataRoom.databaseWriteExecutor.execute(() -> dao.updateLastBounds(northLat, northLong, southLat, southLong));
         }
     }
 
     public void requestPointsInBox(LatLngBounds bounds) {
-        String box = bounds.southwest.latitude + "," + bounds.southwest.longitude + "," + bounds.northeast.latitude + "," + bounds.northeast.longitude;
+        String box = bounds.southwest.latitude + "," + bounds.southwest.longitude + ","
+                + bounds.northeast.latitude + "," + bounds.northeast.longitude;
         Call<ArrayList<Point>> call = pointsApi.requestPointsInBox(box);
         call.enqueue(new Callback<ArrayList<Point>>() {
             @Override

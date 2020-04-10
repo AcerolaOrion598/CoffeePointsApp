@@ -15,13 +15,13 @@ import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class MapPointProductsRecyclerAdapter extends  RecyclerView.Adapter<MapPointProductsRecyclerAdapter.ViewHolder> {
+public class MapPointProductsRecyclerViewAdapter extends RecyclerView.Adapter<MapPointProductsRecyclerViewAdapter.ViewHolder> {
 
     private ArrayList<Product> products;
 
-    public MapPointProductsRecyclerAdapter(ArrayList<Product> products, String nullProductString) {
+    public MapPointProductsRecyclerViewAdapter(ArrayList<Product> products, String nullProductString) {
         this.products = products;
-        if (products.size() == 0) {
+        if (getItemCount() == 0) {
             products.add(new Product("", "", nullProductString, ""));
         }
     }

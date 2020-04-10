@@ -5,10 +5,10 @@ import android.widget.Toast;
 
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.ApiBuilder;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointsApi;
+import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.LocalDataDao;
+import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.LocalDataRoom;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.Product;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
-import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.UserDao;
-import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.UserRoom;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,15 +24,15 @@ public class ProfileViewModel extends AndroidViewModel {
 
     private LiveData<User> userLiveData;
     private LiveData<List<Product>> userProductsLiveData;
-    private UserDao userDao;
+    private LocalDataDao dao;
     private PointsApi pointsApi;
 
     public ProfileViewModel(@NonNull Application application) {
         super(application);
-        UserRoom userRoom = UserRoom.getDatabase(application);
-        userDao = userRoom.userDao();
-        userLiveData = userDao.getUserLiveData();
-        userProductsLiveData = userDao.getUserProductsLiveData();
+        LocalDataRoom room = LocalDataRoom.getDatabase(application);
+        dao = room.localDataDao();
+        userLiveData = dao.getUserLiveData();
+        userProductsLiveData = dao.getUserProductsLiveData();
         pointsApi = ApiBuilder.getPointsApi();
     }
 
@@ -59,7 +59,7 @@ public class ProfileViewModel extends AndroidViewModel {
                 }
                 Integer updatedHash = updatedUser.determineHash();
                 updatedUser.setUserHash(updatedHash);
-                UserRoom.databaseWriteExecutor.execute(() -> userDao.updateUser(updatedUser));
+                LocalDataRoom.databaseWriteExecutor.execute(() -> dao.updateUser(updatedUser));
             }
 
             @Override
@@ -78,7 +78,7 @@ public class ProfileViewModel extends AndroidViewModel {
                     Toast.makeText(getApplication(), response.message(), Toast.LENGTH_SHORT).show();
                     return;
                 }
-                UserRoom.databaseWriteExecutor.execute(() -> userDao.setUserProduct(response.body()));
+                LocalDataRoom.databaseWriteExecutor.execute(() -> dao.setUserProduct(response.body()));
             }
 
             @Override
@@ -100,7 +100,7 @@ public class ProfileViewModel extends AndroidViewModel {
                 if (response.body() == null) {
                     return;
                 }
-                UserRoom.databaseWriteExecutor.execute(() -> userDao.deleteUserProduct(response.body().get_id()));
+                LocalDataRoom.databaseWriteExecutor.execute(() -> dao.deleteUserProduct(response.body().get_id()));
             }
 
             @Override

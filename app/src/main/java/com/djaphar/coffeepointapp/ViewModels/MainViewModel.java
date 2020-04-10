@@ -5,10 +5,10 @@ import android.widget.Toast;
 
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.ApiBuilder;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointsApi;
+import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.LocalDataDao;
+import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.LocalDataRoom;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.Product;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
-import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.UserDao;
-import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.UserRoom;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,23 +23,19 @@ import retrofit2.Response;
 public class MainViewModel extends AndroidViewModel {
 
     private LiveData<User> userLiveData;
-    private UserDao userDao;
+    private LocalDataDao dao;
     private PointsApi pointsApi;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
-        UserRoom userRoom = UserRoom.getDatabase(application);
-        userDao = userRoom.userDao();
-        userLiveData = userDao.getUserLiveData();
+        LocalDataRoom room = LocalDataRoom.getDatabase(application);
+        dao = room.localDataDao();
+        userLiveData = dao.getUserLiveData();
         pointsApi = ApiBuilder.getPointsApi();
     }
 
     public LiveData<User> getUser() {
         return userLiveData;
-    }
-
-    public void editPoint() {
-        //Тут лезем апдейтить бд
     }
 
     public void requestUser(String id, Integer oldHash) {
@@ -62,7 +58,7 @@ public class MainViewModel extends AndroidViewModel {
                     return;
                 }
                 user.setUserHash(newHash);
-                UserRoom.databaseWriteExecutor.execute(() -> userDao.updateUser(user));
+                LocalDataRoom.databaseWriteExecutor.execute(() -> dao.updateUser(user));
             }
 
             @Override
@@ -86,7 +82,7 @@ public class MainViewModel extends AndroidViewModel {
                     return;
                 }
 
-                UserRoom.databaseWriteExecutor.execute(() -> userDao.setUserProducts(response.body()));
+                LocalDataRoom.databaseWriteExecutor.execute(() -> dao.setUserProducts(response.body()));
             }
 
             @Override

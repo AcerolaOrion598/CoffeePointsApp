@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -21,9 +20,9 @@
         android:id="@+id/point_info_window"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/point_info_window_bottom_margin"
-        android:layout_marginStart="@dimen/point_info_window_horizontal_margin"
-        android:layout_marginEnd="@dimen/point_info_window_horizontal_margin"
+        android:layout_marginBottom="76dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginEnd="18dp"
         android:paddingTop="10dp"
         android:paddingStart="29dp"
         android:paddingEnd="29dp"
@@ -64,6 +63,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@+id/point_name"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="11dp">
 
             <androidx.recyclerview.widget.RecyclerView
@@ -93,7 +93,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="13dp"
             android:layout_marginStart="5dp"
-            android:textSize="16dp"
+            android:textSize="16sp"
             android:fontFamily="@font/roboto"
             android:textColor="@color/colorBlack60" />
 
@@ -103,11 +103,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
             android:layout_marginBottom="20dp"
-            android:layout_marginStart="5dp"
             android:fontFamily="@font/roboto"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/point_active_label"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/point_owner" />
 
         <androidx.appcompat.widget.AppCompatButton

@@ -26,7 +26,7 @@ import android.widget.TextView;
 
 import com.djaphar.coffeepointapp.Activities.MainActivity;
 import com.djaphar.coffeepointapp.R;
-import com.djaphar.coffeepointapp.SupportClasses.Adapters.MapPointProductsRecyclerAdapter;
+import com.djaphar.coffeepointapp.SupportClasses.Adapters.MapPointProductsRecyclerViewAdapter;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Point;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointUpdateModel;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
@@ -56,8 +56,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class MapFragment extends MyFragment implements OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener, GoogleMap.OnCameraIdleListener,
-        View.OnTouchListener {
+public class MapFragment extends MyFragment implements OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener,
+        GoogleMap.OnCameraIdleListener, View.OnTouchListener {
 
     private MapPointsChangeChecker mapPointsChangeChecker;
     private MapViewModel mapViewModel;
@@ -77,7 +77,8 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
     private String[] perms = new String[2];
     private User user;
     private HashMap<String, String> authHeaderMap = new HashMap<>();
-    private float infoWindowCorrectionY, infoWindowStartMotionY, infoWindowEndMotionY, editWindowCorrectionY, editWindowEndMotionY, pointEditTopLimit, pointEditBottomLimit;
+    private float infoWindowCorrectionY, infoWindowStartMotionY, infoWindowEndMotionY, editWindowCorrectionY,
+            editWindowEndMotionY, pointEditTopLimit, pointEditBottomLimit;
     private int whoMoved, statusTrueColor, statusFalseColor, myMarkerSize, markerSize;
     private boolean alreadyFocused = false, editWindowHidden = false;
 
@@ -123,18 +124,6 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         }
         perms[0] = Manifest.permission.ACCESS_COARSE_LOCATION;
         perms[1] = Manifest.permission.ACCESS_FINE_LOCATION;
-        mapViewModel.getLastBounds().observe(getViewLifecycleOwner(), lastBounds -> {
-            if (lastBounds == null || gMap == null) {
-                return;
-            }
-            double northLat, northLong, southLat, southLong;
-            northLat = lastBounds.getNorthLat();
-            northLong = lastBounds.getNorthLong();
-            southLat = lastBounds.getSouthLat();
-            southLong = lastBounds.getSouthLong();
-            LatLngBounds bounds = new LatLngBounds(new LatLng(southLat, southLong), new LatLng(northLat, northLong));
-            gMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0));
-        });
         return root;
     }
 
@@ -157,6 +146,20 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         pointEditBottomLimit = pointEditWindow.getY();
         equalizeMarkers(0.87f);
 
+        mapViewModel.getLastBounds().observe(getViewLifecycleOwner(), lastBounds -> {
+            if (lastBounds == null || gMap == null) {
+                return;
+            }
+            double northLat, northLong, southLat, southLong;
+            northLat = lastBounds.getNorthLat();
+            northLong = lastBounds.getNorthLong();
+            southLat = lastBounds.getSouthLat();
+            southLong = lastBounds.getSouthLong();
+            LatLngBounds bounds = new LatLngBounds(new LatLng(southLat, southLong), new LatLng(northLat, northLong));
+            gMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0));
+            requestPointsInBox();
+        });
+
         mapViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
             if (user == null) {
                 return;
@@ -169,12 +172,12 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
             if (supervisor == null) {
                 return;
             }
+
             String name = supervisor.getName();
             if (name == null || name.equals("")) {
-                pointOwner.setText(R.string.some_string_is_null_text);
-            } else {
-                pointOwner.setText(supervisor.getName());
+                name = getString(R.string.some_string_is_null_text);
             }
+            pointOwner.setText(name);
         });
 
         pointNameEd.addTextChangedListener(new TextWatcher() {
@@ -226,7 +229,6 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         if (PermissionDriver.hasPerms(perms, context)) {
             getDeviceLocation();
             gMap.setMyLocationEnabled(true);
-            gMap.getUiSettings().setMyLocationButtonEnabled(false);
         } else {
             PermissionDriver.requestPerms(this, perms);
         }
@@ -277,23 +279,18 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         getDeviceLocation();
-        gMap.getUiSettings().setMyLocationButtonEnabled(false);
         gMap.setMyLocationEnabled(true);
     }
 
     private void getDeviceLocation() {
         LocationManager locationManager = (LocationManager) mainActivity.getSystemService(Context.LOCATION_SERVICE);
 
-        try {
-            if (ActivityCompat.checkSelfPermission(context, perms[0]) != PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(context, perms[0]) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 1, locationListener);
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 100, 1, locationListener);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (ActivityCompat.checkSelfPermission(context, perms[0]) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(context, perms[1]) != PackageManager.PERMISSION_GRANTED) {
+            return;
         }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 1, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 100, 1, locationListener);
     }
 
     private LocationListener locationListener = new LocationListener() {
@@ -302,7 +299,7 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
             LatLng myPosition = new LatLng(location.getLatitude(), location.getLongitude());
             if (!alreadyFocused) {
                 alreadyFocused = true;
-                gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myPosition, (float) 15.0));
+                gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myPosition, 15.0f));
                 requestPointsInBox();
             }
         }
@@ -326,45 +323,48 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
 
     private void showPointInfo(Marker marker) {
         Point point = (Point) marker.getTag();
-        if (point != null) {
-            pointOwner.setText("");
-            mapViewModel.requestSupervisor(point.getSupervisor());
-            if (point.getCurrentlyNotHere()) {
-                ViewDriver.setStatusTvOptions(pointActive, statusTrueText, statusTrueColor);
-            } else {
-                ViewDriver.setStatusTvOptions(pointActive, statusFalseText, statusFalseColor);
-            }
 
-            if (point.getSupervisor().equals(user.get_id())) {
-                infoWindowEditElementsToggle(View.VISIBLE, ConstraintLayout.LayoutParams.UNSET);
-            } else {
-                infoWindowEditElementsToggle(View.GONE, R.id.point_info_window);
-            }
-
-            String name = point.getName();
-            if (name == null || name.equals("")) {
-                name = getString(R.string.point_name_null);
-            }
-            pointName.setText(name);
-
-            if (point.getProductList().size() > 5) {
-                mapPointProductsRecyclerView.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                        (int) resources.getDimension(R.dimen.map_point_products_recycler_view_max_height)));
-            } else {
-                mapPointProductsRecyclerView.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT));
-            }
-
-            MapPointProductsRecyclerAdapter adapter = new MapPointProductsRecyclerAdapter(point.getProductList(), getString(R.string.point_product_null));
-            mapPointProductsRecyclerView.setAdapter(adapter);
-            mapPointProductsRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-
-            editPointModeEnd();
-            ViewDriver.showView(pointInfoWindow, R.anim.bottom_view_show_animation, context);
-
-            equalizeMarkers(0.4f);
-            marker.setAlpha(1.0f);
+        if (point == null) {
+            return;
         }
+
+        pointOwner.setText("");
+        mapViewModel.requestSupervisor(point.getSupervisor());
+
+        if (point.getCurrentlyNotHere()) {
+            ViewDriver.setStatusTvOptions(pointActive, statusTrueText, statusTrueColor);
+        } else {
+            ViewDriver.setStatusTvOptions(pointActive, statusFalseText, statusFalseColor);
+        }
+
+        if (point.getSupervisor().equals(user.get_id())) {
+            infoWindowEditElementsToggle(View.VISIBLE, ConstraintLayout.LayoutParams.UNSET);
+        } else {
+            infoWindowEditElementsToggle(View.GONE, R.id.point_info_window);
+        }
+
+        String name = point.getName();
+        if (name == null || name.equals("")) {
+            name = getString(R.string.point_name_null);
+        }
+        pointName.setText(name);
+
+        if (point.getProductList().size() > 5) {
+            mapPointProductsRecyclerView.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    (int) resources.getDimension(R.dimen.map_point_products_recycler_view_max_height)));
+        } else {
+            mapPointProductsRecyclerView.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT));
+        }
+        MapPointProductsRecyclerViewAdapter adapter = new MapPointProductsRecyclerViewAdapter(point.getProductList(), getString(R.string.point_product_null));
+        mapPointProductsRecyclerView.setAdapter(adapter);
+        mapPointProductsRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+
+        editPointModeEnd();
+        ViewDriver.showView(pointInfoWindow, R.anim.bottom_view_show_animation, context);
+
+        equalizeMarkers(0.4f);
+        marker.setAlpha(1.0f);
     }
 
     private void editPointModeStart(String pointName) {
@@ -399,9 +399,6 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
     }
 
     private boolean focusedMarker(Point point) {
-        if (focusedMarkerInfo == null) {
-            return false;
-        }
         LatLng focusedLatLng = new LatLng(focusedMarkerInfo.getCoordinates().getLat(), focusedMarkerInfo.getCoordinates().getLng());
         LatLng currentLatLng = new LatLng(point.getCoordinates().getLat(), point.getCoordinates().getLng());
         return focusedLatLng.latitude == currentLatLng.latitude && focusedLatLng.longitude == currentLatLng.longitude;
@@ -425,19 +422,17 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         float alphaValue;
         if (focusedMarkerInfo == null) {
             alphaValue = 0.87f;
-        } else {
-            if (focusedMarker(point)) {
+        } else if (focusedMarker(point)) {
                 alphaValue = 1.0f;
-            } else {
-                alphaValue = 0.4f;
-            }
+        } else {
+            alphaValue = 0.4f;
         }
-        MarkerOptions options = new MarkerOptions();
-        options.position(new LatLng(point.getCoordinates().getLat(), point.getCoordinates().getLng()))
+
+        return new MarkerOptions()
+                .position(new LatLng(point.getCoordinates().getLat(), point.getCoordinates().getLng()))
 //                .title(point.getHint())
                 .alpha(alphaValue)
                 .icon(BitmapDescriptorFactory.fromBitmap(scaledCustomIcon));
-        return options;
     }
 
     private void removeMarkers() {
@@ -509,10 +504,9 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
                     setAnimationForSwipedViewHide(view, infoWindowStartMotionY, infoWindowCorrectionY);
                     removeFocusFromMarker();
                     break;
-                } else {
-                    view.animate().y(infoWindowCorrectionY + infoWindowStartMotionY).setDuration(200);
-                    break;
                 }
+                view.animate().y(infoWindowCorrectionY + infoWindowStartMotionY).setDuration(200);
+                break;
         }
         return false;
     }

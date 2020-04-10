@@ -10,7 +10,7 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 @Dao
-public interface UserDao {
+public interface LocalDataDao {
 
     @Insert
     void setUser(User user);
@@ -45,8 +45,8 @@ public interface UserDao {
     @Query("SELECT * FROM last_bounds_table")
     LiveData<LastBounds> getLastBoundsLiveData();
 
-    @Query("UPDATE last_bounds_table SET north_lat = (:nla), north_long = (:nlo), south_lat = (:sla), south_long = (:slo)")
-    void updateLastBounds(double nla, double nlo, double sla, double slo);
+    @Query("UPDATE last_bounds_table SET north_lat = (:northLat), north_long = (:northLong), south_lat = (:southLat), south_long = (:southLong)")
+    void updateLastBounds(double northLat, double northLong, double southLat, double southLong);
 
     @Query("DELETE FROM last_bounds_table")
     void deleteLastBounds();

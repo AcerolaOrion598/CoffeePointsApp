@@ -10,9 +10,9 @@ import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Point;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointDeleteModel;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointUpdateModel;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointsApi;
+import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.LocalDataRoom;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
-import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.UserDao;
-import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.UserRoom;
+import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.LocalDataDao;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,9 +33,9 @@ public class PointsViewModel extends AndroidViewModel {
 
     public PointsViewModel(@NonNull Application application) {
         super(application);
-        UserRoom userRoom = UserRoom.getDatabase(application);
-        UserDao userDao = userRoom.userDao();
-        userLiveData = userDao.getUserLiveData();
+        LocalDataRoom room = LocalDataRoom.getDatabase(application);
+        LocalDataDao dao = room.localDataDao();
+        userLiveData = dao.getUserLiveData();
         pointsApi = ApiBuilder.getPointsApi();
     }
 

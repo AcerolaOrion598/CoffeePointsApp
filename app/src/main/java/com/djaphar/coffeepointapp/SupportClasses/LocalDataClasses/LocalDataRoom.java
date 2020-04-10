@@ -10,18 +10,18 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 @Database(entities = {User.class, Product.class, LastBounds.class}, version = 1, exportSchema = false)
-public abstract class UserRoom extends RoomDatabase {
+public abstract class LocalDataRoom extends RoomDatabase {
     private static final int NUMBER_OF_THREADS = 4;
-    public abstract UserDao userDao();
+    public abstract LocalDataDao localDataDao();
     public static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
-    private static volatile UserRoom INSTANCE;
+    private static volatile LocalDataRoom INSTANCE;
 
-    public static UserRoom getDatabase(final Context context) {
+    public static LocalDataRoom getDatabase(final Context context) {
         if (INSTANCE == null) {
-            synchronized (UserRoom.class) {
+            synchronized (LocalDataRoom.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(), UserRoom.class, "user_database").build();
+                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(), LocalDataRoom.class, "user_database").build();
                 }
             }
         }
