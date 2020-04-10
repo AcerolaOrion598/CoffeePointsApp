@@ -146,20 +146,6 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         pointEditBottomLimit = pointEditWindow.getY();
         equalizeMarkers(0.87f);
 
-        mapViewModel.getLastBounds().observe(getViewLifecycleOwner(), lastBounds -> {
-            if (lastBounds == null || gMap == null) {
-                return;
-            }
-            double northLat, northLong, southLat, southLong;
-            northLat = lastBounds.getNorthLat();
-            northLong = lastBounds.getNorthLong();
-            southLat = lastBounds.getSouthLat();
-            southLong = lastBounds.getSouthLong();
-            LatLngBounds bounds = new LatLngBounds(new LatLng(southLat, southLong), new LatLng(northLat, northLong));
-            gMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0));
-            requestPointsInBox();
-        });
-
         mapViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
             if (user == null) {
                 return;
@@ -225,6 +211,20 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
     @Override
     public void onMapReady(GoogleMap googleMap) {
         gMap = googleMap;
+
+        mapViewModel.getLastBounds().observe(getViewLifecycleOwner(), lastBounds -> {
+            if (lastBounds == null || gMap == null) {
+                return;
+            }
+            double northLat, northLong, southLat, southLong;
+            northLat = lastBounds.getNorthLat();
+            northLong = lastBounds.getNorthLong();
+            southLat = lastBounds.getSouthLat();
+            southLong = lastBounds.getSouthLong();
+            LatLngBounds bounds = new LatLngBounds(new LatLng(southLat, southLong), new LatLng(northLat, northLong));
+            gMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0));
+            requestPointsInBox();
+        });
 
         if (PermissionDriver.hasPerms(perms, context)) {
             getDeviceLocation();
