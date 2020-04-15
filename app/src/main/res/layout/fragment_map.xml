@@ -53,9 +53,30 @@
             android:fontFamily="@font/roboto_medium"
             android:textColor="@color/colorBlack87"
             android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/move_info_window_view" />
+
+        <ImageView
+            android:id="@+id/map_point_rating_iv"
+            android:layout_width="27dp"
+            android:layout_height="27dp"
+            app:layout_constraintTop_toBottomOf="@id/move_info_window_view"
+            app:layout_constraintEnd_toStartOf="@+id/map_point_rating_tv"
+            android:src="@drawable/ic_star_checked_48dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="4dp"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/map_point_rating_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/move_info_window_view"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/roboto"
+            android:textSize="20sp"
+            android:textColor="@color/colorBlack87"/>
 
         <RelativeLayout
             android:id="@+id/map_point_products_layout"
@@ -74,28 +95,37 @@
         </RelativeLayout>
 
         <TextView
-            android:id="@+id/point_owner_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="11dp"
-            android:text="@string/point_owner_label_text"
-            android:fontFamily="@font/roboto_medium"
-            android:textColor="@color/colorBlack60"
-            android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/map_point_products_layout" />
-
-        <TextView
             android:id="@+id/point_owner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@+id/map_point_products_layout"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="13dp"
-            android:layout_marginStart="5dp"
-            android:textSize="16sp"
-            android:fontFamily="@font/roboto"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="11dp"
+            android:textSize="18sp"
+            android:fontFamily="@font/roboto_medium"
             android:textColor="@color/colorBlack60" />
+
+        <ImageView
+            android:id="@+id/supervisor_rating_iv"
+            android:layout_width="27dp"
+            android:layout_height="27dp"
+            android:src="@drawable/ic_star_checked_48dp"
+            app:layout_constraintTop_toBottomOf="@id/map_point_products_layout"
+            app:layout_constraintEnd_toStartOf="@id/supervisor_rating_tv"
+            android:layout_marginTop="7dp"
+            android:layout_marginEnd="4dp"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/supervisor_rating_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/map_point_products_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="7dp"
+            android:fontFamily="@font/roboto"
+            android:textSize="20sp"
+            android:textColor="@color/colorBlack87"/>
 
         <TextView
             android:id="@+id/point_active"

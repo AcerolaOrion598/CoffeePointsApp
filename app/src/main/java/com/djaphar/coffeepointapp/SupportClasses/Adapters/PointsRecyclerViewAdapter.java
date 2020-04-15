@@ -43,7 +43,7 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
         this.pointEditNameFormEd = pointNameFormEd;
         if (points.size() == 0) {
             points.add(new Point(null, null, null, nullPointString,
-                    null, null, null, null));
+                    null, null, null, null, null, null));
         }
     }
 

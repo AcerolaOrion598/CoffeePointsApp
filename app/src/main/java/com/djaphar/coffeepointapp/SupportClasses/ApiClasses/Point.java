@@ -6,20 +6,23 @@ import java.util.ArrayList;
 
 public class Point {
 
-    private String _id, phoneNumber, supervisor, name;
+    private String _id, phoneNumber, supervisor, name, hint;
     private Boolean isActive, isCurrentlyNotHere;
     private ArrayList<Product> productList;
+    private Float avgRating;
     private Coordinates coordinates;
 
-    public Point(String _id, String phoneNumber, String supervisor, String name, Boolean isActive,
-                 Boolean isCurrentlyNotHere, ArrayList<Product> productList, Coordinates coordinates) {
+    public Point(String _id, String phoneNumber, String supervisor, String name, String hint, Boolean isActive,
+                 Boolean isCurrentlyNotHere, ArrayList<Product> productList, Float avgRating, Coordinates coordinates) {
         this._id = _id;
         this.phoneNumber = phoneNumber;
         this.supervisor = supervisor;
         this.name = name;
+        this.hint = hint;
         this.isActive = isActive;
         this.isCurrentlyNotHere = isCurrentlyNotHere;
         this.productList = productList;
+        this.avgRating = avgRating;
         this.coordinates = coordinates;
     }
 
@@ -39,6 +42,10 @@ public class Point {
         return name;
     }
 
+    public String getHint() {
+        return hint;
+    }
+
     public Boolean getActive() {
         return isActive;
     }
@@ -49,6 +56,10 @@ public class Point {
 
     public ArrayList<Product> getProductList() {
         return productList;
+    }
+
+    public Float getAvgRating() {
+        return avgRating;
     }
 
     public Coordinates getCoordinates() {
@@ -71,6 +82,10 @@ public class Point {
         this.name = name;
     }
 
+    public void setHint(String hint) {
+        this.hint = hint;
+    }
+
     public void setActive(Boolean active) {
         isActive = active;
     }
@@ -81,6 +96,10 @@ public class Point {
 
     public void setProductList(ArrayList<Product> productList) {
         this.productList = productList;
+    }
+
+    public void setAvgRating(Float avgRating) {
+        this.avgRating = avgRating;
     }
 
     public void setCoordinates(Coordinates coordinates) {

@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -47,6 +48,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -66,7 +68,8 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
     private Resources resources;
     private ConstraintLayout pointInfoWindow, pointEditWindow;
     private RecyclerView mapPointProductsRecyclerView;
-    private TextView pointName, pointOwner, pointActive;
+    private ImageView mapPointRatingIv, supervisorRatingIv;
+    private TextView pointName, pointOwner, pointActive, mapPointRatingTv, supervisorRatingTv;
     private EditText pointNameEd;
     private Button pointEditCancelBtn, pointEditSaveBtn, pointEditBtn;
     private SupportMapFragment supportMapFragment;
@@ -111,6 +114,10 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         pointInfoWindow = root.findViewById(R.id.point_info_window);
         pointEditWindow = root.findViewById(R.id.point_edit_window);
         mapPointProductsRecyclerView = root.findViewById(R.id.map_point_products_recycler_view);
+        mapPointRatingIv = root.findViewById(R.id.map_point_rating_iv);
+        mapPointRatingTv = root.findViewById(R.id.map_point_rating_tv);
+        supervisorRatingIv = root.findViewById(R.id.supervisor_rating_iv);
+        supervisorRatingTv = root.findViewById(R.id.supervisor_rating_tv);
         pointName = root.findViewById(R.id.point_name);
         pointOwner = root.findViewById(R.id.point_owner);
         pointActive = root.findViewById(R.id.point_active);
@@ -164,6 +171,12 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
                 name = getString(R.string.some_string_is_null_text);
             }
             pointOwner.setText(name);
+
+            Float rating = supervisor.getAvgRating();
+            if (rating != null) {
+                supervisorRatingIv.setVisibility(View.VISIBLE);
+                supervisorRatingTv.setText(String.format(Locale.US, "%.2f", rating));
+            }
         });
 
         pointNameEd.addTextChangedListener(new TextWatcher() {
@@ -216,12 +229,8 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
             if (lastBounds == null || gMap == null) {
                 return;
             }
-            double northLat, northLong, southLat, southLong;
-            northLat = lastBounds.getNorthLat();
-            northLong = lastBounds.getNorthLong();
-            southLat = lastBounds.getSouthLat();
-            southLong = lastBounds.getSouthLong();
-            LatLngBounds bounds = new LatLngBounds(new LatLng(southLat, southLong), new LatLng(northLat, northLong));
+            LatLngBounds bounds = new LatLngBounds(new LatLng(lastBounds.getSouthLat(), lastBounds.getSouthLong()),
+                    new LatLng(lastBounds.getNorthLat(), lastBounds.getNorthLong()));
             gMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0));
             requestPointsInBox();
         });
@@ -323,11 +332,14 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
 
     private void showPointInfo(Marker marker) {
         Point point = (Point) marker.getTag();
-
         if (point == null) {
             return;
         }
 
+        mapPointRatingIv.setVisibility(View.GONE);
+        supervisorRatingIv.setVisibility(View.GONE);
+        mapPointRatingTv.setText("");
+        supervisorRatingTv.setText("");
         pointOwner.setText("");
         mapViewModel.requestSupervisor(point.getSupervisor());
 
@@ -348,6 +360,12 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
             name = getString(R.string.point_name_null);
         }
         pointName.setText(name);
+
+        Float rating = point.getAvgRating();
+        if (rating != null) {
+            mapPointRatingIv.setVisibility(View.VISIBLE);
+            mapPointRatingTv.setText(String.format(Locale.US, "%.2f", rating));
+        }
 
         if (point.getProductList().size() > 5) {
             mapPointProductsRecyclerView.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -412,11 +430,10 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
             customIcon = BitmapFactory.decodeResource(resources, R.drawable.red_marker);
         }
 
-        Bitmap scaledCustomIcon;
         if (point.getSupervisor().equals(user.get_id())) {
-            scaledCustomIcon = Bitmap.createScaledBitmap(customIcon, myMarkerSize, myMarkerSize, false);
+            customIcon = Bitmap.createScaledBitmap(customIcon, myMarkerSize, myMarkerSize, false);
         } else {
-            scaledCustomIcon = Bitmap.createScaledBitmap(customIcon, markerSize, markerSize, false);
+            customIcon = Bitmap.createScaledBitmap(customIcon, markerSize, markerSize, false);
         }
 
         float alphaValue;
@@ -428,11 +445,16 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
             alphaValue = 0.4f;
         }
 
+        String hint = point.getHint();
+        if (hint == null) {
+            hint = "";
+        }
+
         return new MarkerOptions()
                 .position(new LatLng(point.getCoordinates().getLat(), point.getCoordinates().getLng()))
-//                .title(point.getHint())
+                .title(hint)
                 .alpha(alphaValue)
-                .icon(BitmapDescriptorFactory.fromBitmap(scaledCustomIcon));
+                .icon(BitmapDescriptorFactory.fromBitmap(customIcon));
     }
 
     private void removeMarkers() {

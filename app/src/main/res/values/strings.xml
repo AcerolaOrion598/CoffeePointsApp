@@ -26,7 +26,6 @@
     <string name="new_user_name_text">Новое Имя</string>
     <string name="user_about_hint">О себе</string>
     <string name="product_list_tv_text">Ваш Ассортимент</string>
-    <string name="point_owner_label_text">Владелец:</string>
     <string name="point_product_null">У данной точки нет продуктов</string>
     <string name="point_null">Никого...</string>
     <string name="point_name_null">Имя Не Указано</string>
