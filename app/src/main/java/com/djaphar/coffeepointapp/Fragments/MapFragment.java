@@ -182,11 +182,7 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         pointNameEd.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable editable) {
-                if (editable.toString().equals("")) {
-                    pointEditSaveBtn.setEnabled(false);
-                } else {
-                    pointEditSaveBtn.setEnabled(true);
-                }
+                pointEditSaveBtn.setEnabled(!editable.toString().equals(""));
             }
 
             @Override

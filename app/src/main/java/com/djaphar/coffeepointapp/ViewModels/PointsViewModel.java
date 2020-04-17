@@ -53,7 +53,14 @@ public class PointsViewModel extends AndroidViewModel {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                 if (!response.isSuccessful()) {
-                    Toast.makeText(getApplication(), response.message(), Toast.LENGTH_SHORT).show();
+                    switch (response.code()) {
+                        case 403:
+                            Toast.makeText(getApplication(), R.string.courier_bind_error_toast, Toast.LENGTH_SHORT).show();
+                            break;
+                        case 404:
+                            Toast.makeText(getApplication(), R.string.courier_not_found_error_toast, Toast.LENGTH_SHORT).show();
+                            break;
+                    }
                     return;
                 }
                requestMyPoints(headersMap);
@@ -61,7 +68,7 @@ public class PointsViewModel extends AndroidViewModel {
 
             @Override
             public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-                Toast.makeText(getApplication(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplication(), R.string.network_error_toast, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -80,7 +87,7 @@ public class PointsViewModel extends AndroidViewModel {
 
             @Override
             public void onFailure(@NonNull Call<ArrayList<Point>> call, @NonNull Throwable t) {
-                Toast.makeText(getApplication(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplication(), R.string.network_error_toast, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -99,7 +106,7 @@ public class PointsViewModel extends AndroidViewModel {
 
             @Override
             public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-                Toast.makeText(getApplication(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplication(), R.string.network_error_toast, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -118,7 +125,7 @@ public class PointsViewModel extends AndroidViewModel {
 
             @Override
             public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-                Toast.makeText(getApplication(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplication(), R.string.network_error_toast, Toast.LENGTH_SHORT).show();
             }
         });
     }

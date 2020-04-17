@@ -113,6 +113,7 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
         if (b == null) {
             color = R.color.colorBlack60;
             holder.pointDeleteBtn.setVisibility(View.GONE);
+            holder.listPointStatus.setVisibility(View.GONE);
         } else if (b) {
             ViewDriver.setStatusTvOptions(holder.listPointStatus, statusTrueText, statusTrueColor);
         } else {

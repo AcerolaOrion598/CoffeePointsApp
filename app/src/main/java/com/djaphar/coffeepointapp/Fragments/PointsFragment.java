@@ -142,36 +142,28 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
 
         pointEditNameFormEd.addTextChangedListener(new TextWatcher() {
             @Override
+            public void afterTextChanged(Editable editable) {
+                pointEditSaveBtn.setEnabled(!editable.toString().equals(""));
+            }
+
+            @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if (editable.toString().equals("")) {
-                    pointEditSaveBtn.setEnabled(false);
-                } else {
-                    pointEditSaveBtn.setEnabled(true);
-                }
-            }
         });
 
         newPointPhoneNumberEd.addTextChangedListener(new TextWatcher() {
             @Override
+            public void afterTextChanged(Editable editable) {
+                addPointSaveBtn.setEnabled(!editable.toString().equals(""));
+            }
+
+            @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if (editable.toString().equals("")) {
-                    addPointSaveBtn.setEnabled(false);
-                } else {
-                    addPointSaveBtn.setEnabled(true);
-                }
-            }
         });
 
         pointEditSaveBtn.setOnClickListener(lView -> pointsViewModel.requestUpdatePoint(checkedPointId, authHeaderMap,
@@ -213,7 +205,8 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
         builder.setTitle(R.string.delete_dialog_title)
                 .setMessage(R.string.delete_point_dialog_message)
                 .setNegativeButton(R.string.dialog_negative_btn, (dialogInterface, i) -> dialogInterface.cancel())
-                .setPositiveButton(R.string.dialog_positive_btn, (dialogInterface, i) -> pointsViewModel.requestDeletePoint(authHeaderMap, new PointDeleteModel(pointId)))
+                .setPositiveButton(R.string.dialog_positive_btn, (dialogInterface, i) ->
+                        pointsViewModel.requestDeletePoint(authHeaderMap, new PointDeleteModel(pointId)))
                 .show();
     }
 

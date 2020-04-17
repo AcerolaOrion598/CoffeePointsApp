@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -123,6 +125,32 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
         addProductCancelBtn.setOnClickListener(lView -> toggleTopWindow(addProductWindow, addProductBtn, true));
         editUserNameWindow.setOnTouchListener(this);
         addProductWindow.setOnTouchListener(this);
+
+        editUserNameEd.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable editable) {
+                editUserNameSaveBtn.setEnabled(!editable.toString().equals(""));
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+        });
+
+        addProductEd.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable editable) {
+                addProductSaveBtn.setEnabled(!editable.toString().equals(""));
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+        });
     }
 
     public void backWasPressed() {

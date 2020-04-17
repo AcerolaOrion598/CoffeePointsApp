@@ -3,6 +3,7 @@ package com.djaphar.coffeepointapp.ViewModels;
 import android.app.Application;
 import android.widget.Toast;
 
+import com.djaphar.coffeepointapp.R;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.ApiBuilder;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.FirstCredentials;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointsApi;
@@ -56,7 +57,7 @@ public class AuthViewModel extends AndroidViewModel {
 
             @Override
             public void onFailure(@NonNull Call<SecondCredentials> call, @NonNull Throwable t) {
-                Toast.makeText(getApplication(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplication(), R.string.network_error_toast, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -81,7 +82,7 @@ public class AuthViewModel extends AndroidViewModel {
 
             @Override
             public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
-                Toast.makeText(getApplication(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplication(), R.string.network_error_toast, Toast.LENGTH_SHORT).show();
             }
         });
     }
