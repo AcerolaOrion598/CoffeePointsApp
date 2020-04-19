@@ -3,7 +3,7 @@
     <item android:drawable="@color/colorWhite"/>
     <item>
         <bitmap
-            android:src="@drawable/green_marker"
+            android:src="@drawable/active_marker"
             android:gravity="center"/>
     </item>
 </layer-list>

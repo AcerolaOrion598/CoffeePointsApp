@@ -1,9 +1,8 @@
 <resources>
-    <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="my_marker_size">40dp</dimen>
-    <dimen name="marker_size">25dp</dimen>
+    <dimen name="my_marker_size">50dp</dimen>
+    <dimen name="marker_size">35dp</dimen>
     <dimen name="nav_bar_height">60dp</dimen>
     <dimen name="point_edit_translation_y">-159dp</dimen>
     <dimen name="point_edit_expanded_translation_y">-20dp</dimen>

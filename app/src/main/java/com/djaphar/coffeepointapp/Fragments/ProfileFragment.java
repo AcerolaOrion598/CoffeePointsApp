@@ -13,10 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.djaphar.coffeepointapp.Activities.MainActivity;
 import com.djaphar.coffeepointapp.R;
+import com.djaphar.coffeepointapp.SupportClasses.Adapters.AddProductSpinnerAdapter;
 import com.djaphar.coffeepointapp.SupportClasses.Adapters.ProductsRecyclerViewAdapter;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.Product;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
@@ -24,6 +26,7 @@ import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.MyFragment;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.ViewDriver;
 import com.djaphar.coffeepointapp.ViewModels.ProfileViewModel;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import androidx.annotation.NonNull;
@@ -43,6 +46,7 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
     private TextView userNameTv;
     private EditText editUserNameEd, addProductEd;
     private RecyclerView productsRecyclerView;
+    private Spinner addProductSpinner;
     private User user;
     private HashMap<String, String> authHeaderMap = new HashMap<>();
     private float editUserNameWindowCorrectionY, editUserNameWindowEndMotionY, editUserNameWindowStartMotionY,
@@ -64,6 +68,7 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
         editUserNameEd = root.findViewById(R.id.edit_user_name_ed);
         addProductEd = root.findViewById(R.id.add_product_ed);
         productsRecyclerView = root.findViewById(R.id.products_recycler_view);
+        addProductSpinner = root.findViewById(R.id.add_product_spinner);
         context = getContext();
         resources = getResources();
         MainActivity mainActivity = (MainActivity) getActivity();
@@ -96,6 +101,13 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
             productsRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         });
 
+        ArrayList<String> productTypes = new ArrayList<>();
+        productTypes.add("Кофе");
+        productTypes.add("Мороженое");
+        productTypes.add("Другое");
+        AddProductSpinnerAdapter adapter = new AddProductSpinnerAdapter(context, productTypes);
+        addProductSpinner.setAdapter(adapter);
+
         editUserNameBtn.setOnClickListener(lView -> {
             editUserNameEd.setText(user.getName());
             editUserNameWindow.setTranslationY(resources.getDimension(R.dimen.add_point_window_expanded_translation_y));
@@ -117,7 +129,8 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
         });
 
         addProductSaveBtn.setOnClickListener(lView -> {
-            profileViewModel.requestAddProduct(new Product("0", "Кофе", addProductEd.getText().toString(), "0"), authHeaderMap);
+            profileViewModel.requestAddProduct(new Product("0", addProductSpinner.getSelectedItem().toString(),
+                    addProductEd.getText().toString(), "0"), authHeaderMap);
             toggleTopWindow(addProductWindow, addProductBtn, true);
         });
 

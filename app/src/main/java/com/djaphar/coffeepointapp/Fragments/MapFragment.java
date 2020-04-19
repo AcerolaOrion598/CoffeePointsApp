@@ -421,9 +421,9 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
     private MarkerOptions setMarkerOptions(Point point) {
         Bitmap customIcon;
         if (point.getCurrentlyNotHere()) {
-            customIcon = BitmapFactory.decodeResource(resources, R.drawable.green_marker);
+            customIcon = BitmapFactory.decodeResource(resources, R.drawable.active_marker);
         } else {
-            customIcon = BitmapFactory.decodeResource(resources, R.drawable.red_marker);
+            customIcon = BitmapFactory.decodeResource(resources, R.drawable.inactive_marker);
         }
 
         if (point.getSupervisor().equals(user.get_id())) {
