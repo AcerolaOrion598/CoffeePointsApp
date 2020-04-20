@@ -59,13 +59,6 @@ public class OtherFragment extends MyFragment {
             mainActivity.logout();
         });
 
-        otherViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
-            if (user != null) {
-                return;
-            }
-            mainActivity.logout();
-        });
-
         aboutAppTv.setOnClickListener(lView -> {
             mainActivity.setActionBarTitle(getString(R.string.about_app));
             ViewDriver.hideView(otherContainer, R.anim.top_view_hide_animation, context);

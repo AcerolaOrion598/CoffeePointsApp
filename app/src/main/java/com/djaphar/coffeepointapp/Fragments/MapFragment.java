@@ -179,6 +179,20 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
             }
         });
 
+        mapViewModel.getPoints().observe(getViewLifecycleOwner(), points -> {
+            if (gMap == null) {
+                return;
+            }
+            drawMarkers(points);
+            removeMarkers();
+            rewriteMarkerList();
+            gMap.setOnMarkerClickListener(marker -> {
+                showPointInfo(marker);
+                focusedMarkerInfo = (Point) marker.getTag();
+                return false;
+            });
+        });
+
         pointNameEd.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable editable) {
@@ -240,17 +254,6 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
 
         gMap.setOnCameraMoveStartedListener(this);
         gMap.setOnCameraIdleListener(this);
-
-        mapViewModel.getPoints().observe(getViewLifecycleOwner(), points -> {
-            drawMarkers(points);
-            removeMarkers();
-            rewriteMarkerList();
-            gMap.setOnMarkerClickListener(marker -> {
-                showPointInfo(marker);
-                focusedMarkerInfo = (Point) marker.getTag();
-                return false;
-            });
-        });
     }
 
     @Override
