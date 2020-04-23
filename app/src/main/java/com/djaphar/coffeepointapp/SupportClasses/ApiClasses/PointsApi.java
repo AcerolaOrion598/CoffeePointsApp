@@ -49,6 +49,9 @@ public interface PointsApi {
     @PUT("api/couriers/{id}")
     Call<Void> requestUpdatePoint(@Path("id") String id, @HeaderMap Map<String, String> headers, @Body PointUpdateModel pointUpdateModel);
 
+    @GET("api/couriers/{id}")
+    Call<Point> requestSinglePoint(@Path("id") String id, @HeaderMap Map<String, String> headers);
+
     @POST("api/couriers/removesupervisor")
     Call<Void> requestDeletePoint(@HeaderMap Map<String, String> headers, @Body PointDeleteModel pointDeleteModel);
 

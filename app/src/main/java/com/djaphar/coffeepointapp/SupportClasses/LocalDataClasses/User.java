@@ -35,14 +35,18 @@ public class User {
     @ColumnInfo(name = "name")
     private String name;
 
+    @ColumnInfo(name = "avg_rating")
+    private Float avgRating;
+
     public User(@NonNull String _id, @NonNull String token, @NonNull String role, @NonNull String phoneNumber,
-         @NonNull String supervisorStatus, String name) {
+         @NonNull String supervisorStatus, String name, Float avgRating) {
         this._id = _id;
         this.token = token;
         this.role = role;
         this.phoneNumber = phoneNumber;
         this.supervisorStatus = supervisorStatus;
         this.name = name;
+        this.avgRating = avgRating;
     }
 
     @NonNull
@@ -78,6 +82,10 @@ public class User {
         return name;
     }
 
+    public Float getAvgRating() {
+        return avgRating;
+    }
+
     public void set_id(@NonNull String _id) {
         this._id = _id;
     }
@@ -106,11 +114,21 @@ public class User {
         this.name = name;
     }
 
+    public void setAvgRating(Float avgRating) {
+        this.avgRating = avgRating;
+    }
+
     public Integer determineHash() {
         String data = get_id() + getToken() + getRole() + getSupervisorStatus() + getPhoneNumber();
+
         if (getName() != null) {
             data += getName();
         }
+
+        if (getAvgRating() != null) {
+            data += getAvgRating();
+        }
+
         return data.hashCode();
     }
 }

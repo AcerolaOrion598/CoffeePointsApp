@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -28,19 +27,17 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
     private ArrayList<Point> points;
     private MainActivity mainActivity;
     private PointsFragment pointsFragment;
-    private EditText pointEditNameFormEd;
     private String statusTrueText, statusFalseText;
     private int statusTrueColor, statusFalseColor;
     private Resources resources;
     private Animation animation;
 
     public PointsRecyclerViewAdapter(ArrayList<Point> points, String nullPointString, ConstraintLayout singlePointInfoContainer,
-                                     MainActivity mainActivity, PointsFragment pointsFragment, EditText pointNameFormEd) {
+                                     MainActivity mainActivity, PointsFragment pointsFragment) {
         this.singlePointInfoContainer = singlePointInfoContainer;
         this.points = points;
         this.mainActivity = mainActivity;
         this.pointsFragment = pointsFragment;
-        this.pointEditNameFormEd = pointNameFormEd;
         if (points.size() == 0) {
             points.add(new Point(null, null, null, nullPointString,
                     null, null, null, null, null, null));
@@ -68,11 +65,15 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
             pointsFragment.setCheckedPointId(point.get_id());
             pointsFragment.setPointProductRecyclerView(point.getProductList());
             String name = point.getName();
-            if (name == null) {
-                name = "";
+            if (name == null || name.equals("")) {
+                pointsFragment.setSinglePointNameTv(point.getPhoneNumber());
+                pointsFragment.setCheckedPointName("");
+            } else {
+                pointsFragment.setSinglePointNameTv(name);
+                pointsFragment.setCheckedPointName(name);
             }
-            pointEditNameFormEd.setText(name);
-            mainActivity.setActionBarTitle(context.getString(R.string.title_point_edit));
+            pointsFragment.setSinglePointRatingTv(point.getAvgRating());
+            mainActivity.setActionBarTitle(context.getString(R.string.title_point_info));
             singlePointInfoContainer.setTranslationX(resources.getDimension(R.dimen.point_edit_layout_translation_x));
             animation = ViewDriver.showView(singlePointInfoContainer, R.anim.show_right_animation, context);
             if (animation == null) {

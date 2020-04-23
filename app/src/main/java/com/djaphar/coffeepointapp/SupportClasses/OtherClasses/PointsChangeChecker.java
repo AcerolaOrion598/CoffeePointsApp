@@ -23,7 +23,11 @@ public class PointsChangeChecker {
     }
 
     private Runnable asyncPointsChangeChecker = () -> {
-        pointsFragment.requestMyPoints();
+        if (pointsFragment.getCheckedPointId() == null) {
+            pointsFragment.requestMyPoints();
+        } else {
+            pointsFragment.requestSinglePoint();
+        }
         handler.postDelayed(this::startPointsChangeCheck, 5000);
     };
 }

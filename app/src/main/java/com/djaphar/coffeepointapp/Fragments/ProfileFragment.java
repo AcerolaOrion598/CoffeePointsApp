@@ -28,6 +28,7 @@ import com.djaphar.coffeepointapp.ViewModels.ProfileViewModel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -43,7 +44,7 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
     private ConstraintLayout editUserNameWindow, addProductWindow;
     private Context context;
     private Resources resources;
-    private TextView userNameTv;
+    private TextView userNameTv, userRatingTv;
     private EditText editUserNameEd, addProductEd;
     private RecyclerView productsRecyclerView;
     private Spinner addProductSpinner;
@@ -65,6 +66,7 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
         editUserNameWindow = root.findViewById(R.id.edit_user_name_window);
         addProductWindow = root.findViewById(R.id.add_product_window);
         userNameTv = root.findViewById(R.id.user_name_tv);
+        userRatingTv = root.findViewById(R.id.user_rating_tv);
         editUserNameEd = root.findViewById(R.id.edit_user_name_ed);
         addProductEd = root.findViewById(R.id.add_product_ed);
         productsRecyclerView = root.findViewById(R.id.products_recycler_view);
@@ -86,13 +88,24 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
         profileViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
             this.user = user;
             authHeaderMap.put(getString(R.string.authorization_header), user.getToken());
-            if (user.getName() == null) {
+
+            Float rating = user.getAvgRating();
+            if (rating == null) {
+                userRatingTv.setTextColor(resources.getColor(R.color.colorBlack30));
+                userRatingTv.setText(R.string.rating_is_null_text);
+            } else {
+                userRatingTv.setTextColor(resources.getColor(R.color.colorBlack60));
+                userRatingTv.setText(String.format(Locale.US, "%.2f", rating));
+            }
+
+            String name = user.getName();
+            if (name == null) {
                 userNameTv.setTextColor(resources.getColor(R.color.colorBlack30));
                 userNameTv.setText(R.string.some_string_is_null_text);
                 return;
             }
             userNameTv.setTextColor(resources.getColor(R.color.colorBlack60));
-            userNameTv.setText(user.getName());
+            userNameTv.setText(name);
         });
 
         profileViewModel.getUserProducts().observe(getViewLifecycleOwner(), products -> {

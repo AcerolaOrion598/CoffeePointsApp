@@ -249,11 +249,30 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/profile_name_tv" />
 
+                <ImageView
+                    android:id="@+id/user_rating_iv"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="11dp"
+                    android:src="@drawable/ic_star_checked_48dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/user_name_tv" />
+
+                <TextView
+                    android:id="@+id/user_rating_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="11dp"
+                    android:fontFamily="@font/roboto"
+                    android:textSize="15sp"
+                    app:layout_constraintStart_toEndOf="@+id/user_rating_iv"
+                    app:layout_constraintTop_toBottomOf="@+id/user_name_tv" />
+
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/edit_user_name_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
-                    android:layout_marginTop="20dp"
                     android:background="@drawable/save_button"
                     android:fontFamily="@font/roboto"
                     android:paddingStart="15dp"
@@ -261,8 +280,8 @@
                     android:text="@string/edit_btn"
                     android:textColor="@color/colorWhite87"
                     android:textSize="12sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/profile_name_tv" />
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

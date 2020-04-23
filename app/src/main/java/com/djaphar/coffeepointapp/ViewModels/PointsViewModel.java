@@ -28,6 +28,7 @@ import retrofit2.Response;
 public class PointsViewModel extends AndroidViewModel {
 
     private MutableLiveData<ArrayList<Point>> pointsMutableLiveData = new MutableLiveData<>();
+    private MutableLiveData<Point> singlePointMutableLiveData = new MutableLiveData<>();
     private LiveData<User> userLiveData;
     private PointsApi pointsApi;
 
@@ -41,6 +42,10 @@ public class PointsViewModel extends AndroidViewModel {
 
     public MutableLiveData<ArrayList<Point>> getPoints() {
         return pointsMutableLiveData;
+    }
+
+    public MutableLiveData<Point> getSinglePoint() {
+        return singlePointMutableLiveData;
     }
 
     public LiveData<User> getUser() {
@@ -101,7 +106,8 @@ public class PointsViewModel extends AndroidViewModel {
                     Toast.makeText(getApplication(), response.message(), Toast.LENGTH_SHORT).show();
                     return;
                 }
-                Toast.makeText(getApplication(), getApplication().getString(R.string.point_update_success), Toast.LENGTH_SHORT).show();
+                requestSinglePoint(pointId, headersMap);
+//                Toast.makeText(getApplication(), getApplication().getString(R.string.point_update_success), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -126,6 +132,25 @@ public class PointsViewModel extends AndroidViewModel {
             @Override
             public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
                 Toast.makeText(getApplication(), R.string.network_error_toast, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void requestSinglePoint(String pointId, HashMap<String, String> headersMap) {
+        Call<Point> call = pointsApi.requestSinglePoint(pointId, headersMap);
+        call.enqueue(new Callback<Point>() {
+            @Override
+            public void onResponse(@NonNull Call<Point> call, @NonNull Response<Point> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getApplication(), response.message(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                singlePointMutableLiveData.setValue(response.body());
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Point> call, @NonNull Throwable t) {
+                Toast.makeText(getApplication(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
