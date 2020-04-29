@@ -12,13 +12,12 @@ import com.djaphar.coffeepointapp.Fragments.PointsFragment;
 import com.djaphar.coffeepointapp.Fragments.ProfileFragment;
 import com.djaphar.coffeepointapp.R;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
-import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.UserChangeChecker;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.MyFragment;
+import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.UserChangeChecker;
 import com.djaphar.coffeepointapp.ViewModels.MainViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.HashMap;
-import java.util.Objects;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -44,10 +43,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
-
-        Objects.requireNonNull(getSupportActionBar()).setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        getSupportActionBar().setCustomView(R.layout.action_bar);
-        actionBarTitle = findViewById(R.id.action_bar_title);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+            actionBar.setCustomView(R.layout.action_bar);
+            actionBarTitle = findViewById(R.id.action_bar_title);
+        }
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(navView, navController);
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);

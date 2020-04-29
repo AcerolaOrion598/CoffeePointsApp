@@ -187,8 +187,14 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
             removeMarkers();
             rewriteMarkerList();
             gMap.setOnMarkerClickListener(marker -> {
-                showPointInfo(marker);
                 focusedMarkerInfo = (Point) marker.getTag();
+//                if (focusedMarkerInfo == null) {
+//                    return false;
+//                }
+//                if (focusedMarkerInfo.getAmount() > 1) {
+//                    return false;
+//                }
+                showPointInfo(marker);
                 return false;
             });
         });
@@ -416,12 +422,21 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
     }
 
     private boolean focusedMarker(Point point) {
-        LatLng focusedLatLng = new LatLng(focusedMarkerInfo.getCoordinates().getLat(), focusedMarkerInfo.getCoordinates().getLng());
-        LatLng currentLatLng = new LatLng(point.getCoordinates().getLat(), point.getCoordinates().getLng());
+        LatLng focusedLatLng = new LatLng(focusedMarkerInfo.getCoordinates().get(1), focusedMarkerInfo.getCoordinates().get(0));
+        LatLng currentLatLng = new LatLng(point.getCoordinates().get(1), point.getCoordinates().get(0));
         return focusedLatLng.latitude == currentLatLng.latitude && focusedLatLng.longitude == currentLatLng.longitude;
     }
 
     private MarkerOptions setMarkerOptions(Point point) {
+//        Integer amount = point.getAmount();
+//        if (amount > 1) {
+//            return new MarkerOptions()
+//                    .position(new LatLng(point.getCoordinates().get(1), point.getCoordinates().get(0)))
+//                    .title(String.valueOf(amount))
+//                    .alpha(setAlphaValueForMarker(point))
+//                    .icon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(BitmapFactory.decodeResource(resources, R.drawable.active_marker),
+//                            markerSize, markerSize, false)));
+//        }
         Bitmap customIcon;
         if (point.getCurrentlyNotHere()) {
             customIcon = BitmapFactory.decodeResource(resources, R.drawable.active_marker);
@@ -435,14 +450,7 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
             customIcon = Bitmap.createScaledBitmap(customIcon, markerSize, markerSize, false);
         }
 
-        float alphaValue;
-        if (focusedMarkerInfo == null) {
-            alphaValue = 0.87f;
-        } else if (focusedMarker(point)) {
-                alphaValue = 1.0f;
-        } else {
-            alphaValue = 0.4f;
-        }
+        float alphaValue = setAlphaValueForMarker(point);
 
         String hint = point.getHint();
         if (hint == null) {
@@ -450,10 +458,22 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         }
 
         return new MarkerOptions()
-                .position(new LatLng(point.getCoordinates().getLat(), point.getCoordinates().getLng()))
+                .position(new LatLng(point.getCoordinates().get(1), point.getCoordinates().get(0)))
                 .title(hint)
                 .alpha(alphaValue)
                 .icon(BitmapDescriptorFactory.fromBitmap(customIcon));
+    }
+
+    private float setAlphaValueForMarker(Point point) {
+        float alphaValue;
+        if (focusedMarkerInfo == null) {
+            alphaValue = 0.87f;
+        } else if (focusedMarker(point)) {
+            alphaValue = 1.0f;
+        } else {
+            alphaValue = 0.4f;
+        }
+        return alphaValue;
     }
 
     private void removeMarkers() {

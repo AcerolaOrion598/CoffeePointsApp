@@ -10,10 +10,12 @@ public class Point {
     private Boolean isActive, isCurrentlyNotHere;
     private ArrayList<Product> productList;
     private Float avgRating;
-    private Coordinates coordinates;
+    private Integer amount;
+    private ArrayList<Double> coordinates;
+//    private Coordinates coordinates;
 
     public Point(String _id, String phoneNumber, String supervisor, String name, String hint, Boolean isActive,
-                 Boolean isCurrentlyNotHere, ArrayList<Product> productList, Float avgRating, Coordinates coordinates) {
+                 Boolean isCurrentlyNotHere, ArrayList<Product> productList, Float avgRating, Integer amount, ArrayList<Double> coordinates) {
         this._id = _id;
         this.phoneNumber = phoneNumber;
         this.supervisor = supervisor;
@@ -23,6 +25,7 @@ public class Point {
         this.isCurrentlyNotHere = isCurrentlyNotHere;
         this.productList = productList;
         this.avgRating = avgRating;
+        this.amount = amount;
         this.coordinates = coordinates;
     }
 
@@ -62,9 +65,16 @@ public class Point {
         return avgRating;
     }
 
-    public Coordinates getCoordinates() {
+    public Integer getAmount() {
+        return amount;
+    }
+
+    public ArrayList<Double> getCoordinates() {
         return coordinates;
     }
+    //    public Coordinates getCoordinates() {
+//        return coordinates;
+//    }
 
     public void set_id(String _id) {
         this._id = _id;
@@ -102,7 +112,15 @@ public class Point {
         this.avgRating = avgRating;
     }
 
-    public void setCoordinates(Coordinates coordinates) {
+    public void setAmount(Integer amount) {
+        this.amount = amount;
+    }
+
+    public void setCoordinates(ArrayList<Double> coordinates) {
         this.coordinates = coordinates;
     }
+
+    //    public void setCoordinates(Coordinates coordinates) {
+//        this.coordinates = coordinates;
+//    }
 }

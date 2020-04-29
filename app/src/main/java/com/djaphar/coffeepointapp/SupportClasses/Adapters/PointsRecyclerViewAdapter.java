@@ -40,7 +40,7 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
         this.pointsFragment = pointsFragment;
         if (points.size() == 0) {
             points.add(new Point(null, null, null, nullPointString,
-                    null, null, null, null, null, null));
+                    null, null, null, null, null, null, null));
         }
     }
 

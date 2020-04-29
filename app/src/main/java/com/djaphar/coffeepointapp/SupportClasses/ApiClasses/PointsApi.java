@@ -58,6 +58,9 @@ public interface PointsApi {
     @GET("api/couriers")
     Call<ArrayList<Point>> requestPointsInBox(@Query("box") String box);
 
+//    @GET("api/couriers/all")
+//    Call<ArrayList<Point>> requestPointsInBox(@Query("box") String box);
+
     @GET("api/supervisors/{id}")
     Call<SupervisorModel> requestSupervisor(@Path("id") String id);
 }

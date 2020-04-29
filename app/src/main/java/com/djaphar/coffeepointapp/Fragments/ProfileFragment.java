@@ -54,7 +54,6 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
             addProductWindowCorrectionY, addProductWindowEndMotionY, addProductWindowStartMotionY;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
         editUserNameBtn = root.findViewById(R.id.edit_user_name_btn);
