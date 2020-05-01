@@ -70,7 +70,6 @@ public class MapViewModel extends AndroidViewModel {
 
     public void requestPointsInBox(LatLngBounds bounds) {
         String box = bounds.southwest.longitude + "," + bounds.southwest.latitude + "," + bounds.northeast.longitude + "," + bounds.northeast.latitude;
-//        String box = bounds.southwest.latitude + "," + bounds.southwest.longitude + "," + bounds.northeast.latitude + "," + bounds.northeast.longitude;
         Call<ArrayList<Point>> call = pointsApi.requestPointsInBox(box);
         call.enqueue(new Callback<ArrayList<Point>>() {
             @Override

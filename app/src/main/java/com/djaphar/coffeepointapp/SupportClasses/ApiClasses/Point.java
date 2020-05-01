@@ -12,7 +12,6 @@ public class Point {
     private Float avgRating;
     private Integer amount;
     private ArrayList<Double> coordinates;
-//    private Coordinates coordinates;
 
     public Point(String _id, String phoneNumber, String supervisor, String name, String hint, Boolean isActive,
                  Boolean isCurrentlyNotHere, ArrayList<Product> productList, Float avgRating, Integer amount, ArrayList<Double> coordinates) {

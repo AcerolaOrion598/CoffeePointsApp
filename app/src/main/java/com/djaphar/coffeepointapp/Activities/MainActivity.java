@@ -3,13 +3,8 @@ package com.djaphar.coffeepointapp.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.View;
 import android.widget.TextView;
 
-import com.djaphar.coffeepointapp.Fragments.MapFragment;
-import com.djaphar.coffeepointapp.Fragments.OtherFragment;
-import com.djaphar.coffeepointapp.Fragments.PointsFragment;
-import com.djaphar.coffeepointapp.Fragments.ProfileFragment;
 import com.djaphar.coffeepointapp.R;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
 import com.djaphar.coffeepointapp.SupportClasses.OtherClasses.MyFragment;
@@ -21,7 +16,6 @@ import java.util.HashMap;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -58,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
             }
             this.user = user;
             authHeaderMap.put(getString(R.string.authorization_header), user.getToken());
-            mainViewModel.requestUserProducts(user.get_id(), authHeaderMap);
+            mainViewModel.requestUserProducts(authHeaderMap);
         });
         userChangeChecker = new UserChangeChecker(new Handler(), this);
     }
@@ -71,46 +65,9 @@ public class MainActivity extends AppCompatActivity {
             currentFragment = (MyFragment) navHostFragment.getChildFragmentManager().getFragments().get(0);
         }
 
-        FragmentNames names = FragmentNames.valueOf(currentFragment.getClass().getSimpleName());
-        switch (names) {
-            case MapFragment:
-                MapFragment mapFragment = ((MapFragment) currentFragment);
-                ConstraintLayout pointInfoWindow = mapFragment.getPointInfoWindow();
-                ConstraintLayout pointEditWindow = mapFragment.getPointEditWindow();
-                if (!(pointInfoWindow.getVisibility() == View.VISIBLE) && !(pointEditWindow.getVisibility() == View.VISIBLE)) {
-                    super.onBackPressed();
-                    return;
-                }
-                break;
-
-            case PointsFragment:
-                PointsFragment pointsFragment = ((PointsFragment) currentFragment);
-                ConstraintLayout infoContainer = pointsFragment.getSinglePointInfoContainer();
-                ConstraintLayout addPointWindow = pointsFragment.getAddPointWindow();
-                if (!(infoContainer.getVisibility() == View.VISIBLE) && !(addPointWindow.getVisibility() == View.VISIBLE)) {
-                    super.onBackPressed();
-                    return;
-                }
-                break;
-
-            case ProfileFragment:
-                ProfileFragment profileFragment = ((ProfileFragment) currentFragment);
-                ConstraintLayout editUserNameWindow = profileFragment.getEditUserNameWindow();
-                ConstraintLayout addProductWindow = profileFragment.getAddProductWindow();
-                if (!(editUserNameWindow.getVisibility() == View.VISIBLE) && !(addProductWindow.getVisibility() == View.VISIBLE)) {
-                    super.onBackPressed();
-                    return;
-                }
-                break;
-
-            case OtherFragment:
-                OtherFragment otherFragment = ((OtherFragment) currentFragment);
-                ConstraintLayout aboutAppContainer = otherFragment.getAboutAppContainer();
-                if (!(aboutAppContainer.getVisibility() == View.VISIBLE)) {
-                    super.onBackPressed();
-                    return;
-                }
-                break;
+        if (currentFragment.everythingIsClosed()) {
+            super.onBackPressed();
+            return;
         }
         currentFragment.backWasPressed();
     }
@@ -131,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         if (user == null) {
             return;
         }
-        mainViewModel.requestUser(user.get_id(), user.getUserHash());
+        mainViewModel.requestUser(authHeaderMap, user.getUserHash());
     }
 
     public void setActionBarTitle(String title) {
@@ -142,9 +99,5 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, AuthActivity.class);
         startActivity(intent);
         finish();
-    }
-
-    enum FragmentNames {
-        MapFragment, PointsFragment, ProfileFragment, OtherFragment
     }
 }

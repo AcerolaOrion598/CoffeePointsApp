@@ -13,6 +13,7 @@ import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -39,8 +40,8 @@ public class MainViewModel extends AndroidViewModel {
         return userLiveData;
     }
 
-    public void requestUser(String id, Integer oldHash) {
-        Call<User> call = pointsApi.requestUser(id);
+    public void requestUser(Map<String, String> headersMap, Integer oldHash) {
+        Call<User> call = pointsApi.requestUser(headersMap);
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
@@ -69,8 +70,8 @@ public class MainViewModel extends AndroidViewModel {
         });
     }
 
-    public void requestUserProducts(String id, HashMap<String, String> headersMap) {
-        Call<List<Product>> call = pointsApi.requestUserProducts(id, headersMap);
+    public void requestUserProducts(HashMap<String, String> headersMap) {
+        Call<List<Product>> call = pointsApi.requestUserProducts(headersMap);
         call.enqueue(new Callback<List<Product>>() {
             @Override
             public void onResponse(@NonNull Call<List<Product>> call, @NonNull Response<List<Product>> response) {

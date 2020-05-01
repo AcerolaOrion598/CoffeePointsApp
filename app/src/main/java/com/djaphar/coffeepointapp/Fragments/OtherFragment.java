@@ -80,14 +80,14 @@ public class OtherFragment extends MyFragment {
                 .show();
     }
 
+    public boolean everythingIsClosed() {
+        return !(aboutAppContainer.getVisibility() == View.VISIBLE);
+    }
+
     public void backWasPressed() {
         mainActivity.setActionBarTitle(getString(R.string.title_other));
         ViewDriver.hideView(aboutAppContainer, R.anim.top_view_hide_animation, context);
         ViewDriver.hideView(backProfileBtn, R.anim.bottom_view_hide_animation, context);
         ViewDriver.showView(otherContainer, R.anim.top_view_show_animation, context);
-    }
-
-    public ConstraintLayout getAboutAppContainer() {
-        return aboutAppContainer;
     }
 }

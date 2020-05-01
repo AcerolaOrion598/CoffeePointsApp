@@ -188,12 +188,12 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
             rewriteMarkerList();
             gMap.setOnMarkerClickListener(marker -> {
                 focusedMarkerInfo = (Point) marker.getTag();
-//                if (focusedMarkerInfo == null) {
-//                    return false;
-//                }
-//                if (focusedMarkerInfo.getAmount() > 1) {
-//                    return false;
-//                }
+                if (focusedMarkerInfo == null) {
+                    return false;
+                }
+                if (focusedMarkerInfo.getAmount() > 1) {
+                    return false;
+                }
                 showPointInfo(marker);
                 return false;
             });
@@ -383,7 +383,7 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         mapPointProductsRecyclerView.setAdapter(adapter);
         mapPointProductsRecyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-        editPointModeEnd();
+        ViewDriver.hideView(pointEditWindow, R.anim.top_view_hide_animation, context);
         ViewDriver.showView(pointInfoWindow, R.anim.bottom_view_show_animation, context);
 
         equalizeMarkers(0.4f);
@@ -428,22 +428,21 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
     }
 
     private MarkerOptions setMarkerOptions(Point point) {
-//        Integer amount = point.getAmount();
-//        if (amount > 1) {
-//            return new MarkerOptions()
-//                    .position(new LatLng(point.getCoordinates().get(1), point.getCoordinates().get(0)))
-//                    .title(String.valueOf(amount))
-//                    .alpha(setAlphaValueForMarker(point))
-//                    .icon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(BitmapFactory.decodeResource(resources, R.drawable.active_marker),
-//                            markerSize, markerSize, false)));
-//        }
+        Integer amount = point.getAmount();
+        if (amount > 1) {
+            return new MarkerOptions()
+                    .position(new LatLng(point.getCoordinates().get(1), point.getCoordinates().get(0)))
+                    .title(String.valueOf(amount))
+                    .alpha(setAlphaValueForMarker(point))
+                    .icon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(BitmapFactory.decodeResource(resources, R.drawable.active_marker),
+                            markerSize, markerSize, false)));
+        }
         Bitmap customIcon;
         if (point.getCurrentlyNotHere()) {
             customIcon = BitmapFactory.decodeResource(resources, R.drawable.active_marker);
         } else {
             customIcon = BitmapFactory.decodeResource(resources, R.drawable.inactive_marker);
         }
-
         if (point.getSupervisor().equals(user.get_id())) {
             customIcon = Bitmap.createScaledBitmap(customIcon, myMarkerSize, myMarkerSize, false);
         } else {
@@ -495,6 +494,10 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         mapViewModel.requestPointsInBox(gMap.getProjection().getVisibleRegion().latLngBounds);
     }
 
+    public boolean everythingIsClosed() {
+        return !(pointInfoWindow.getVisibility() == View.VISIBLE) && !(pointEditWindow.getVisibility() == View.VISIBLE);
+    }
+
     public void backWasPressed() {
         if (pointEditWindow.getVisibility() == View.VISIBLE) {
             editPointModeEnd();
@@ -502,14 +505,6 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
             ViewDriver.hideView(pointInfoWindow, R.anim.bottom_view_hide_animation, context);
             removeFocusFromMarker();
         }
-    }
-
-    public ConstraintLayout getPointInfoWindow() {
-        return pointInfoWindow;
-    }
-
-    public ConstraintLayout getPointEditWindow() {
-        return pointEditWindow;
     }
 
     @SuppressLint("ClickableViewAccessibility")

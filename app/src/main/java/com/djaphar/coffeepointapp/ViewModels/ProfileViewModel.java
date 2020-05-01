@@ -46,7 +46,7 @@ public class ProfileViewModel extends AndroidViewModel {
     }
 
     public void requestUpdateUser(User user, HashMap<String, String> headersMap)  {
-        Call<User> call = pointsApi.updateUser(user.get_id(), headersMap, user);
+        Call<User> call = pointsApi.updateUser(headersMap, user);
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {

@@ -25,14 +25,14 @@ public interface PointsApi {
     @POST("api/supervisors/codecheck")
     Call<User> login(@Body SecondCredentials credentials);
 
-    @GET("api/supervisors/{id}")
-    Call<User> requestUser(@Path("id") String id);
+    @GET("api/supervisors/me")
+    Call<User> requestUser(@HeaderMap Map<String, String> headers);
 
-    @PUT("api/supervisors/{id}")
-    Call<User> updateUser(@Path("id") String id, @HeaderMap Map<String, String> headers, @Body User user);
+    @PUT("api/supervisors/me")
+    Call<User> updateUser(@HeaderMap Map<String, String> headers, @Body User user);
 
-    @GET("api/supervisors/{id}/products")
-    Call<List<Product>> requestUserProducts(@Path("id") String id, @HeaderMap Map<String, String> headers);
+    @GET("api/supervisors/me/products")
+    Call<List<Product>> requestUserProducts(@HeaderMap Map<String, String> headers);
 
     @POST("api/products")
     Call<Product> requestAddProduct(@HeaderMap Map<String, String> headers, @Body Product product);
@@ -55,11 +55,8 @@ public interface PointsApi {
     @POST("api/couriers/removesupervisor")
     Call<Void> requestDeletePoint(@HeaderMap Map<String, String> headers, @Body PointDeleteModel pointDeleteModel);
 
-    @GET("api/couriers")
+    @GET("api/couriers/all")
     Call<ArrayList<Point>> requestPointsInBox(@Query("box") String box);
-
-//    @GET("api/couriers/all")
-//    Call<ArrayList<Point>> requestPointsInBox(@Query("box") String box);
 
     @GET("api/supervisors/{id}")
     Call<SupervisorModel> requestSupervisor(@Path("id") String id);

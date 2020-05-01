@@ -286,6 +286,10 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
         pointsViewModel.requestSinglePoint(checkedPointId, authHeaderMap);
     }
 
+    public boolean everythingIsClosed() {
+        return !(singlePointInfoContainer.getVisibility() == View.VISIBLE) && !(addPointWindow.getVisibility() == View.VISIBLE);
+    }
+
     public void backWasPressed() {
         if (editPointWindow.getVisibility() == View.VISIBLE) {
             toggleEditWindow(true);
@@ -309,14 +313,6 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
 
     public String getCheckedPointId() {
         return checkedPointId;
-    }
-
-    public ConstraintLayout getSinglePointInfoContainer() {
-        return singlePointInfoContainer;
-    }
-
-    public ConstraintLayout getAddPointWindow() {
-        return addPointWindow;
     }
 
     @SuppressLint("ClickableViewAccessibility")

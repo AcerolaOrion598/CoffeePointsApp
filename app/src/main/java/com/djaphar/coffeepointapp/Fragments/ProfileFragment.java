@@ -178,6 +178,10 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
         });
     }
 
+    public boolean everythingIsClosed() {
+        return !(editUserNameWindow.getVisibility() == View.VISIBLE) && !(addProductWindow.getVisibility() == View.VISIBLE);
+    }
+
     public void backWasPressed() {
         if (editUserNameWindow.getVisibility() == View.VISIBLE) {
             toggleTopWindow(editUserNameWindow, editUserNameBtn, true);
@@ -271,13 +275,5 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
                 }
         }
         return false;
-    }
-
-    public ConstraintLayout getEditUserNameWindow() {
-        return editUserNameWindow;
-    }
-
-    public ConstraintLayout getAddProductWindow() {
-        return addProductWindow;
     }
 }
