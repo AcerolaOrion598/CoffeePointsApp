@@ -7,23 +7,23 @@ import java.util.ArrayList;
 public class Point {
 
     private String _id, phoneNumber, supervisor, name, hint;
-    private Boolean isActive, isCurrentlyNotHere;
+    private Boolean isActive, isAway;
     private ArrayList<Product> productList;
-    private Float avgRating;
+    private Float rating;
     private Integer amount;
     private ArrayList<Double> coordinates;
 
     public Point(String _id, String phoneNumber, String supervisor, String name, String hint, Boolean isActive,
-                 Boolean isCurrentlyNotHere, ArrayList<Product> productList, Float avgRating, Integer amount, ArrayList<Double> coordinates) {
+                 Boolean isAway, ArrayList<Product> productList, Float rating, Integer amount, ArrayList<Double> coordinates) {
         this._id = _id;
         this.phoneNumber = phoneNumber;
         this.supervisor = supervisor;
         this.name = name;
         this.hint = hint;
         this.isActive = isActive;
-        this.isCurrentlyNotHere = isCurrentlyNotHere;
+        this.isAway = isAway;
         this.productList = productList;
-        this.avgRating = avgRating;
+        this.rating = rating;
         this.amount = amount;
         this.coordinates = coordinates;
     }
@@ -52,16 +52,16 @@ public class Point {
         return isActive;
     }
 
-    public Boolean getCurrentlyNotHere() {
-        return isCurrentlyNotHere;
+    public Boolean isAway() {
+        return isAway;
     }
 
     public ArrayList<Product> getProductList() {
         return productList;
     }
 
-    public Float getAvgRating() {
-        return avgRating;
+    public Float getRating() {
+        return rating;
     }
 
     public Integer getAmount() {
@@ -71,9 +71,6 @@ public class Point {
     public ArrayList<Double> getCoordinates() {
         return coordinates;
     }
-    //    public Coordinates getCoordinates() {
-//        return coordinates;
-//    }
 
     public void set_id(String _id) {
         this._id = _id;
@@ -95,20 +92,20 @@ public class Point {
         this.hint = hint;
     }
 
-    public void setActive(Boolean active) {
-        isActive = active;
+    public void setActive(Boolean isActive) {
+        this.isActive = isActive;
     }
 
-    public void setCurrentlyNotHere(Boolean currentlyNotHere) {
-        isCurrentlyNotHere = currentlyNotHere;
+    public void setAway(Boolean isAway) {
+        this.isAway = isAway;
     }
 
     public void setProductList(ArrayList<Product> productList) {
         this.productList = productList;
     }
 
-    public void setAvgRating(Float avgRating) {
-        this.avgRating = avgRating;
+    public void setRating(Float rating) {
+        this.rating = rating;
     }
 
     public void setAmount(Integer amount) {
@@ -118,8 +115,4 @@ public class Point {
     public void setCoordinates(ArrayList<Double> coordinates) {
         this.coordinates = coordinates;
     }
-
-    //    public void setCoordinates(Coordinates coordinates) {
-//        this.coordinates = coordinates;
-//    }
 }

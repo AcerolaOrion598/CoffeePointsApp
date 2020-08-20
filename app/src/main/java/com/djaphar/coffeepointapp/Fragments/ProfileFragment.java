@@ -88,7 +88,7 @@ public class ProfileFragment extends MyFragment implements View.OnTouchListener 
             this.user = user;
             authHeaderMap.put(getString(R.string.authorization_header), user.getToken());
 
-            Float rating = user.getAvgRating();
+            Float rating = user.getRating();
             if (rating == null) {
                 userRatingTv.setTextColor(resources.getColor(R.color.colorBlack30));
                 userRatingTv.setText(R.string.rating_is_null_text);

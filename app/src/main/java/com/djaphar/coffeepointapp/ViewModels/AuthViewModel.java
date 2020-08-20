@@ -9,8 +9,8 @@ import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.FirstCredentials;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointsApi;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.SecondCredentials;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.LocalDataDao;
-import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.LocalDataRoom;
+import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -44,8 +44,7 @@ public class AuthViewModel extends AndroidViewModel {
     }
 
     public void requestCode(FirstCredentials credentials) {
-        Call<SecondCredentials> call = pointsApi.getCode(credentials);
-        call.enqueue(new Callback<SecondCredentials>() {
+        pointsApi.getCode(credentials).enqueue(new Callback<SecondCredentials>() {
             @Override
             public void onResponse(@NonNull Call<SecondCredentials> call, @NonNull Response<SecondCredentials> response) {
                 if (!response.isSuccessful()) {
@@ -63,8 +62,7 @@ public class AuthViewModel extends AndroidViewModel {
     }
 
     public void login(SecondCredentials credentials) {
-        Call<User> call = pointsApi.login(credentials);
-        call.enqueue(new Callback<User>() {
+        pointsApi.login(credentials).enqueue(new Callback<User>() {
             @Override
             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                 if (!response.isSuccessful()) {

@@ -59,7 +59,7 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
 
         viewHolder.parentLayout.setOnClickListener(lView -> {
             Point point = points.get(viewHolder.getAdapterPosition());
-            if (point.getCurrentlyNotHere() == null) {
+            if (point.isAway() == null) {
                 return;
             }
             pointsFragment.setCheckedPointId(point.get_id());
@@ -72,7 +72,7 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
                 pointsFragment.setSinglePointNameTv(name);
                 pointsFragment.setCheckedPointName(name);
             }
-            pointsFragment.setSinglePointRatingTv(point.getAvgRating());
+            pointsFragment.setSinglePointRatingTv(point.getRating());
             mainActivity.setActionBarTitle(context.getString(R.string.title_point_info));
             singlePointInfoContainer.setTranslationX(resources.getDimension(R.dimen.point_edit_layout_translation_x));
             animation = ViewDriver.showView(singlePointInfoContainer, R.anim.show_right_animation, context);
@@ -110,7 +110,7 @@ public class PointsRecyclerViewAdapter extends RecyclerView.Adapter<PointsRecycl
             name = point.getPhoneNumber();
         }
 
-        Boolean b = point.getCurrentlyNotHere();
+        Boolean b = point.isAway();
         if (b == null) {
             color = R.color.colorBlack60;
             holder.pointDeleteBtn.setVisibility(View.GONE);

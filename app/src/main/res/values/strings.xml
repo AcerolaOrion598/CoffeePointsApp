@@ -8,7 +8,7 @@
     <string name="title_log_in">Вход</string>
     <string name="point_status_true">Открыта</string>
     <string name="point_status_false">Закрыта</string>
-    <string name="maps_key">YOUR_API_KEY</string>
+    <string name="maps_key">AIzaSyCZOEHFd_tdIdZmQbL2XMnhCve0JazriEE</string>
     <string name="new_point_tv_text">Новая точка</string>
     <string name="point_name_hint">Название точки</string>
     <string name="visible_point_tv_text">На Смене</string>

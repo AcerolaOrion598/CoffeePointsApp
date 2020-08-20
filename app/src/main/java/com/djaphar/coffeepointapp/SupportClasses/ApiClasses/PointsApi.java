@@ -40,8 +40,8 @@ public interface PointsApi {
     @DELETE("api/products/{id}")
     Call<Product> requestDeleteProduct(@Path("id") String id, @HeaderMap Map<String, String> headers);
 
-    @POST("api/couriers/addsupervisor")
-    Call<Void> requestBindCourier(@HeaderMap Map<String, String> headers, @Body BindCourierModel bindCourierModel);
+    @GET("api/couriers/{phoneNumber}/addsupervisor")
+    Call<Void> requestBindCourier(@Path("phoneNumber") String phoneNumber, @HeaderMap Map<String, String> headers);
 
     @GET("api/couriers/my")
     Call<ArrayList<Point>> requestMyPoints(@HeaderMap Map<String, String> headers);
@@ -52,8 +52,8 @@ public interface PointsApi {
     @GET("api/couriers/{id}")
     Call<Point> requestSinglePoint(@Path("id") String id, @HeaderMap Map<String, String> headers);
 
-    @POST("api/couriers/removesupervisor")
-    Call<Void> requestDeletePoint(@HeaderMap Map<String, String> headers, @Body PointDeleteModel pointDeleteModel);
+    @POST("api/couriers/{courierId}/removesupervisor")
+    Call<Void> requestDeletePoint(@Path("courierId") String courierId, @HeaderMap Map<String, String> headers);
 
     @GET("api/couriers/all")
     Call<ArrayList<Point>> requestPointsInBox(@Query("box") String box);

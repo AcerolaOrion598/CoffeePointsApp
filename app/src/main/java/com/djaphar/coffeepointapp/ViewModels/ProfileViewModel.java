@@ -46,8 +46,7 @@ public class ProfileViewModel extends AndroidViewModel {
     }
 
     public void requestUpdateUser(User user, HashMap<String, String> headersMap)  {
-        Call<User> call = pointsApi.updateUser(headersMap, user);
-        call.enqueue(new Callback<User>() {
+        pointsApi.updateUser(headersMap, user).enqueue(new Callback<User>() {
             @Override
             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                 if (!response.isSuccessful()) {
@@ -71,8 +70,7 @@ public class ProfileViewModel extends AndroidViewModel {
     }
 
     public void requestAddProduct(Product product, HashMap<String, String> headersMap) {
-        Call<Product> call = pointsApi.requestAddProduct(headersMap, product);
-        call.enqueue(new Callback<Product>() {
+        pointsApi.requestAddProduct(headersMap, product).enqueue(new Callback<Product>() {
             @Override
             public void onResponse(@NonNull Call<Product> call, @NonNull Response<Product> response) {
                 if (!response.isSuccessful()) {
@@ -90,8 +88,7 @@ public class ProfileViewModel extends AndroidViewModel {
     }
 
     public void requestDeleteProduct(String id, HashMap<String, String> headersMap) {
-        Call<Product> call = pointsApi.requestDeleteProduct(id, headersMap);
-        call.enqueue(new Callback<Product>() {
+        pointsApi.requestDeleteProduct(id, headersMap).enqueue(new Callback<Product>() {
             @Override
             public void onResponse(@NonNull Call<Product> call, @NonNull Response<Product> response) {
                 if (!response.isSuccessful()) {

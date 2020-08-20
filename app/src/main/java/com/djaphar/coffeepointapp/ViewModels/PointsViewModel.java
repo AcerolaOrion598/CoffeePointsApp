@@ -5,9 +5,7 @@ import android.widget.Toast;
 
 import com.djaphar.coffeepointapp.R;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.ApiBuilder;
-import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.BindCourierModel;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Point;
-import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointDeleteModel;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointUpdateModel;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointsApi;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.LocalDataRoom;
@@ -52,9 +50,8 @@ public class PointsViewModel extends AndroidViewModel {
         return userLiveData;
     }
 
-    public void requestBindCourier(HashMap<String, String> headersMap, BindCourierModel bindCourierModel) {
-        Call<Void> call = pointsApi.requestBindCourier(headersMap, bindCourierModel);
-        call.enqueue(new Callback<Void>() {
+    public void requestBindCourier(String phoneNumber, HashMap<String, String> headersMap) {
+        pointsApi.requestBindCourier(phoneNumber, headersMap).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                 if (!response.isSuccessful()) {
@@ -79,8 +76,7 @@ public class PointsViewModel extends AndroidViewModel {
     }
 
     public void requestMyPoints(HashMap<String, String> headersMap) {
-        Call<ArrayList<Point>> call = pointsApi.requestMyPoints(headersMap);
-        call.enqueue(new Callback<ArrayList<Point>>() {
+        pointsApi.requestMyPoints(headersMap).enqueue(new Callback<ArrayList<Point>>() {
             @Override
             public void onResponse(@NonNull Call<ArrayList<Point>> call, @NonNull Response<ArrayList<Point>> response) {
                 if (!response.isSuccessful()) {
@@ -98,8 +94,7 @@ public class PointsViewModel extends AndroidViewModel {
     }
 
     public void requestUpdatePoint(String pointId, HashMap<String, String> headersMap, PointUpdateModel pointUpdateModel) {
-        Call<Void> call = pointsApi.requestUpdatePoint(pointId, headersMap, pointUpdateModel);
-        call.enqueue(new Callback<Void>() {
+        pointsApi.requestUpdatePoint(pointId, headersMap, pointUpdateModel).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                 if (!response.isSuccessful()) {
@@ -107,7 +102,6 @@ public class PointsViewModel extends AndroidViewModel {
                     return;
                 }
                 requestSinglePoint(pointId, headersMap);
-//                Toast.makeText(getApplication(), getApplication().getString(R.string.point_update_success), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -117,9 +111,8 @@ public class PointsViewModel extends AndroidViewModel {
         });
     }
 
-    public void requestDeletePoint(HashMap<String, String> headersMap, PointDeleteModel pointDeleteModel) {
-        Call<Void> call = pointsApi.requestDeletePoint(headersMap, pointDeleteModel);
-        call.enqueue(new Callback<Void>() {
+    public void requestDeletePoint(String courierId, HashMap<String, String> headersMap) {
+        pointsApi.requestDeletePoint(courierId, headersMap).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                 if (!response.isSuccessful()) {
@@ -137,8 +130,7 @@ public class PointsViewModel extends AndroidViewModel {
     }
 
     public void requestSinglePoint(String pointId, HashMap<String, String> headersMap) {
-        Call<Point> call = pointsApi.requestSinglePoint(pointId, headersMap);
-        call.enqueue(new Callback<Point>() {
+        pointsApi.requestSinglePoint(pointId, headersMap).enqueue(new Callback<Point>() {
             @Override
             public void onResponse(@NonNull Call<Point> call, @NonNull Response<Point> response) {
                 if (!response.isSuccessful()) {

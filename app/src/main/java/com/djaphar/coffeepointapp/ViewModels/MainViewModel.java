@@ -41,8 +41,7 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void requestUser(Map<String, String> headersMap, Integer oldHash) {
-        Call<User> call = pointsApi.requestUser(headersMap);
-        call.enqueue(new Callback<User>() {
+        pointsApi.requestUser(headersMap).enqueue(new Callback<User>() {
             @Override
             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                 if (!response.isSuccessful()) {
@@ -71,8 +70,7 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void requestUserProducts(HashMap<String, String> headersMap) {
-        Call<List<Product>> call = pointsApi.requestUserProducts(headersMap);
-        call.enqueue(new Callback<List<Product>>() {
+        pointsApi.requestUserProducts(headersMap).enqueue(new Callback<List<Product>>() {
             @Override
             public void onResponse(@NonNull Call<List<Product>> call, @NonNull Response<List<Product>> response) {
                 if (!response.isSuccessful()) {

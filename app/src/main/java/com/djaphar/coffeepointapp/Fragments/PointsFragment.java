@@ -21,9 +21,7 @@ import com.djaphar.coffeepointapp.Activities.MainActivity;
 import com.djaphar.coffeepointapp.R;
 import com.djaphar.coffeepointapp.SupportClasses.Adapters.PointProductsRecyclerViewAdapter;
 import com.djaphar.coffeepointapp.SupportClasses.Adapters.PointsRecyclerViewAdapter;
-import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.BindCourierModel;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.Point;
-import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointDeleteModel;
 import com.djaphar.coffeepointapp.SupportClasses.ApiClasses.PointUpdateModel;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.Product;
 import com.djaphar.coffeepointapp.SupportClasses.LocalDataClasses.User;
@@ -160,7 +158,7 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
             }
             singlePointNameTv.setText(name);
             setPointProductRecyclerView(point.getProductList());
-            setSinglePointRatingTv(point.getAvgRating());
+            setSinglePointRatingTv(point.getRating());
         });
 
         pointEditNameFormEd.addTextChangedListener(new TextWatcher() {
@@ -204,7 +202,7 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
         });
 
         addPointSaveBtn.setOnClickListener(lView -> {
-            pointsViewModel.requestBindCourier(authHeaderMap, new BindCourierModel(user.get_id(), newPointPhoneNumberEd.getText().toString()));
+            pointsViewModel.requestBindCourier(newPointPhoneNumberEd.getText().toString(), authHeaderMap);
             ViewDriver.hideView(addPointWindow, R.anim.top_view_hide_animation, context);
             ViewDriver.showView(addPointBtn, R.anim.bottom_view_show_animation, context);
         });
@@ -271,7 +269,7 @@ public class PointsFragment extends MyFragment implements View.OnTouchListener {
                 .setMessage(R.string.delete_point_dialog_message)
                 .setNegativeButton(R.string.dialog_negative_btn, (dialogInterface, i) -> dialogInterface.cancel())
                 .setPositiveButton(R.string.dialog_positive_btn, (dialogInterface, i) ->
-                        pointsViewModel.requestDeletePoint(authHeaderMap, new PointDeleteModel(pointId)))
+                        pointsViewModel.requestDeletePoint(pointId, authHeaderMap))
                 .show();
     }
 

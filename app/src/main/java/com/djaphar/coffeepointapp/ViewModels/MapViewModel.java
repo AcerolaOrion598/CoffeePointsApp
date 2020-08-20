@@ -70,8 +70,7 @@ public class MapViewModel extends AndroidViewModel {
 
     public void requestPointsInBox(LatLngBounds bounds) {
         String box = bounds.southwest.longitude + "," + bounds.southwest.latitude + "," + bounds.northeast.longitude + "," + bounds.northeast.latitude;
-        Call<ArrayList<Point>> call = pointsApi.requestPointsInBox(box);
-        call.enqueue(new Callback<ArrayList<Point>>() {
+        pointsApi.requestPointsInBox(box).enqueue(new Callback<ArrayList<Point>>() {
             @Override
             public void onResponse(@NonNull Call<ArrayList<Point>> call, @NonNull Response<ArrayList<Point>> response) {
                 if (!response.isSuccessful()) {
@@ -89,8 +88,7 @@ public class MapViewModel extends AndroidViewModel {
     }
 
     public void requestSupervisor(String supervisorId) {
-        Call<SupervisorModel> call = pointsApi.requestSupervisor(supervisorId);
-        call.enqueue(new Callback<SupervisorModel>() {
+        pointsApi.requestSupervisor(supervisorId).enqueue(new Callback<SupervisorModel>() {
             @Override
             public void onResponse(@NonNull Call<SupervisorModel> call, @NonNull Response<SupervisorModel> response) {
                 if (!response.isSuccessful()) {
@@ -108,8 +106,7 @@ public class MapViewModel extends AndroidViewModel {
     }
 
     public void requestUpdatePoint(String pointId, HashMap<String, String> headersMap, PointUpdateModel pointUpdateModel, LatLngBounds latLngBounds) {
-        Call<Void> call = pointsApi.requestUpdatePoint(pointId, headersMap, pointUpdateModel);
-        call.enqueue(new Callback<Void>() {
+        pointsApi.requestUpdatePoint(pointId, headersMap, pointUpdateModel).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                 if (!response.isSuccessful()) {

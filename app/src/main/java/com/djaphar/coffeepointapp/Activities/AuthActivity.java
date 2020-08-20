@@ -21,8 +21,6 @@ import com.djaphar.coffeepointapp.ViewModels.AuthViewModel;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
-import java.util.Objects;
-
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -43,10 +41,13 @@ public class AuthActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
 
-        Objects.requireNonNull(getSupportActionBar()).setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        getSupportActionBar().setCustomView(R.layout.action_bar);
-        TextView actionBarTitle = findViewById(R.id.action_bar_title);
-        actionBarTitle.setText(R.string.title_log_in);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+            actionBar.setCustomView(R.layout.action_bar);
+            TextView actionBarTitle = findViewById(R.id.action_bar_title);
+            actionBarTitle.setText(R.string.title_log_in);
+        }
 
         phoneNumberEd = findViewById(R.id.phone_number_ed);
         smsCodeEd = findViewById(R.id.sms_code_ed);

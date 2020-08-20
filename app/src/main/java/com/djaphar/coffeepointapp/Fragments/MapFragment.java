@@ -292,6 +292,10 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (ActivityCompat.checkSelfPermission(context, perms[0]) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(context, perms[1]) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
         getDeviceLocation();
         gMap.setMyLocationEnabled(true);
     }
@@ -348,7 +352,7 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         pointOwner.setText("");
         mapViewModel.requestSupervisor(point.getSupervisor());
 
-        if (point.getCurrentlyNotHere()) {
+        if (point.isAway()) {
             ViewDriver.setStatusTvOptions(pointActive, statusTrueText, statusTrueColor);
         } else {
             ViewDriver.setStatusTvOptions(pointActive, statusFalseText, statusFalseColor);
@@ -366,7 +370,7 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
         }
         pointName.setText(name);
 
-        Float rating = point.getAvgRating();
+        Float rating = point.getRating();
         if (rating != null) {
             mapPointRatingIv.setVisibility(View.VISIBLE);
             mapPointRatingTv.setText(String.format(Locale.US, "%.2f", rating));
@@ -438,7 +442,7 @@ public class MapFragment extends MyFragment implements OnMapReadyCallback, Googl
                             markerSize, markerSize, false)));
         }
         Bitmap customIcon;
-        if (point.getCurrentlyNotHere()) {
+        if (point.isAway()) {
             customIcon = BitmapFactory.decodeResource(resources, R.drawable.active_marker);
         } else {
             customIcon = BitmapFactory.decodeResource(resources, R.drawable.inactive_marker);

@@ -35,18 +35,18 @@ public class User {
     @ColumnInfo(name = "name")
     private String name;
 
-    @ColumnInfo(name = "avg_rating")
-    private Float avgRating;
+    @ColumnInfo(name = "rating")
+    private Float rating;
 
     public User(@NonNull String _id, @NonNull String token, @NonNull String role, @NonNull String phoneNumber,
-         @NonNull String supervisorStatus, String name, Float avgRating) {
+         @NonNull String supervisorStatus, String name, Float rating) {
         this._id = _id;
         this.token = token;
         this.role = role;
         this.phoneNumber = phoneNumber;
         this.supervisorStatus = supervisorStatus;
         this.name = name;
-        this.avgRating = avgRating;
+        this.rating = rating;
     }
 
     @NonNull
@@ -82,8 +82,8 @@ public class User {
         return name;
     }
 
-    public Float getAvgRating() {
-        return avgRating;
+    public Float getRating() {
+        return rating;
     }
 
     public void set_id(@NonNull String _id) {
@@ -114,8 +114,8 @@ public class User {
         this.name = name;
     }
 
-    public void setAvgRating(Float avgRating) {
-        this.avgRating = avgRating;
+    public void setRating(Float rating) {
+        this.rating = rating;
     }
 
     public Integer determineHash() {
@@ -125,8 +125,8 @@ public class User {
             data += getName();
         }
 
-        if (getAvgRating() != null) {
-            data += getAvgRating();
+        if (getRating() != null) {
+            data += getRating();
         }
 
         return data.hashCode();
